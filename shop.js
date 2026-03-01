@@ -12,206 +12,255 @@ let wishlist = JSON.parse(localStorage.getItem('buyit_wishlist')) || [];
 const BUYIT_REGULAR_PRICE_MULTIPLIER = 2.1451612903;
 
 const BUYIT_PRODUCT_CATALOG = {
-    'iphone-17-pro-max': { id: 'iphone-17-pro-max', title: 'iPhone 17 Pro Max', price: 130000, regularPrice: 149999, localImage: 'product-images/smartphones/iphone1.jpg', category: 'smartphones'},
-    'titan-sport-v2': { id: 'titan-sport-v2', title: 'Titan Sport Active V2', price: 28967, regularPrice: 34999, localImage: 'product-images/wearables/iwatch1.jpg', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBLvDKoi4zzOxtthUuIkDWpoamW-x_fQcJEenQ8eWiqnyVLfQMdcrpsuLly_lrUhZs3d6rDOKciRa-9KLqKzuX7i2IuZMZ6po08oAKXGIWAEC1EzyElHQfYru--gHp5ZLiiq1T_pRDM4SNohZIXPpNWeHc1mide9BXN9wMGZbaU4c0BvKMku1QVkBCjgcwUdEIKFVgaxKK0CWMNQQ4OSbAqJLDRxVKLsmPNS6YBxgln_7oDra8AlLxzSR0vXVxi9wpnu2AKpifrHwku', category: 'Wearables', brand: 'Titan' },
-    'nextgen-console-x': { id: 'nextgen-console-x', title: 'NextGen Console X Pro', price: 41417, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBoNvTmbpDl3xYLyHDXOgNocUClVgCDIg56BmIx1mLXhb9QR-kwh6EY3KcLuRxP_Zt9FFeC6q17_i-sttTTy7-IxK8eW5vh711_0Fu0xdaxPJGpZmPNBwiGQ_NtTo0J7pYOJR8MtCnR_rz9ZgNNJvDs1nMRYK5jqXO8juxZY398lCEvAjH8oa7PRG_vSTTiFVN2-aEbWrp-HEXG_T9GmM6l1e-Fy41eS2eOC9DonSgqY_7CKdPlhScZzRfcp4lfUOoAlTsYfMOKrBKB', category: 'Gaming', brand: 'NextGen' },
-    'apex-rtx-4080': { id: 'apex-rtx-4080', title: 'Apex RTX 4080 Founders', price: 99517, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBwRMO7z2je82ZTm3hpu2eG6T1HmQgVQYrspH9xxeZpE-usWlmZQIka4hWuRh3VnZSS64UH8uyIYcmLUna5VsVWfGKyHbf8H2DMFDcT01_8BG5MfEnUNdXXj7gNaEyZmhwTGIAvi2z5hQLLc7M8C1DqmeVFGiWchCEClYpgHrkZDfvjsS9cXKwsHiZx4i6tQd3q2oSn8xHhJHkRd5dFOU7TTbXP2X09hs55cWz5ccMNGk7K4yx0mRsL9th9xZtJiJYNT0-5zpxf9r4t', category: 'Components', brand: 'Apex' },
-    'studio-pro-anc': { id: 'studio-pro-anc', title: 'Studio Pro ANC Wireless', price: 24817, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC72_IR4svNMhKtT5sm8RaaDmpEGOpauk1kXFPvop4eVxZv73hFLRewhGgPXryPM_dLLa-HT5HBt63f8sP8o5IZA_s1iwEoel5BoVzziGzkM9ukhzIyp2DvLneMqxqAEdDdle3CoM_rNEwmSg5KKDqokrTt49Fbf1wqARuvFNim7Z45TA3qSqubIb15Y4hi5pKQlsjLqPXObsL2OdUso0LR18BkVj6Ryn_6PfiEQdJWrzW8mjRT77sipTGyaT7wTwNVaiVZDAfYYR1v', category: 'Audio', brand: 'Studio Pro' },
-    'alpha-vii-mirrorless': { id: 'alpha-vii-mirrorless', title: 'Alpha VII Mirrorless 4K', price: 207417, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDs6rJpoRVW9Vfr2O34zg1KW0WSRF0Tw-GxbYYuRxuyey8KFTSm6SobKH5bZUxfQjVRyuir6ZrCmZyZ_D4sMO-GVw-EKNGqbJPnFqpQP5Y9ud1JMfObBDvToIyD0PdsqybkGCl89kJxI_YH5kWdwAsEN-KeHFZ1MLwpAAvsoQB9ByWbPU110ONhZN5pueX_FP1WDJqG6LgZ0cYEaD1tWigrfxJcAgdxRNdvpcqIpA-zuheG_oLEh6y266eRTZMA7k8GttJvh7hI3POu', category: 'Cameras', brand: 'Alpha' },
-    'snapx-5g': { id: 'snapx-5g', title: 'SnapX 5G Pro', price: 54999, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBoNvTmbpDl3xYLyHDXOgNocUClVgCDIg56BmIx1mLXhb9QR-kwh6EY3KcLuRxP_Zt9FFeC6q17_i-sttTTy7-IxK8eW5vh711_0Fu0xdaxPJGpZmPNBwiGQ_NtTo0J7pYOJR8MtCnR_rz9ZgNNJvDs1nMRYK5jqXO8juxZY398lCEvAjH8oa7PRG_vSTTiFVN2-aEbWrp-HEXG_T9GmM6l1e-Fy41eS2eOC9DonSgqY_7CKdPlhScZzRfcp4lfUOoAlTsYfMOKrBKB', category: 'Mobile', brand: 'SnapX' },
-    'aero-book-x1': { id: 'aero-book-x1', title: 'AeroBook X1 Ultra', price: 149999, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC8HkLH_OsrpLvu-bp8uPttjK3ozesEMQn8dEIpL5YukgAp4wU1bEcmw0Fv_xZY2R8cDLwTxUfjA0gPlCtxs8DCuKXLXtwruzxc4evYKI0YoDCmuiAWBMsk7Jclx0jc9qaq1beCCOnVFp0OJqUKteG7LJiNTyGu2Qw5CsOM6sdyReEVPItX-Idb3_izI6hcIS1_w-t7JuoyQKUKlviCzFwU8End3Rufk3MrRxD5ilZ4LSgWR8NrGXRfHY_1vA6wXqbpim0xnC_3vhx_', category: 'Laptops', brand: 'AeroBook' },
-    'desk-drone-v3': { id: 'desk-drone-v3', title: 'SkyView Drone V3', price: 37499, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBwRMO7z2je82ZTm3hpu2eG6T1HmQgVQYrspH9xxeZpE-usWlmZQIka4hWuRh3VnZSS64UH8uyIYcmLUna5VsVWfGKyHbf8H2DMFDcT01_8BG5MfEnUNdXXj7gNaEyZmhwTGIAvi2z5hQLLc7M8C1DqmeVFGiWchCEClYpgHrkZDfvjsS9cXKwsHiZx4i6tQd3q2oSn8xHhJHkRd5dFOU7TTbXP2X09hs55cWz5ccMNGk7K4yx0mRsL9th9xZtJiJYNT0-5zpxf9r4t', category: 'Drones', brand: 'SkyView' },
-    'hyper-earbuds': { id: 'hyper-earbuds', title: 'HyperBuds X Pro', price: 12999, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC72_IR4svNMhKtT5sm8RaaDmpEGOpauk1kXFPvop4eVxZv73hFLRewhGgPXryPM_dLLa-HT5HBt63f8sP8o5IZA_s1iwEoel5BoVzziGzkM9ukhzIyp2DvLneMqxqAEdDdle3CoM_rNEwmSg5KKDqokrTt49Fbf1wqARuvFNim7Z45TA3qSqubIb15Y4hi5pKQlsjLqPXObsL2OdUso0LR18BkVj6Ryn_6PfiEQdJWrzW8mjRT77sipTGyaT7wTwNVaiVZDAfYYR1v', category: 'Audio', brand: 'Hyper' },
-    'odyssey-ultrawide': { id: 'odyssey-ultrawide', title: 'Odyssey UltraWide', price: 104999, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAYugVACfRanIulRggXALKX2RvjDqsGzgS4u5zoW6jlw--VXFgMggb5TZPegxIpVx9suOdfu1diIZS_zeJr6Jce9eEnzLQJhttR5ThNBKUeecFFbLJ990XQYQHLO3IKfBtEbw0cU-GBIlF7PFHzGIUVMXQn4YqcsAX2b2Gu4z0WSi5LWKUHNg7hmD4UquEO94HDte6wLTR4YiYjmv8ILoC6MP01D6SmoUdiv3gPkeD-ON-Tl3wKcvIViCG896ijlFZj5iJwKfnY1CdN', category: 'Monitors', brand: 'Odyssey' },
-    'stealth-mouse': { id: 'stealth-mouse', title: 'Stealth Gaming Mouse', price: 8499, image: 'https://lh3.googleusercontent.com/aida-public/AEdXbcoTpHs82-J0yW0U7Lw0e_t9i6-xL3WdYvC_q0P3gZ-W0Tz3Z1P5V0_k6L7NnQw5Jq_r_1Cj6oMw3G_tX6F1-2B8T2P_qT3N5g8Hw2jZwO9rQw2M8J6s7t6T8R9L1N9Kj1G0W9b8-z7V0L7wY2J3Q6N0E3_p6YpQw6eE2K3-h5P4K0-u0B4-mJ8', category: 'Accessories', brand: 'Stealth' },
-    'hologram-display': { id: 'hologram-display', title: 'HoloView 3D Monitor', price: 84999, image: 'https://lh3.googleusercontent.com/aida-public/AEdXbcoTpHs82-J0yW0U7Lw0e_t9i6-xL3WdYvC_q0P3gZ-W0Tz3Z1P5V0_k6L7NnQw5Jq_r_1Cj6oMw3G_tX6F1-2B8T2P_qT3N5g8Hw2jZwO9rQw2M8J6s7t6T8R9L1N9Kj1G0W9b8-z7V0L7wY2J3Q6N0E3_p6YpQw6eE2K3-h5P4K0-u0B4-mJ8', category: 'Monitors', brand: 'HoloView' },
-    'smart-ring-g2': { id: 'smart-ring-g2', title: 'Aura Smart Ring Gen 2', price: 18499, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAYugVACfRanIulRggXALKX2RvjDqsGzgS4u5zoW6jlw--VXFgMggb5TZPegxIpVx9suOdfu1diIZS_zeJr6Jce9eEnzLQJhttR5ThNBKUeecFFbLJ990XQYQHLO3IKfBtEbw0cU-GBIlF7PFHzGIUVMXQn4YqcsAX2b2Gu4z0WSi5LWKUHNg7hmD4UquEO94HDte6wLTR4YiYjmv8ILoC6MP01D6SmoUdiv3gPkeD-ON-Tl3wKcvIViCG896ijlFZj5iJwKfnY1CdN', category: 'Wearables', brand: 'Aura' },
-    'mech-keyboard': { id: 'mech-keyboard', title: 'Pro Keys Wireless Mech', price: 15999, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBwRMO7z2je82ZTm3hpu2eG6T1HmQgVQYrspH9xxeZpE-usWlmZQIka4hWuRh3VnZSS64UH8uyIYcmLUna5VsVWfGKyHbf8H2DMFDcT01_8BG5MfEnUNdXXj7gNaEyZmhwTGIAvi2z5hQLLc7M8C1DqmeVFGiWchCEClYpgHrkZDfvjsS9cXKwsHiZx4i6tQd3q2oSn8xHhJHkRd5dFOU7TTbXP2X09hs55cWz5ccMNGk7K4yx0mRsL9th9xZtJiJYNT0-5zpxf9r4t', category: 'Accessories', brand: 'Pro Keys' },
-    'streaming-mic': { id: 'streaming-mic', title: 'StudioCast Condenser', price: 11499, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC72_IR4svNMhKtT5sm8RaaDmpEGOpauk1kXFPvop4eVxZv73hFLRewhGgPXryPM_dLLa-HT5HBt63f8sP8o5IZA_s1iwEoel5BoVzziGzkM9ukhzIyp2DvLneMqxqAEdDdle3CoM_rNEwmSg5KKDqokrTt49Fbf1wqARuvFNim7Z45TA3qSqubIb15Y4hi5pKQlsjLqPXObsL2OdUso0LR18BkVj6Ryn_6PfiEQdJWrzW8mjRT77sipTGyaT7wTwNVaiVZDAfYYR1v', category: 'Audio', brand: 'StudioCast' },
-    'g1': { id: 'g1', title: 'SonicPro Elite Headphones', price: 28967, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBLOreNU_-zNsgMsN9SxCNbLx3JnqXlubtpdRcndwgXaMrag_1O5OIJa1CbKh11Hjk8iqR2l11FhmKft5w_ieB_d2uJRKw4irky6ZeW6A6z4nCCmW6rMyMnxo0Q1GmV6-MUGBEEBCGLVpfEzu5E35SdcMwdWP82OXMMS2qmUKBFjjeb0X0kqfFGyS4MhC511YdkYRaemy6t2c33bw1bwrY8-3aEidBMK-qXiZQsigQvTzXynzse29eG8ScZV4a49n9A2mZp1FTdbVr7', category: 'Audio', brand: 'SonicPro' },
-    'g2': { id: 'g2', title: 'Acoustic Home Mini', price: 10707, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAFhXpw5I4-414dj0gx9UH451YrFL2BW2H7DhXJZMb3IKw8p9gkhZ9ALpEWSSMtgVzhkIP0OP3_wucqbKLa1dOIeytaOfy9FxLUbdrfxnuDYYhIPlWxU7Bcq1p7Ts0d98GNlGr5Doy2jtQgORYzDf8-r0sNRBb03ulZAmH5nUSTN_YgWEc4GnTpa8lF9s6u8ox3OBc8bnz0PNf9dn21YeElqqPseHURQYJcqFYZoMBlfICYIp6h0sDp1dLUR9yD0fJoHDskmDF9wVRE', category: 'Smart Home', brand: 'Acoustic' },
-    'g3': { id: 'g3', title: 'Nexus Flagship 24 Pro', price: 99517, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBxvt6ZpU7eFk5poBgKqR2MHHWe3lMO66m7jN-lV58-NaSfrmayN5nNHuyPjVYUz_5eP7nGLo_cj1zxHd765Gh4VTX54BOFyd1200GtIfjW_snnIjf9y0vp0N5f0Hsnb2RC2xDfsptuxy8Fy8xkji8pCl1ThY8x_fMGfijeDxsCJgwFa4oVNK1YmH2kqdUcqxtGPiwMPDr2ALbSnFTK4NQzCr-cH1AuKZYkIiOoeNDsHDd4YUeAymr2m5fpeYhuH9zgtuG-s1BCFACw', category: 'Mobile', brand: 'Nexus' },
-    'g4': { id: 'g4', title: 'VisionPad Pro 12"', price: 74617, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA1hDN7LBWzrSqLJNv9CrCDdlkORLWXEJA15EY7oCW6ulQJ_5Sc11Islan8k-t9Qkc6XerQpQR1wc0ZLjkkoClP3jShAgRHGD2WNQsBlehUL22oIjHVjQqGTLfM9562nvzyTsPe18JZ7oSoOWxYwXaOYxeC3GQfazyfM5D9v_H206YJhSs2wdvVILCw4-sVNNZJIUFMsoSbB-eIum1P_jer42-yG9npAz3MepL5hn9-GUDgM6G-ZymYOcz3I9ohL0-lUqH3-TK630vm', category: 'Computing', brand: 'VisionPad' }
+    'iphone-17-pro-max': {
+        id: 'iphone-17-pro-max',
+        title: 'iPhone 17 Pro Max',
+        price: 130000,
+        regularPrice: 149999,
+        featured: true,
+        sortOrder: 1,
+        localImage: 'product-images/smartphones/iphone1.jpg',
+        galleryImages: [
+            'product-images/smartphones/iphone1.jpg',
+            'product-images/smartphones/iphone2.jpg',
+            'product-images/smartphones/iphone3.jpg',
+            'product-images/smartphones/iphone4.jpg',
+            'product-images/smartphones/iphone5.jpg',
+            'product-images/smartphones/iphone6.jpg',
+            'product-images/smartphones/iphone7.jpg'
+        ],
+        specifications: [
+            '6.9-inch Super Retina XDR display with ProMotion 120Hz refresh rate.',
+            'A19 Pro chipset engineered for flagship gaming and AI performance.',
+            'Triple-camera pro system with advanced low-light and cinematic video.',
+            'Fast charging with all-day battery optimization for heavy usage.',
+            '5G, Wi-Fi 7, and premium titanium build for long-term durability.'
+        ],
+        category: 'smartphones'
+    },
+    
+    'apple-macbook-pro-m5': {
+        id: 'apple-macbook-pro-m5',
+        title: 'Apple MacBook Pro M5',
+        price: 170000,
+        regularPrice: 199999,
+        featured: true,
+        sortOrder: 2,
+        localImage: 'product-images/laptops/mac1.jpg',
+        galleryImages: [
+            'product-images/laptops/mac1.jpg',
+            'product-images/laptops/mac2.jpg',
+            'product-images/laptops/mac3.jpg',
+            'product-images/laptops/mac4.jpg',
+            'product-images/laptops/mac5.jpg',
+            'product-images/laptops/mac6.jpg',
+            'product-images/laptops/mac7.jpg',
+            'product-images/laptops/mac8.jpg'
+        ],
+        specifications: [
+            'Apple M5 architecture tuned for pro-grade editing and development workloads.',
+            'Liquid Retina XDR display with high brightness and accurate color rendering.',
+            'Unified memory design for smooth multitasking across demanding applications.',
+            'High-speed SSD storage with rapid boot and file transfer performance.',
+            'Long battery life with premium thermal efficiency and silent operation.'
+        ],
+        category: 'laptops'
+    },
+
+    'apple-ipad-pro-m5': {
+        id: 'apple-ipad-pro-m5',
+        title: 'Apple iPad Pro M5',
+        price: 115000,
+        regularPrice: 149999,
+        featured: true,
+        sortOrder: 3,
+        localImage: 'product-images/tablets/ipad1.jpg',
+        galleryImages: [
+            'product-images/tablets/ipad1.jpg',
+            'product-images/tablets/ipad2.jpg',
+            'product-images/tablets/ipad3.jpg',
+            'product-images/tablets/ipad4.jpg',
+            'product-images/tablets/ipad5.jpg',
+            'product-images/tablets/ipad6.jpg',
+            'product-images/tablets/ipad7.jpg'
+        ],
+        specifications: [
+            'Ultra-smooth high-refresh display with pencil-ready precision touch response.',
+            'M5-class tablet performance for creators, students, and professionals.',
+            'Large battery designed for all-day productivity and entertainment.',
+            'Advanced camera and scanner support for content capture and calls.',
+            'Fast wireless connectivity and ecosystem integration with Apple accessories.'
+        ],
+        category: 'tablets'
+    },
+
+    'apple-airpods-max-headset': {
+        id: 'apple-airpods-max-headset',
+        title: 'Apple AirPods Max Headset',
+        price: 60000,
+        regularPrice: 85000,
+        featured: false,
+        sortOrder: 4,
+        localImage: 'product-images/audio/apple-headphone1.jpg',
+        galleryImages: [
+            'product-images/audio/apple-headphone1.jpg',
+            'product-images/audio/apple-headphone2.jpg',
+            'product-images/audio/apple-headphone3.jpg',
+            'product-images/audio/apple-headphone4.jpg',
+            'product-images/audio/apple-headphone5.jpg',
+            'product-images/audio/apple-headphone6.jpg'
+        ],
+        specifications: [
+            'High-fidelity drivers with spatial audio and dynamic head tracking.',
+            'Adaptive active noise cancellation with transparency listening mode.',
+            'Premium over-ear comfort with breathable cushions for long sessions.',
+            'Low-latency wireless performance for music, calls, and media.',
+            'Extended playback time with smart power management and fast charging.'
+        ],
+        category: 'audio'
+    },
+
+    'apple-watch-se-2': {
+        id: 'apple-watch-se-2',
+        title: 'Apple Watch SE 2',
+        price: 15000,
+        regularPrice: 20000,
+        featured: false,
+        sortOrder: 5,
+        localImage: 'product-images/wearables/iwatch1.jpg',
+        galleryImages: [
+            'product-images/wearables/iwatch1.jpg',
+            'product-images/wearables/iwatch2.jpg',
+            'product-images/wearables/iwatch3.jpg',
+            'product-images/wearables/iwatch4.jpg',
+            'product-images/wearables/iwatch5.jpg',
+            'product-images/wearables/iwatch6.jpg',
+            'product-images/wearables/iwatch7.jpg'
+        ],
+        specifications: [
+            'Retina display with bright outdoor readability and smooth interactions.',
+            'Heart rate, activity, and sleep tracking for daily fitness insights.',
+            'Water-resistant design suitable for workouts and light swimming.',
+            'Smart notifications, call handling, and app sync with iPhone.',
+            'Efficient battery profile for full-day smart wearable use.'
+        ],
+        category: 'wearables'
+    },
+
+    'blue-evil-eye-pendant-chain': {
+        id: 'blue-evil-eye-pendant-chain',
+        title: 'Blue Evil Eye Pendant Chain',
+        price: 19,
+        regularPrice: 99,
+        featured: false,
+        sortOrder: 6,
+        localImage: 'product-images/accessories/evileye1.jpg',
+        galleryImages: [
+            'product-images/accessories/evileye1.jpg',
+            'product-images/accessories/evileye2.jpg',
+            'product-images/accessories/evileye3.jpg',
+            'product-images/accessories/evileye4.jpg',
+            'product-images/accessories/evileye5.jpg',
+            'product-images/accessories/evileye6.jpg'
+        ],
+        specifications: [
+            'Minimal pendant design with blue evil-eye centerpiece styling.',
+            'Lightweight chain for comfortable all-day wear.',
+            'Polished finish with durable everyday accessory build quality.',
+            'Suitable for casual outfits and layered fashion combinations.',
+            'Compact form factor with easy clasp handling and fit adjustment.'
+        ],
+        category: 'accessories'
+    },
 };
 
-const BUYIT_SPECS_BY_PRODUCT_ID = {
-    'zenith-x1-ultra': [
-        '16-inch Mini-LED display with pro-grade color accuracy.',
-        'M4 Ultra performance architecture for intensive creative workloads.',
-        'High-capacity battery optimized for full-day productivity.',
-        'Premium aluminum chassis with advanced thermal management.',
-        'High-speed ports and wireless connectivity for modern workflows.'
-    ],
-    'elite-tab-pro': [
-        '13-inch 120Hz AMOLED panel with vivid color depth.',
-        'Flagship-grade processor for multitasking and media creation.',
-        '16GB RAM class performance for smooth app switching.',
-        'All-day battery with fast charge support.',
-        'Slim premium body with stylus-ready productivity support.'
-    ],
-    'titan-sport-v2': [
-        'Advanced health sensors with ECG and heart-rate tracking.',
-        '5ATM water resistance for swimming and outdoor activities.',
-        'Long battery endurance for multi-day usage.',
-        'Bright always-on display for easy readability outdoors.',
-        'Comprehensive workout and recovery analytics.'
-    ],
-    'nextgen-console-x': [
-        '4K gaming output with high-frame-rate support.',
-        'Fast NVMe storage for reduced load times.',
-        'Ray-tracing capable graphics pipeline.',
-        'Optimized cooling for sustained gaming sessions.',
-        'Low-latency wireless controller connectivity.'
-    ],
-    'apex-rtx-4080': [
-        '16GB GDDR6X memory for high-resolution rendering.',
-        'Hardware ray tracing and AI-accelerated workloads.',
-        'High-performance cooling design for stable clocks.',
-        'Optimized drivers for modern content creation suites.',
-        'PCIe high-bandwidth interface for gaming and compute.'
-    ],
-    'studio-pro-anc': [
-        'Active noise cancellation with adaptive environment control.',
-        '40-hour battery class playback on a single charge.',
-        'High-resolution codec support for premium audio quality.',
-        'Dual-device pairing with seamless switching.',
-        'Comfort-tuned over-ear design for extended sessions.'
-    ],
-    'alpha-vii-mirrorless': [
-        'High-resolution full-frame sensor for professional imaging.',
-        'Advanced autofocus with real-time subject tracking.',
-        '4K and high-bitrate video capture pipeline.',
-        'In-body stabilization for sharper handheld shots.',
-        'Fast burst shooting for action and sports scenarios.'
-    ],
-    'snapx-5g': [
-        '5G-ready modem with broad network compatibility.',
-        '108MP camera system with AI scene optimization.',
-        'High refresh AMOLED display for fluid interaction.',
-        'Fast charging with efficient thermal control.',
-        'Powerful chipset for gaming and multitasking.'
-    ],
-    'aero-book-x1': [
-        'High-resolution OLED display with deep contrast.',
-        '32GB memory class for demanding productivity workflows.',
-        'Fast NVMe SSD storage for quick boot and launch.',
-        'Lightweight premium body with long battery life.',
-        'Comprehensive modern ports and high-speed wireless.'
-    ],
-    'desk-drone-v3': [
-        '4K stabilized camera for cinematic aerial footage.',
-        'Up to 40 minutes class flight endurance.',
-        'Intelligent tracking and waypoint navigation modes.',
-        'Obstacle awareness for safer autonomous flight.',
-        'Portable foldable frame for travel convenience.'
-    ],
-    'hyper-earbuds': [
-        'Hybrid ANC with transparency mode support.',
-        'Low-latency audio tuning for gaming and video.',
-        'Hi-Res playback profile with balanced sound signature.',
-        'Pocket charging case with fast top-up capability.',
-        'Ergonomic in-ear fit for long daily use.'
-    ],
-    'odyssey-ultrawide': [
-        'Ultrawide QHD panel with 240Hz refresh rate.',
-        'Curved immersive design for productivity and gaming.',
-        'High contrast display with low motion blur.',
-        'Adaptive sync support for smoother visuals.',
-        'Ergonomic stand with tilt and height adjustments.'
-    ],
-    'stealth-mouse': [
-        'Up to 26K DPI precision optical sensor.',
-        'Low-latency wireless connectivity for competitive play.',
-        'Ergonomic shell with textured grip support.',
-        'Programmable buttons with onboard memory profiles.',
-        'Long battery runtime with fast recharge support.'
-    ],
-    'hologram-display': [
-        'Immersive 3D depth visualization technology.',
-        'High-resolution panel for creative and design workflows.',
-        'Wide viewing angles with accurate color reproduction.',
-        'Low-latency input path for interactive experiences.',
-        'Modern connectivity options for workstation setups.'
-    ],
-    'smart-ring-g2': [
-        'Continuous heart-rate and HRV wellness tracking.',
-        'Advanced sleep stage analysis and readiness scoring.',
-        'Ultra-compact lightweight form with all-day comfort.',
-        'Extended standby battery with quick magnetic charging.',
-        'Companion app insights for long-term health trends.'
-    ],
-    'mech-keyboard': [
-        'Hot-swappable mechanical switches for custom feel.',
-        'Wireless multi-device support with low input lag.',
-        'Per-key RGB lighting customization profiles.',
-        'Durable keycaps and reinforced frame construction.',
-        'Programmable macros for productivity and gaming.'
-    ],
-    'streaming-mic': [
-        'Condenser capsule tuned for broadcast-grade vocal clarity.',
-        'USB-C plug-and-play with low-noise preamp chain.',
-        'Selectable pickup modes for solo and group recording.',
-        'Integrated gain controls and real-time monitoring.',
-        'Shock-resistant mount compatibility for clean capture.'
-    ],
-    'g1': [
-        'Premium ANC with immersive wide-range sound profile.',
-        'Comfort-focused over-ear build for long sessions.',
-        'Extended battery backup with rapid charging support.',
-        'Dual-mode wired and wireless operation.',
-        'Voice assistant integration with quick controls.'
-    ],
-    'g2': [
-        'Compact smart speaker with room-filling output.',
-        'Hands-free voice command and app-based control.',
-        'Wi-Fi and Bluetooth dual connectivity options.',
-        '360-degree audio projection for balanced listening.',
-        'Energy-efficient standby with instant wake response.'
-    ],
-    'g3': [
-        'Flagship-class chipset with advanced AI acceleration.',
-        'Pro camera stack with enhanced low-light performance.',
-        'High refresh AMOLED display for ultra-smooth operation.',
-        'Fast charging and battery health optimization.',
-        'Robust 5G, Wi-Fi, and Bluetooth connectivity suite.'
-    ],
-    'g4': [
-        '12-inch high-resolution display with accurate touch response.',
-        'Power-efficient processor for creative multitasking.',
-        'Lightweight premium chassis for portable productivity.',
-        'Long battery endurance with quick recharge capability.',
-        'Accessory-ready ecosystem for keyboard and stylus use.'
-    ]
+const BUYIT_SORT_OPTIONS = {
+    featured: 'Featured',
+    newest: 'Newly Added',
+    'price-asc': 'Price: Low to High',
+    'price-desc': 'Price: High to Low'
 };
+
+const BUYIT_CATEGORY_MAP = {
+    smartphones: 'smartphones',
+    'smart-phones': 'smartphones',
+    'smart_phones': 'smartphones',
+    smartphone: 'smartphones',
+    phones: 'smartphones',
+    phone: 'smartphones',
+    mobile: 'smartphones',
+    mobiles: 'smartphones',
+    laptops: 'laptops',
+    'lap-tops': 'laptops',
+    'lap_tops': 'laptops',
+    laptop: 'laptops',
+    computers: 'laptops',
+    computer: 'laptops',
+    tablets: 'tablets',
+    'tab-lets': 'tablets',
+    'tab_lets': 'tablets',
+    tablet: 'tablets',
+    computing: 'tablets',
+    audio: 'audio',
+    'smart-home': 'audio',
+    'smart_home': 'audio',
+    'smart home': 'audio',
+    smarthome: 'audio',
+    wearables: 'wearables',
+    'wear-ables': 'wearables',
+    'wear_ables': 'wearables',
+    wearable: 'wearables',
+    accessories: 'accessories',
+    'access-ories': 'accessories',
+    'access_ories': 'accessories',
+    accessory: 'accessories',
+    components: 'accessories',
+    component: 'accessories',
+    monitors: 'laptops',
+    monitor: 'laptops'
+};
+
+const BUYIT_CATEGORY_DISPLAY_MAP = {
+    smartphones: 'Smartphones',
+    laptops: 'Laptops',
+    tablets: 'Tablets',
+    audio: 'Audio',
+    wearables: 'Wearables',
+    accessories: 'Accessories'
+};
+
+const BUYIT_CATEGORY_ICON_MAP = {
+    smartphones: 'smartphone',
+    laptops: 'laptop',
+    tablets: 'tablet_mac',
+    audio: 'headphones',
+    wearables: 'watch',
+    accessories: 'cable'
+};
+
+function normalizeCategory(value) {
+    const cleaned = (value || '').toString().trim().toLowerCase();
+    const compact = cleaned.replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim();
+    return BUYIT_CATEGORY_MAP[cleaned] || BUYIT_CATEGORY_MAP[compact] || cleaned;
+}
+
+function getCategoryDisplayName(value) {
+    const normalized = normalizeCategory(value);
+    return BUYIT_CATEGORY_DISPLAY_MAP[normalized] || normalized;
+}
+
+function getCategoryCardItems() {
+    return Object.entries(BUYIT_CATEGORY_DISPLAY_MAP).map(([category, label]) => ({
+        category,
+        label,
+        icon: BUYIT_CATEGORY_ICON_MAP[category] || 'category'
+    }));
+}
 
 const BUYIT_OUT_OF_STOCK_IDS = new Set([
-    'nextgen-console-x',
-    'alpha-vii-mirrorless',
-    'hologram-display'
+    'apple-macbook-pro-m5',
+    'apple-watch-se-2'
 ]);
-
-function normalizeCatalogCategory(category) {
-    const value = String(category || '').trim().toLowerCase();
-    if (['smartphones', 'smartphone', 'phone', 'phones', 'mobile', 'mobiles'].includes(value)) {
-        return 'smartphones';
-    }
-    if (['laptops', 'laptop', 'computer', 'computers', 'monitor', 'monitors'].includes(value)) {
-        return 'laptops';
-    }
-    if (['tablets', 'tablet', 'computing'].includes(value)) {
-        return 'tablets';
-    }
-    if (['audio', 'smarthome', 'smart home'].includes(value)) {
-        return 'audio';
-    }
-    if (['wearable', 'wearables'].includes(value)) {
-        return 'wearables';
-    }
-    if (['accessory', 'accessories', 'component', 'components'].includes(value)) {
-        return 'accessories';
-    }
-    return 'accessories';
-}
 
 Object.values(BUYIT_PRODUCT_CATALOG).forEach((product) => {
     const normalizedPrice = parsePrice(product.price);
@@ -222,15 +271,12 @@ Object.values(BUYIT_PRODUCT_CATALOG).forEach((product) => {
         : Math.round(normalizedPrice * BUYIT_REGULAR_PRICE_MULTIPLIER);
     product.image = String(product.localImage || product.image || 'buyit-logo.png');
 
-    if (!Array.isArray(product.specifications) || product.specifications.length === 0) {
-        product.specifications = BUYIT_SPECS_BY_PRODUCT_ID[product.id] || [
-            'Premium build quality and reliable daily performance.',
-            'Balanced hardware optimized for stable operation.',
-            'Modern connectivity support for current devices.',
-            'Efficient power usage for practical everyday use.',
-            'Built for durability and long-term consistency.'
-        ];
+    if (!Array.isArray(product.specifications)) {
+        product.specifications = [];
     }
+    product.featured = Boolean(product.featured);
+    const normalizedSortOrder = Number(product.sortOrder);
+    product.sortOrder = Number.isFinite(normalizedSortOrder) ? normalizedSortOrder : Number.MAX_SAFE_INTEGER;
     if (typeof product.inStock !== 'boolean') {
         product.inStock = !BUYIT_OUT_OF_STOCK_IDS.has(product.id);
     }
@@ -251,6 +297,13 @@ function getProductLink(productId) {
 window.BUYIT_PRODUCT_CATALOG = BUYIT_PRODUCT_CATALOG;
 window.getProductById = getProductById;
 window.getProductLink = getProductLink;
+window.BUYIT_CATEGORY_MAP = BUYIT_CATEGORY_MAP;
+window.BUYIT_CATEGORY_DISPLAY_MAP = BUYIT_CATEGORY_DISPLAY_MAP;
+window.BUYIT_CATEGORY_ICON_MAP = BUYIT_CATEGORY_ICON_MAP;
+window.BUYIT_SORT_OPTIONS = BUYIT_SORT_OPTIONS;
+window.BUYIT_NORMALIZE_CATEGORY = normalizeCategory;
+window.BUYIT_GET_CATEGORY_DISPLAY_NAME = getCategoryDisplayName;
+window.BUYIT_GET_CATEGORY_CARD_ITEMS = getCategoryCardItems;
 
 function parsePrice(value) {
     if (typeof value === 'number' && Number.isFinite(value)) {

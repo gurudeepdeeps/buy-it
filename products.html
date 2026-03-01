@@ -18,54 +18,91 @@
 <script>
 // Category filter logic
 document.addEventListener('DOMContentLoaded', function() {
-    const categoryMap = {
-        smartphones: 'smartphones',
-        smartphone: 'smartphones',
-        phones: 'smartphones',
-        phone: 'smartphones',
-        mobile: 'smartphones',
-        mobiles: 'smartphones',
-        laptops: 'laptops',
-        laptop: 'laptops',
-        computers: 'laptops',
-        computer: 'laptops',
-        tablets: 'tablets',
-        tablet: 'tablets',
-        computing: 'tablets',
-        audio: 'audio',
-        'smart home': 'audio',
-        smarthome: 'audio',
-        wearables: 'wearables',
-        wearable: 'wearables',
-        accessories: 'accessories',
-        accessory: 'accessories',
-        components: 'accessories',
-        component: 'accessories',
-        monitors: 'laptops',
-        monitor: 'laptops'
-    };
+    const sharedNormalizeCategory = typeof window.BUYIT_NORMALIZE_CATEGORY === 'function'
+        ? window.BUYIT_NORMALIZE_CATEGORY
+        : null;
 
-    const categoryDisplayMap = {
-        smartphones: 'Smartphones',
-        laptops: 'Laptops',
-        tablets: 'Tablets',
-        audio: 'Audio',
-        wearables: 'Wearables',
-        accessories: 'Accessories'
-    };
+    const sharedCategoryDisplayName = typeof window.BUYIT_GET_CATEGORY_DISPLAY_NAME === 'function'
+        ? window.BUYIT_GET_CATEGORY_DISPLAY_NAME
+        : null;
 
     const normalizeCategory = (value) => {
-        const cleaned = (value || '').toString().trim().toLowerCase();
-        return categoryMap[cleaned] || cleaned;
+        if (sharedNormalizeCategory) {
+            return sharedNormalizeCategory(value);
+        }
+        return (value || '').toString().trim().toLowerCase();
+    };
+
+    const getCategoryDisplayName = (value) => {
+        if (sharedCategoryDisplayName) {
+            return sharedCategoryDisplayName(value);
+        }
+        return normalizeCategory(value);
     };
 
     const requestedCategory = normalizeCategory(new URLSearchParams(window.location.search).get('category'));
-    window.BUYIT_NORMALIZE_CATEGORY = normalizeCategory;
     window.BUYIT_ACTIVE_CATEGORY = requestedCategory;
+
+    const sortSelect = document.getElementById('sort-select');
+    if (sortSelect) {
+        const sortOptions = (window.BUYIT_SORT_OPTIONS && typeof window.BUYIT_SORT_OPTIONS === 'object')
+            ? Object.entries(window.BUYIT_SORT_OPTIONS)
+            : [
+                ['featured', 'Featured'],
+                ['newest', 'Newly Added'],
+                ['price-asc', 'Price: Low to High'],
+                ['price-desc', 'Price: High to Low']
+            ];
+
+        sortSelect.innerHTML = sortOptions
+            .map(([value, label]) => `<option value="${value}">${label}</option>`)
+            .join('');
+
+        const selectedSort = sortSelect.getAttribute('data-selected-sort') || 'featured';
+        sortSelect.value = sortOptions.some(([value]) => value === selectedSort) ? selectedSort : 'featured';
+    }
+
+    const renderCategoryCards = () => {
+        const grid = document.getElementById('category-grid-products');
+        if (!grid) {
+            return;
+        }
+
+        const categoryItems = typeof window.BUYIT_GET_CATEGORY_CARD_ITEMS === 'function'
+            ? window.BUYIT_GET_CATEGORY_CARD_ITEMS()
+            : [];
+
+        if (!Array.isArray(categoryItems) || categoryItems.length === 0) {
+            return;
+        }
+
+        grid.innerHTML = categoryItems.map((item) => `
+            <a href="products.html?category=${encodeURIComponent(item.category)}" data-category-link="${item.category}" class="flex flex-col items-center bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-slate-100 group">
+                <span class="material-symbols-outlined text-[40px] text-primary mb-2 group-hover:scale-110 transition-transform">${item.icon}</span>
+                <span class="font-semibold text-slate-800">${item.label}</span>
+            </a>
+        `).join('');
+    };
+
+    renderCategoryCards();
 
     const categorySelect = document.getElementById('category-select');
     if (categorySelect) {
-        categorySelect.value = requestedCategory || 'all';
+        const categoryEntries = (window.BUYIT_CATEGORY_DISPLAY_MAP && typeof window.BUYIT_CATEGORY_DISPLAY_MAP === 'object')
+            ? Object.entries(window.BUYIT_CATEGORY_DISPLAY_MAP)
+            : Object.values(window.BUYIT_PRODUCT_CATALOG || {})
+                .map((product) => normalizeCategory(product?.category || ''))
+                .filter((value, index, array) => value && array.indexOf(value) === index)
+                .map((value) => [value, getCategoryDisplayName(value)]);
+
+        categorySelect.innerHTML = [
+            '<option value="all">All Categories</option>',
+            ...categoryEntries.map(([value, label]) => `<option value="${value}">${label}</option>`)
+        ].join('');
+
+        const hasRequestedOption = categoryEntries.some(([value]) => value === requestedCategory);
+        categorySelect.value = hasRequestedOption ? requestedCategory : 'all';
+
         categorySelect.addEventListener('change', () => {
             const selected = normalizeCategory(categorySelect.value);
             if (!selected || selected === 'all') {
@@ -79,8 +116,10 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('[data-category-link]').forEach((link) => {
         link.addEventListener('click', (event) => {
             event.preventDefault();
-            const category = link.getAttribute('data-category-link') || '';
-            window.location.href = `products.html?category=${encodeURIComponent(category)}`;
+            const category = normalizeCategory(link.getAttribute('data-category-link') || '');
+            window.location.href = category
+                ? `products.html?category=${encodeURIComponent(category)}`
+                : 'products.html';
         });
     });
 
@@ -88,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const activeCategoryText = document.getElementById('active-category-text');
     if (activeCategoryWrap && activeCategoryText) {
         if (requestedCategory) {
-            activeCategoryText.textContent = categoryDisplayMap[requestedCategory] || requestedCategory;
+            activeCategoryText.textContent = getCategoryDisplayName(requestedCategory);
             activeCategoryWrap.classList.remove('hidden');
         } else {
             activeCategoryWrap.classList.add('hidden');
@@ -209,7 +248,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="relative">
                         <select id="sort-select" onchange="sortProducts()"
                             class="appearance-none bg-surface-light border border-border-light text-text-primary-light text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 pr-8 cursor-pointer" title="Sort products">
-                            <option value="newest" selected>Newly Added</option>
+                            <option value="featured" selected>Featured</option>
+                            <option value="newest">Newly Added</option>
                             <option value="price-asc">Price: Low to High</option>
                             <option value="price-desc">Price: High to Low</option>
                         </select>
@@ -226,32 +266,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <h2 class="text-2xl font-black tracking-tight text-slate-900">Shop by Category</h2>
                 <p class="text-slate-500 mt-2">Find the perfect device for your needs</p>
             </div>
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 mb-10">
-                <a href="products.html?category=smartphones" data-category-link="smartphones" class="flex flex-col items-center bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-slate-100 group">
-                    <span class="material-symbols-outlined text-[40px] text-primary mb-2 group-hover:scale-110 transition-transform">smartphone</span>
-                    <span class="font-semibold text-slate-800">Smartphones</span>
-                </a>
-                <a href="products.html?category=laptops" data-category-link="laptops" class="flex flex-col items-center bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-slate-100 group">
-                    <span class="material-symbols-outlined text-[40px] text-primary mb-2 group-hover:scale-110 transition-transform">laptop</span>
-                    <span class="font-semibold text-slate-800">Laptops</span>
-                </a>
-                <a href="products.html?category=tablets" data-category-link="tablets" class="flex flex-col items-center bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-slate-100 group">
-                    <span class="material-symbols-outlined text-[40px] text-primary mb-2 group-hover:scale-110 transition-transform">tablet_mac</span>
-                    <span class="font-semibold text-slate-800">Tablets</span>
-                </a>
-                <a href="products.html?category=audio" data-category-link="audio" class="flex flex-col items-center bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-slate-100 group">
-                    <span class="material-symbols-outlined text-[40px] text-primary mb-2 group-hover:scale-110 transition-transform">headphones</span>
-                    <span class="font-semibold text-slate-800">Audio</span>
-                </a>
-                <a href="products.html?category=wearables" data-category-link="wearables" class="flex flex-col items-center bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-slate-100 group">
-                    <span class="material-symbols-outlined text-[40px] text-primary mb-2 group-hover:scale-110 transition-transform">watch</span>
-                    <span class="font-semibold text-slate-800">Wearables</span>
-                </a>
-                <a href="products.html?category=accessories" data-category-link="accessories" class="flex flex-col items-center bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-slate-100 group">
-                    <span class="material-symbols-outlined text-[40px] text-primary mb-2 group-hover:scale-110 transition-transform">cable</span>
-                    <span class="font-semibold text-slate-800">Accessories</span>
-                </a>
-            </div>
+            <div id="category-grid-products" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6"></div>
         </section>
         <div id="products-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
             <div data-price="91217" data-order="6"
@@ -933,19 +948,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function sortProducts() {
             const select = document.getElementById('sort-select');
+            const order = select ? select.value : 'featured';
+            const visibleCount = renderedProductCount;
+            catalogProductsForGrid = sortCatalogProducts(catalogProductsForGrid, order);
+
             const grid = document.getElementById('products-grid');
-            const cards = Array.from(grid.querySelectorAll('[data-price]'));
-            const order = select.value;
-            cards.sort((a, b) => {
-                if (order === 'price-asc') {
-                    return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
-                } else if (order === 'price-desc') {
-                    return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
-                } else {
-                    return parseFloat(a.dataset.order) - parseFloat(b.dataset.order);
-                }
-            });
-            cards.forEach(card => grid.appendChild(card));
+            if (!grid) {
+                return;
+            }
+
+            grid.innerHTML = '';
+            renderedProductCount = 0;
+
+            if (visibleCount > 0) {
+                renderNextProductBatch(visibleCount);
+            } else {
+                renderNextProductBatch(PRODUCT_CARD_BATCH_SIZE);
+            }
         }
 
         function resolveCardProductId(card) {
@@ -1221,6 +1240,38 @@ document.addEventListener('DOMContentLoaded', function() {
         let catalogProductsForGrid = [];
         let renderedProductCount = 0;
 
+        function getSelectedSortOrder() {
+            const select = document.getElementById('sort-select');
+            return select ? select.value : 'featured';
+        }
+
+        function sortCatalogProducts(products, order) {
+            const sorted = Array.isArray(products) ? [...products] : [];
+
+            sorted.sort((a, b) => {
+                if (order === 'price-asc') {
+                    return Number(a.price || 0) - Number(b.price || 0);
+                }
+                if (order === 'price-desc') {
+                    return Number(b.price || 0) - Number(a.price || 0);
+                }
+                if (order === 'featured') {
+                    if (Boolean(a.featured) !== Boolean(b.featured)) {
+                        return a.featured ? -1 : 1;
+                    }
+                }
+
+                const bySortOrder = Number(a.sortOrder || Number.MAX_SAFE_INTEGER) - Number(b.sortOrder || Number.MAX_SAFE_INTEGER);
+                if (bySortOrder !== 0) {
+                    return bySortOrder;
+                }
+
+                return String(a.title || '').localeCompare(String(b.title || ''));
+            });
+
+            return sorted;
+        }
+
         function escapeHtml(value) {
             return String(value || '')
                 .replace(/&/g, '&amp;')
@@ -1234,6 +1285,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!window.BUYIT_PRODUCT_CATALOG) {
                 return [];
             }
+
+            const activeCategory = typeof window.BUYIT_NORMALIZE_CATEGORY === 'function'
+                ? window.BUYIT_NORMALIZE_CATEGORY(window.BUYIT_ACTIVE_CATEGORY || '')
+                : String(window.BUYIT_ACTIVE_CATEGORY || '').toLowerCase().trim();
 
             const preferredOrder = [
                 'elite-tab-pro',
@@ -1257,6 +1312,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const orderMap = new Map(preferredOrder.map((id, index) => [id, index + 1]));
             const products = Object.values(window.BUYIT_PRODUCT_CATALOG)
                 .filter((product) => product && product.id && product.title)
+                .filter((product) => {
+                    if (!activeCategory) {
+                        return true;
+                    }
+                    const normalizedProductCategory = typeof window.BUYIT_NORMALIZE_CATEGORY === 'function'
+                        ? window.BUYIT_NORMALIZE_CATEGORY(product.category || '')
+                        : String(product.category || '').toLowerCase().trim();
+                    return normalizedProductCategory === activeCategory;
+                })
                 .sort((a, b) => {
                     const aOrder = orderMap.get(a.id) || Number.MAX_SAFE_INTEGER;
                     const bOrder = orderMap.get(b.id) || Number.MAX_SAFE_INTEGER;
@@ -1271,6 +1335,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 title: product.title,
                 price: Number(product.price || 0),
                 regularPrice: Number(product.regularPrice || calculateRegularPrice(product.price || 0)),
+                featured: Boolean(product.featured),
+                sortOrder: Number(product.sortOrder || index + 1),
                 category: product.category || 'General',
                 tags: getCardSpecifications(product).slice(0, 2),
                 reviews: '1.2k',
@@ -1359,7 +1425,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!grid) {
                 return;
             }
-            catalogProductsForGrid = getCatalogGridProducts();
+            catalogProductsForGrid = sortCatalogProducts(getCatalogGridProducts(), getSelectedSortOrder());
             renderedProductCount = 0;
             grid.innerHTML = '';
             renderNextProductBatch(PRODUCT_CARD_BATCH_SIZE);

@@ -444,9 +444,9 @@
 
             const specListElement = document.getElementById('product-spec-list');
             if (specListElement) {
-                const specifications = Array.isArray(product.specifications) && product.specifications.length > 0
-                    ? product.specifications
-                    : ['Specifications will be updated soon.'];
+                const specifications = Array.isArray(product.specifications)
+                    ? product.specifications.filter((spec) => String(spec || '').trim())
+                    : [];
                 specListElement.innerHTML = specifications
                     .map((spec) => `<li>${spec}</li>`)
                     .join('');
