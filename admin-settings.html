@@ -1,459 +1,180 @@
-﻿<!DOCTYPE html>
-<html lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Buy it</title>
-<link rel="icon" href="buyit-logo-tansperant.png" type="image/png">
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="main.css">
-<script>
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              "primary": "#135bec",
-              "primary-dark": "#0e45b8",
-              "background-light": "#f8f9fc",
-              "background-dark": "#101622",
-              "surface-light": "#ffffff",
-              "surface-dark": "#1a2234",
-              "text-main": "#0d121b",
-              "text-sub": "#4c669a",
-              "border-light": "#e7ebf3",
-              "border-dark": "#2a3447",
-            },
-            fontFamily: {
-              "display": ["Inter", "sans-serif"]
-            },
-            borderRadius: { "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem" },
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buy it Admin - Settings</title>
+  <link rel="icon" href="buyit-logo-tansperant.png" type="image/png">
+  <script src="admin-auth.js"></script>
+  <script src="admin-data.js"></script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#135bec',
+            'background-light': '#f6f6f8'
           },
-        },
+          fontFamily: {
+            display: ['Inter', 'sans-serif']
+          }
+        }
       }
-    </script>
+    }
+  </script>
+  <link rel="stylesheet" href="main.css">
 </head>
-<body class="bg-background-light text-text-main font-display transition-colors duration-200">
-<div class="relative flex min-h-screen w-full flex-col overflow-hidden">
-<div class="flex h-full grow flex-col">
-<header
-        class="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-200 ">
-        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex h-16 items-center justify-between gap-4 sm:gap-8">
-                                <a href="index.html" class="flex items-center gap-2 flex-shrink-0 group">
-                    <div class="size-8 rounded-lg bg-primary flex items-center justify-center text-white transition-opacity group-hover:opacity-90">
-                        <img src="buyit-logo.png" alt="Buy it Logo" class="h-6 w-auto object-contain">
-                    </div>
-                    <h1 class="text-xl font-bold tracking-tight text-slate-900 hidden sm:block transition-colors group-hover:text-primary">Buy it</h1>
-                </a>
-                <div class="hidden lg:flex flex-1 max-w-lg">
-                    <div class="relative w-full group">
-                        <div
-                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                            <span class="material-symbols-outlined text-[20px]">search</span>
-                        </div>
-                        <input
-                            class="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-lg leading-5 bg-slate-50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-all"
-                            placeholder="Search premium smartphones, laptops..." type="text" />
-                    </div>
-                </div>
-                <nav class="hidden md:flex items-center gap-6">
-                    <a class="text-sm font-medium text-slate-700 hover:text-primary :text-primary transition-colors"
-                        href="products.html">Products</a>
-                    <a class="text-sm font-medium text-slate-700 hover:text-primary :text-primary transition-colors"
-                        href="about.html">About Us</a>
-                    <a class="text-sm font-medium text-slate-700 hover:text-primary :text-primary transition-colors"
-                        href="contact.html">Contact</a>
-                </nav>
-                <div class="flex items-center gap-2 sm:gap-4">
-                    <button
-                        class="p-2 text-slate-500 hover:text-primary  :text-primary transition-colors lg:hidden">
-                        <span class="material-symbols-outlined">search</span>
-                    </button>
-                    <button class="relative p-2 text-slate-500 hover:text-primary  :text-primary transition-colors">
-                        <span class="material-symbols-outlined">favorite</span>
-                    </button>
-                    <button
-                        class="relative p-2 text-slate-500 hover:text-primary  :text-primary transition-colors">
-                        <span class="material-symbols-outlined">shopping_cart</span>
-                        <span
-                            class="absolute top-1 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white ring-2 ring-white ">2</span>
-                    </button>
-                    <button
-                        class="flex items-center gap-2 p-1 pl-2 pr-1 rounded-full border border-slate-200 hover:bg-slate-50 :bg-slate-800 transition-colors ml-2">
-                        <div class="size-6 rounded-full bg-slate-200 overflow-hidden">
-                            <img alt="User Avatar" class="h-full w-full object-cover" src="https://ui-avatars.com/api/?name=User&background=random" />
-                        </div>
-                    </button>
-                </div>
+<body class="bg-background-light font-display text-slate-900">
+  <div class="min-h-screen md:flex">
+    <aside class="hidden md:flex md:w-64 md:flex-col bg-white border-r border-slate-200">
+      <div class="h-16 px-5 flex items-center border-b border-slate-200">
+        <img src="buyit-logo.png" alt="Buy it" class="h-8 w-8 rounded" />
+        <span class="ml-3 text-lg font-bold">Admin Panel</span>
+      </div>
+      <nav class="p-3 space-y-1 flex-1">
+        <a href="admin.html" class="block px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700">Dashboard</a>
+        <a href="admin-products.html" class="block px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700">Products</a>
+        <a href="admin-orders.html" class="block px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700">Orders</a>
+        <a href="admin-settings.html" class="block px-3 py-2 rounded-lg bg-primary/10 text-primary font-semibold">Settings</a>
+      </nav>
+      <div class="p-3 border-t border-slate-200">
+        <button onclick="adminLogout()" class="w-full px-3 py-2 rounded-lg bg-slate-900 text-white hover:bg-slate-700">Logout</button>
+      </div>
+    </aside>
+
+    <main class="flex-1 p-4 sm:p-6 lg:p-8 space-y-6">
+      <header>
+        <h1 class="text-2xl sm:text-3xl font-bold">Settings</h1>
+        <p class="text-slate-600 mt-1">Update admin account credentials.</p>
+      </header>
+
+      <section class="bg-white border border-slate-200 rounded-xl p-4 sm:p-6">
+        <h2 class="text-lg font-semibold mb-4">Admin Account</h2>
+        <form id="admin-account-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium mb-1">Admin Name</label>
+            <input id="admin-name" type="text" title="Admin Name" class="w-full rounded-lg border-slate-200" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Admin Email</label>
+            <input id="admin-email" type="email" title="Admin Email" class="w-full rounded-lg border-slate-200" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Current Password</label>
+            <div class="relative">
+              <input id="current-password" type="password" title="Current Password" placeholder="Enter current password" class="w-full rounded-lg border-slate-200 pr-12" />
+              <button type="button" data-toggle-password="current-password" aria-label="Show current password" class="absolute inset-y-0 right-0 px-3 text-slate-500 hover:text-slate-700">👁️</button>
             </div>
-        </div>
-    </header>
-
-<div class="flex flex-1 overflow-hidden">
-<aside class="w-64 flex-col justify-between border-r border-border-light bg-surface-light hidden lg:flex">
-<div class="flex flex-col gap-1 p-4">
-<div class="flex items-center gap-3 px-3 py-4 mb-2">
-<div class="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-<span class="material-symbols-outlined">devices</span>
-</div>
-<div class="flex flex-col">
-<h1 class="text-sm font-semibold ">Buy it Pro</h1>
-<p class="text-xs text-text-sub ">v2.4.0</p>
-</div>
-</div>
-<nav class="flex flex-col gap-1">
-<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-sub hover:bg-background-light :bg-border-dark transition-colors group" href="index.html">
-<span class="material-symbols-outlined group-hover:text-primary transition-colors">grid_view</span>
-<span class="text-sm font-medium group-hover:text-text-main :text-white">Dashboard</span>
-</a>
-<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-sub hover:bg-background-light :bg-border-dark transition-colors group" href="index.html">
-<span class="material-symbols-outlined group-hover:text-primary transition-colors">local_shipping</span>
-<span class="text-sm font-medium group-hover:text-text-main :text-white">Orders &amp; Logistics</span>
-<span class="ml-auto text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">12</span>
-</a>
-<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-sub hover:bg-background-light :bg-border-dark transition-colors group" href="index.html">
-<span class="material-symbols-outlined group-hover:text-primary transition-colors">memory</span>
-<span class="text-sm font-medium group-hover:text-text-main :text-white">Products</span>
-</a>
-<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-sub hover:bg-background-light :bg-border-dark transition-colors group" href="index.html">
-<span class="material-symbols-outlined group-hover:text-primary transition-colors">groups</span>
-<span class="text-sm font-medium group-hover:text-text-main :text-white">Customers</span>
-</a>
-<div class="my-2 border-t border-border-light "></div>
-<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary  " href="index.html">
-<span class="material-symbols-outlined fill-current">settings_applications</span>
-<span class="text-sm font-bold">Platform Config</span>
-</a>
-</nav>
-</div>
-<div class="p-4 border-t border-border-light ">
-<div class="rounded-xl bg-gradient-to-br from-primary to-primary-dark p-4 text-white">
-<div class="flex items-center gap-2 mb-2">
-<span class="material-symbols-outlined text-white/80">rocket_launch</span>
-<p class="text-xs font-medium opacity-80">Enterprise Plan</p>
-</div>
-<h4 class="text-sm font-bold mb-3">Priority Support Active</h4>
-<button class="w-full py-2 bg-white/20 hover:bg-white/30 rounded text-xs font-semibold backdrop-blur-sm transition-colors">Manage Subscription</button>
-</div>
-</div>
-</aside>
-<main class="flex-1 overflow-y-auto bg-background-light p-6 lg:p-10">
-<div class="max-w-5xl mx-auto">
-<div class="mb-8">
-<div class="flex items-center gap-3 mb-2">
-<span class="material-symbols-outlined text-3xl text-primary">display_settings</span>
-<h1 class="text-3xl font-bold text-text-main ">Platform Settings</h1>
-</div>
-<p class="text-text-sub ">Configure your electronics store platform, payment gateways, and logistics parameters.</p>
-</div>
-<div class="flex border-b border-border-light mb-8 overflow-x-auto no-scrollbar">
-<button class="px-6 py-3 text-sm font-semibold border-b-2 border-primary text-primary whitespace-nowrap flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px]">store</span>
-                            General
-                        </button>
-<button class="px-6 py-3 text-sm font-semibold border-b-2 border-transparent text-text-sub hover:text-text-main :text-slate-200 hover:border-border-dark transition-all whitespace-nowrap flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px]">payments</span>
-                            Payments
-                        </button>
-<button class="px-6 py-3 text-sm font-semibold border-b-2 border-transparent text-text-sub hover:text-text-main :text-slate-200 hover:border-border-dark transition-all whitespace-nowrap flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px]">local_shipping</span>
-                            Logistics
-                        </button>
-<button class="px-6 py-3 text-sm font-semibold border-b-2 border-transparent text-text-sub hover:text-text-main :text-slate-200 hover:border-border-dark transition-all whitespace-nowrap flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px]">api</span>
-                            API &amp; Integrations
-                        </button>
-<button class="px-6 py-3 text-sm font-semibold border-b-2 border-transparent text-text-sub hover:text-text-main :text-slate-200 hover:border-border-dark transition-all whitespace-nowrap flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px]">admin_panel_settings</span>
-                            Roles
-                        </button>
-</div>
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-<div class="lg:col-span-2 space-y-8">
-<section class="bg-surface-light rounded-xl shadow-sm border border-border-light p-6">
-<h3 class="text-lg font-bold text-text-main mb-6 flex items-center gap-2">
-<span class="material-symbols-outlined text-primary">developer_board</span>
-                                    Core Configuration
-                                </h3>
-<div class="space-y-6">
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-<div class="space-y-2">
-<label class="text-sm font-medium text-text-main ">Platform Name</label>
-<input id="platform-name" class="w-full rounded-lg border-border-light bg-background-light text-sm px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-transparent" type="text" value="ElectroTech Buy it" title="Platform Name" />
-</div>
-<div class="space-y-2">
-<label class="text-sm font-medium text-text-main ">Technical Contact Email</label>
-<input id="contact-email" class="w-full rounded-lg border-border-light bg-background-light text-sm px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-transparent" type="email" value="admin@electrotech.io" title="Technical Contact Email" />
-</div>
-</div>
-<div class="space-y-2">
-<label class="text-sm font-medium text-text-main ">SEO Meta Description</label>
-<textarea id="seo-meta" class="w-full rounded-lg border-border-light bg-background-light text-sm px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-transparent resize-none" rows="3" title="SEO Meta Description">Premium electronics and gadgets store featuring the latest tech, smart home devices, and components.</textarea>
-<p class="text-xs text-text-sub ">Optimized for tech-savvy search queries.</p>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-<div class="space-y-2">
-<label class="text-sm font-medium text-text-main ">Default Currency</label>
-<div class="relative">
-<select id="currency" class="w-full rounded-lg border-border-light bg-background-light text-sm px-4 py-2.5 pr-10 focus:ring-2 focus:ring-primary focus:border-transparent appearance-none" title="Default Currency">
-  <option>USD ($) - US Dollar</option>
-  <option>EUR (â‚¬) - Euro</option>
-  <option>GBP (Â£) - British Pound</option>
-  <option>JPY (Â¥) - Japanese Yen</option>
-</select>
-<span class="material-symbols-outlined absolute right-3 top-2.5 text-text-sub pointer-events-none">expand_more</span>
-</div>
-</div>
-<div class="space-y-2">
-<label class="text-sm font-medium text-text-main ">Server Timezone</label>
-<div class="relative">
-<select id="timezone" class="w-full rounded-lg border-border-light bg-background-light text-sm px-4 py-2.5 pr-10 focus:ring-2 focus:ring-primary focus:border-transparent appearance-none" title="Server Timezone">
-  <option>(UTC-08:00) Pacific Time (US &amp; Canada)</option>
-  <option>(UTC-05:00) Eastern Time (US &amp; Canada)</option>
-  <option>(UTC+00:00) Coordinated Universal Time</option>
-</select>
-<span class="material-symbols-outlined absolute right-3 top-2.5 text-text-sub pointer-events-none">expand_more</span>
-</div>
-</div>
-</div>
-</div>
-</section>
-<section class="bg-surface-light rounded-xl shadow-sm border border-border-light p-6">
-<h3 class="text-lg font-bold text-text-main mb-6 flex items-center gap-2">
-<span class="material-symbols-outlined text-primary">security</span>
-                                    Warranty &amp; Service Centers
-                                </h3>
-<div class="space-y-6">
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-<div class="space-y-2">
-<label class="text-sm font-medium text-text-main ">Standard Protection Plan (%)</label>
-<input id="protection-plan" class="w-full rounded-lg border-border-light bg-background-light text-sm px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-transparent" type="number" value="8.5" title="Standard Protection Plan (%)" />
-</div>
-<div class="space-y-2">
-<label class="text-sm font-medium text-text-main ">Premium Care+ Plan (%)</label>
-<input id="premium-care" class="w-full rounded-lg border-border-light bg-background-light text-sm px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-transparent" type="number" value="15.0" title="Premium Care+ Plan (%)" />
-</div>
-</div>
-<div class="space-y-3">
-<div class="flex items-center justify-between mb-2">
-<label class="text-sm font-medium text-text-main ">Authorized Repair Buy it Centers</label>
-<button class="text-xs font-semibold text-primary hover:text-primary-dark transition-colors flex items-center gap-1">
-<span class="material-symbols-outlined text-sm">add_location_alt</span> Add Buy it Center
-                                            </button>
-</div>
-<div class="space-y-3">
-<div class="flex items-start justify-between p-3 rounded-lg border border-border-light bg-background-light/50 ">
-<div class="flex gap-3">
-<div class="mt-1 h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
-<span class="material-symbols-outlined text-sm">build</span>
-</div>
-<div>
-<h4 class="text-sm font-semibold text-text-main ">NYC Repair Lab</h4>
-<p class="text-xs text-text-sub ">450 W 33rd St, Suite 10, NY 10001</p>
-<div class="flex gap-2 mt-1">
-<span class="text-[10px] px-1.5 py-0.5 rounded bg-green-100 text-green-700  font-medium flex items-center gap-1"><span class="w-1 h-1 bg-green-500 rounded-full"></span>Operational</span>
-<span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-600  ">Apple Authorized</span>
-</div>
-</div>
-</div>
-<button class="text-text-sub hover:text-red-500 transition-colors p-1">
-<span class="material-symbols-outlined text-sm">delete</span>
-</button>
-</div>
-<div class="flex items-start justify-between p-3 rounded-lg border border-border-light bg-background-light/50 ">
-<div class="flex gap-3">
-<div class="mt-1 h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
-<span class="material-symbols-outlined text-sm">build</span>
-</div>
-<div>
-<h4 class="text-sm font-semibold text-text-main ">LA Logistics &amp; Repair</h4>
-<p class="text-xs text-text-sub ">1200 Tech Blvd, Los Angeles, CA 90049</p>
-<div class="flex gap-2 mt-1">
-<span class="text-[10px] px-1.5 py-0.5 rounded bg-green-100 text-green-700  font-medium flex items-center gap-1"><span class="w-1 h-1 bg-green-500 rounded-full"></span>Operational</span>
-<span class="text-[10px] px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-700  ">Queue: High</span>
-</div>
-</div>
-</div>
-<button class="text-text-sub hover:text-red-500 transition-colors p-1">
-<span class="material-symbols-outlined text-sm">delete</span>
-</button>
-</div>
-</div>
-</div>
-</div>
-</section>
-<section class="bg-surface-light rounded-xl shadow-sm border border-border-light p-6">
-<h3 class="text-lg font-bold text-text-main mb-6 flex items-center gap-2">
-<span class="material-symbols-outlined text-primary">brush</span>
-                                    Frontend Branding
-                                </h3>
-<div class="flex items-start gap-6 flex-wrap md:flex-nowrap">
-<div class="flex-shrink-0">
-<div class="h-32 w-32 rounded-lg border-2 border-dashed border-border-light flex flex-col items-center justify-center bg-background-light cursor-pointer hover:border-primary transition-colors group">
-<span class="material-symbols-outlined text-text-sub group-hover:text-primary mb-1">upload_file</span>
-<span class="text-xs text-text-sub group-hover:text-primary">SVG / PNG</span>
-</div>
-</div>
-<div class="flex-1 space-y-4">
-<div>
-<label class="text-sm font-medium text-text-main mb-2 block">Primary Accent Color</label>
-<div class="flex items-center gap-3">
-<input id="primary-accent-color" class="h-10 w-10 rounded cursor-pointer border-none p-0 bg-transparent" type="color" value="#135bec" title="Primary Accent Color" />
-<label for="primary-accent-text" class="sr-only">Primary Accent Color Text</label>
-<input id="primary-accent-text" class="w-32 rounded-lg border-border-light bg-background-light text-sm px-3 py-2 uppercase" type="text" value="#135BEC" title="Primary Accent Color Text" />
-</div>
-</div>
-<p class="text-xs text-text-sub leading-relaxed">
-                                            Upload your brand logo. Recommended for dark and light modes. This asset is used in the header and transactional emails.
-                                        </p>
-</div>
-</div>
-</section>
-</div>
-<div class="lg:col-span-1 space-y-6">
-<div class="bg-surface-light rounded-xl shadow-sm border border-border-light p-6">
-<h3 class="text-sm font-bold uppercase tracking-wider text-text-sub mb-4">System Status</h3>
-<div class="space-y-5">
-<div class="flex items-center justify-between">
-<div class="flex flex-col">
-<span class="text-sm font-semibold text-text-main flex items-center gap-2"><span class="material-symbols-outlined text-base">construction</span>Maintenance Mode</span>
-<span class="text-xs text-text-sub ">Temporarily disable storefront</span>
-</div>
-<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-<input class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-gray-300" id="toggle-maintenance" name="toggle" type="checkbox" title="Maintenance Mode" />
-<label class="toggle-label block overflow-hidden h-5 rounded-full bg-gray-300 cursor-pointer" for="toggle-maintenance"></label>
-</div>
-</div>
-<hr class="border-border-light "/>
-<div class="flex items-center justify-between">
-<div class="flex flex-col">
-<span class="text-sm font-semibold text-text-main flex items-center gap-2"><span class="material-symbols-outlined text-base">person_off</span>Guest Checkout</span>
-<span class="text-xs text-text-sub ">Allow unauthenticated orders</span>
-</div>
-<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-<input checked class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-gray-300" id="toggle-guest" name="toggle" type="checkbox" title="Guest Checkout" />
-<label class="toggle-label block overflow-hidden h-5 rounded-full bg-gray-300 cursor-pointer" for="toggle-guest"></label>
-</div>
-</div>
-<hr class="border-border-light "/>
-<div class="flex items-center justify-between">
-<div class="flex flex-col">
-<span class="text-sm font-semibold text-text-main flex items-center gap-2"><span class="material-symbols-outlined text-base">mail</span>Order Emails</span>
-<span class="text-xs text-text-sub ">Transactional notifications</span>
-</div>
-<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-<input checked class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-gray-300" id="toggle-notifications" name="toggle" type="checkbox" title="Order Emails" />
-<label class="toggle-label block overflow-hidden h-5 rounded-full bg-gray-300 cursor-pointer" for="toggle-notifications"></label>
-</div>
-</div>
-</div>
-</div>
-<div class="bg-surface-light rounded-xl shadow-sm border border-border-light p-6">
-<h3 class="text-sm font-bold uppercase tracking-wider text-text-sub mb-4">Advanced Actions</h3>
-<p class="text-xs text-text-sub mb-4">
-                                    Critical actions that affect the entire platform database.
-                                </p>
-<button class="w-full py-2.5 px-4 rounded-lg border border-red-200 text-red-600 hover:bg-red-50   :bg-red-900/20 text-sm font-semibold transition-colors flex items-center justify-center gap-2">
-<span class="material-symbols-outlined text-[18px]">restart_alt</span>
-                                    Factory Reset
-                                </button>
-</div>
-</div>
-</div>
-<div class="flex items-center justify-end gap-4 mt-8 pt-6 border-t border-border-light ">
-<button class="px-6 py-2.5 rounded-lg text-sm font-semibold text-text-main hover:bg-gray-100 :bg-gray-800 transition-colors">
-                            Discard Changes
-                        </button>
-<button class="px-6 py-2.5 rounded-lg text-sm font-semibold bg-primary hover:bg-primary-dark text-white shadow-lg shadow-primary/30 transition-all flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px]">save</span>
-                            Save Configuration
-                        </button>
-</div>
-</div>
-</main>
-</div>
-</div>
-</div>
-    <footer class="bg-white border-t border-slate-200 pt-16 pb-12 mt-20">
-        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-12 mb-16">
-                <div class="col-span-2 lg:col-span-2">
-                    <div class="flex items-center gap-2 mb-6">
-                        <div class="size-9 rounded-xl bg-primary flex items-center justify-center text-white">
-                            <img src="buyit-logo.png" alt="Buy it Logo" class="h-6 w-auto object-contain">
-                        </div>
-                        <span class="text-2xl font-black tracking-tight text-slate-900 uppercase">Buy it</span>
-                    </div>
-                    <p class="text-slate-500 text-sm leading-relaxed max-w-sm mb-8">
-                        Defining the future of premium retail. We curate the world's most innovative electronics,
-                        ensuring every gadget meets our strict standards for design and performance.
-                    </p>
-                    <div class="flex gap-5">
-                        <a class="text-slate-400 hover:text-primary transition-colors" href="index.html">
-                            <span class="sr-only">Facebook</span>
-                            <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                                <path clip-rule="evenodd"
-                                    d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
-                                    fill-rule="evenodd"></path>
-                            </svg>
-                        </a>
-                        <a class="text-slate-400 hover:text-primary transition-colors" href="index.html">
-                            <span class="sr-only">Instagram</span>
-                            <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                                <path clip-rule="evenodd"
-                                    d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.468 2.373c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.505-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"
-                                    fill-rule="evenodd"></path>
-                            </svg>
-                        </a>
-                        <a class="text-slate-400 hover:text-green-500 transition-colors" href="https://wa.me/919999999999" target="_blank" rel="noopener" title="WhatsApp">
-                            <span class="sr-only">WhatsApp</span>
-                            <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.472-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.5-.669-.51-.173-.007-.372-.009-.571-.009-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.099 3.2 5.077 4.363.709.244 1.262.389 1.694.497.712.181 1.36.156 1.872.095.571-.067 1.758-.719 2.006-1.413.248-.694.248-1.288.173-1.413-.074-.124-.272-.198-.57-.347zm-5.421 7.617h-.001a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.999-3.648-.235-.374A9.86 9.86 0 012.1 12.045C2.111 6.479 6.58 2.01 12.153 2c2.652.004 5.146 1.037 7.022 2.915A9.822 9.822 0 0122.3 12.04c-.003 5.572-4.472 10.041-9.949 10.041zm8.413-17.453A11.815 11.815 0 0012.153.001C5.495.013.111 6.006.1 12.045c0 2.13.557 4.21 1.613 6.033L.057 23.925a1 1 0 001.225 1.225l5.874-1.641a11.822 11.822 0 005.001 1.106h.005c6.658 0 12.042-5.994 12.053-12.033a11.82 11.82 0 00-3.33-8.233z"/>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-                <div>
-                    <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider mb-6">Company
-                    </h3>
-                    <ul class="space-y-4 text-sm font-medium text-slate-500 ">
-                        <li><a class="hover:text-primary transition-colors" href="about.html">About Us</a></li>
-                        <li><a class="hover:text-primary transition-colors" href="contact.html">Contact Us</a></li>
-                        <li><a class="hover:text-primary transition-colors" href="products.html">Shop Products</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider mb-6">
-                        Policies</h3>
-                    <ul class="space-y-4 text-sm font-medium text-slate-500 ">
-                        <!-- Concierge Support removed -->
-                        <li><a class="hover:text-primary transition-colors" href="account.html">Track My order</a></li>
-                        <!-- Global Warranty removed -->
-                        <!-- Return Policy removed -->
-                        <li><a class="hover:text-primary transition-colors" href="terms-and-conditions.html">Terms & Conditions</a></li>
-                        <li><a class="hover:text-primary transition-colors" href="shipping-policy.html">Shipping Policy</a></li>
-                        <li><a class="hover:text-primary transition-colors" href="return-and-refund-policy.html">Return and Refund policy</a></li>
-                        <li><a class="hover:text-primary transition-colors" href="payment-and-security.html">Payment & Security</a></li>
-                        <li><a class="hover:text-primary transition-colors" href="privacy-policy.html">Privacy Policy</a></li>
-                        <li><a class="hover:text-primary transition-colors" href="order-cancellation-policy.html">Order Cancellation Policy</a></li>
-                    </ul>
-                </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">New Password</label>
+            <div class="relative">
+              <input id="new-password" type="password" title="New Password" placeholder="Enter new password" class="w-full rounded-lg border-slate-200 pr-12" />
+              <button type="button" data-toggle-password="new-password" aria-label="Show new password" class="absolute inset-y-0 right-0 px-3 text-slate-500 hover:text-slate-700">👁️</button>
             </div>
-            <div
-                class="border-t border-slate-100 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
-                <p class="text-xs font-medium text-slate-400 w-full text-center">Â© 2026 Buy it Inc. All rights reserved.</p>
-                <!-- Privacy and Terms links removed -->
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Confirm Password</label>
+            <div class="relative">
+              <input id="confirm-password" type="password" title="Confirm Password" placeholder="Confirm new password" class="w-full rounded-lg border-slate-200 pr-12" />
+              <button type="button" data-toggle-password="confirm-password" aria-label="Show confirm password" class="absolute inset-y-0 right-0 px-3 text-slate-500 hover:text-slate-700">👁️</button>
             </div>
-        </div>
-    </footer>
-</body></html>
+          </div>
+          <div class="md:col-span-2">
+            <button type="submit" class="px-4 py-2 rounded-lg bg-slate-900 text-white hover:bg-slate-700">Update Admin Account</button>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
 
+  <script>
+    function loadSettings() {
+      const settings = window.AdminData.getSettings();
+      document.getElementById('admin-name').value = settings.adminName || 'Admin User';
+      document.getElementById('admin-email').value = settings.adminEmail || 'admin@buyit.com';
+    }
 
+    function bindSettingsForms() {
+      document.querySelectorAll('[data-toggle-password]').forEach((toggleButton) => {
+        toggleButton.addEventListener('click', function () {
+          const targetId = this.getAttribute('data-toggle-password');
+          const input = document.getElementById(targetId);
+          if (!input) {
+            return;
+          }
 
+          const isHidden = input.type === 'password';
+          input.type = isHidden ? 'text' : 'password';
+          this.textContent = isHidden ? '🙈' : '👁️';
 
+          const labels = {
+            'current-password': 'current password',
+            'new-password': 'new password',
+            'confirm-password': 'confirm password'
+          };
+          const label = labels[targetId] || 'password';
+          this.setAttribute('aria-label', (isHidden ? 'Hide ' : 'Show ') + label);
+        });
+      });
 
+      document.getElementById('admin-account-form').addEventListener('submit', function (event) {
+        event.preventDefault();
 
+        const adminName = document.getElementById('admin-name').value.trim();
+        const adminEmail = document.getElementById('admin-email').value.trim().toLowerCase();
+        const currentPassword = document.getElementById('current-password').value;
+        const newPassword = document.getElementById('new-password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
 
+        if (!adminEmail) {
+          alert('Admin email is required.');
+          return;
+        }
 
+        const current = window.AdminData.getSettings();
+        const savedPassword = current.adminPassword || 'admin1234';
+
+        if ((newPassword || confirmPassword) && currentPassword !== savedPassword) {
+          alert('Current password is incorrect.');
+          return;
+        }
+
+        if (newPassword || confirmPassword) {
+          if (newPassword !== confirmPassword) {
+            alert('Passwords do not match.');
+            return;
+          }
+        }
+
+        const payload = {
+          ...current,
+          adminName,
+          adminEmail
+        };
+
+        if (newPassword) {
+          payload.adminPassword = newPassword;
+        }
+
+        window.AdminData.saveSettings(payload);
+        document.getElementById('current-password').value = '';
+        document.getElementById('new-password').value = '';
+        document.getElementById('confirm-password').value = '';
+        alert('Admin account updated.');
+      });
+    }
+
+    function adminLogout() {
+      localStorage.removeItem('loggedIn');
+      localStorage.removeItem('role');
+      window.location.href = 'login.html';
+    }
+
+    loadSettings();
+    bindSettingsForms();
+  </script>
+</body>
+</html>

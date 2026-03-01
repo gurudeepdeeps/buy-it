@@ -113,7 +113,7 @@
                                     <div class="flex flex-col gap-1 mt-4">
                                         <div>Subtotal: <span id="order-subtotal"></span></div>
                                         <div>Tax: <span id="order-tax"></span></div>
-                                        <div>Shipping: â‚¹1245</div>
+                                        <div>Shipping: <span id="order-shipping"></span></div>
                                         <div class="font-bold">Total: <span id="order-total"></span></div>
                                     </div>
                                 </div>
@@ -264,7 +264,9 @@
         document.addEventListener('DOMContentLoaded', () => {
             const SHIPPING = 1245;
             const TAX_RATE = 0.18;
-            const fmt = n => 'â‚¹' + Math.round(n).toLocaleString('en-IN');
+            const fmt = n => typeof window.formatINR === 'function'
+                ? window.formatINR(n)
+                : new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(Number(n || 0));
 
             // Read buy-now item from sessionStorage, fall back to cart
             const buyNowRaw = sessionStorage.getItem('buyit_buynow');
@@ -281,6 +283,11 @@
             const subtotalEl = document.getElementById('order-subtotal');
             const taxEl = document.getElementById('order-tax');
             const totalEl = document.getElementById('order-total');
+            const shippingEl = document.getElementById('order-shipping');
+
+            if (shippingEl) {
+                shippingEl.textContent = fmt(SHIPPING);
+            }
 
             if (items.length === 0) {
                 list.innerHTML = '<p class="text-sm text-text-sub-light text-center py-4">Your order is empty.</p>';
@@ -294,17 +301,19 @@
             let subtotal = 0;
             list.innerHTML = '';
             items.forEach(item => {
-                const lineTotal = item.price * (item.quantity || 1);
+                const unitPrice = Number(item.price || 0);
+                const quantity = Math.max(1, Number(item.quantity || 1));
+                const lineTotal = unitPrice * quantity;
                 subtotal += lineTotal;
                 list.innerHTML += `
             <div class="flex gap-4 group">
                 <div class="relative size-20 rounded-xl overflow-hidden bg-background-light flex-shrink-0 border border-border-light group-hover:border-primary transition-colors">
                     <img alt="${item.title}" class="object-cover w-full h-full" src="${item.image || ''}" onerror="this.src='buyit-logo.png'" />
-                    <span class="absolute top-1 right-1 bg-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md shadow-sm">x${item.quantity || 1}</span>
+                    <span class="absolute top-1 right-1 bg-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md shadow-sm">x${quantity}</span>
                 </div>
                 <div class="flex flex-col flex-1 justify-center">
                     <h4 class="font-bold text-sm leading-tight text-text-main-light group-hover:text-primary transition-colors">${item.title}</h4>
-                    <p class="text-[11px] text-text-sub-light mt-1">Qty: ${item.quantity || 1}</p>
+                    <p class="text-[11px] text-text-sub-light mt-1">Qty: ${quantity}</p>
                     <div class="mt-2 flex justify-between items-center">
                         <div class="text-sm font-bold text-text-main-light ">${fmt(lineTotal)}</div>
                     </div>
@@ -315,7 +324,7 @@
 
             const tax = subtotal * TAX_RATE;
             const total = subtotal + tax + SHIPPING;
-            const totalQty = items.reduce((s, i) => s + (i.quantity || 1), 0);
+            const totalQty = items.reduce((s, i) => s + Math.max(1, Number(i.quantity || 1)), 0);
 
             countEl.textContent = totalQty + (totalQty === 1 ? ' Item' : ' Items');
             subtotalEl.textContent = fmt(subtotal);

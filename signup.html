@@ -238,7 +238,7 @@
           <label class="login-label" for="signup-password">Password</label>
           <input class="login-input" type="password" id="signup-password" placeholder="demo1234 (try this)" value="demo1234" required>
           <button type="button" id="toggle-signup-password" class="login-password-toggle" tabindex="-1">
-            <span id="eye-icon-signup" class="material-symbols-outlined">visibility</span>
+            <span id="eye-icon-signup">👁️</span>
           </button>
         </div>
         <button type="submit" class="login-btn login-btn-margin">Sign Up</button>
@@ -256,17 +256,17 @@
     toggleSignupPassword.addEventListener('click', function() {
       if (signupPasswordInput.type === 'password') {
         signupPasswordInput.type = 'text';
-        eyeIconSignup.textContent = 'visibility_off';
+        eyeIconSignup.textContent = '🙈';
       } else {
         signupPasswordInput.type = 'password';
-        eyeIconSignup.textContent = 'visibility';
+        eyeIconSignup.textContent = '👁️';
       }
     });
     document.getElementById('signup-form').addEventListener('submit', function(e) {
       e.preventDefault();
       // Simulate signup success
       localStorage.setItem('loggedIn', '1');
-      window.location.href = 'account.html';
+      window.location.href = 'index.html';
     });
   </script>
 </body>

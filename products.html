@@ -763,6 +763,26 @@ document.addEventListener('DOMContentLoaded', function() {
     </footer>
     <script src="shop.js"></script>
     <script>
+        function formatINR(amount) {
+            const value = Number(amount || 0);
+            return new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                maximumFractionDigits: 0
+            }).format(value);
+        }
+
+        function normalizeProductPrices(scopeElement = document) {
+            const cards = scopeElement.querySelectorAll('#products-grid > div[data-price]');
+            cards.forEach((card) => {
+                const price = Number(card.getAttribute('data-price') || 0);
+                const priceText = card.querySelector('div.flex.items-center.justify-between.mb-3 > span');
+                if (priceText) {
+                    priceText.textContent = formatINR(price);
+                }
+            });
+        }
+
         function sortProducts() {
             const select = document.getElementById('sort-select');
             const grid = document.getElementById('products-grid');
@@ -780,18 +800,56 @@ document.addEventListener('DOMContentLoaded', function() {
             cards.forEach(card => grid.appendChild(card));
         }
 
+        function resolveCardProductId(card) {
+            if (!card) {
+                return null;
+            }
+
+            const existingId = card.getAttribute('data-product-id');
+            if (existingId) {
+                return existingId;
+            }
+
+            const wishlistButton = card.querySelector('[data-wishlist-id]');
+            const wishlistId = wishlistButton ? wishlistButton.getAttribute('data-wishlist-id') : null;
+            if (wishlistId) {
+                return wishlistId;
+            }
+
+            const buttonsWithInlineId = card.querySelectorAll('button[onclick]');
+            for (const button of buttonsWithInlineId) {
+                const inline = button.getAttribute('onclick') || '';
+                const match = inline.match(/id:\s*'([^']+)'/);
+                if (match && match[1]) {
+                    return match[1];
+                }
+            }
+
+            const titleElement = card.querySelector('h3');
+            const title = titleElement ? titleElement.textContent.trim() : '';
+            if (title && window.BUYIT_PRODUCT_CATALOG) {
+                const matchByTitle = Object.values(window.BUYIT_PRODUCT_CATALOG).find((product) => product.title === title);
+                if (matchByTitle && matchByTitle.id) {
+                    return matchByTitle.id;
+                }
+            }
+
+            return null;
+        }
+
         function applyProductRouting(scopeElement = document) {
             const cards = scopeElement.querySelectorAll('#products-grid > div');
             cards.forEach((card) => {
-                const wishlistButton = card.querySelector('[data-wishlist-id]');
-                const productId = wishlistButton ? wishlistButton.getAttribute('data-wishlist-id') : null;
+                const productId = resolveCardProductId(card);
                 if (!productId) {
                     return;
                 }
 
+                card.setAttribute('data-product-id', productId);
+
                 const link = typeof getProductLink === 'function'
                     ? getProductLink(productId)
-                    : `product.html?id=${encodeURIComponent(productId)}`;
+                    : `product-details.html?id=${encodeURIComponent(productId)}`;
                 const image = card.querySelector('img.cursor-pointer, img');
                 if (image) {
                     image.setAttribute('onclick', `window.location.href='${link}'`);
@@ -799,11 +857,117 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 card.querySelectorAll('a[href]').forEach((anchor) => {
                     const href = anchor.getAttribute('href') || '';
-                    if (href === 'product.html' || href.startsWith('product.html?') || href === '#') {
+                    if (href === 'product-details.html' || href.startsWith('product-details.html?') || href === '#') {
                         anchor.setAttribute('href', link);
                     }
                 });
             });
+        }
+
+        function bindProductCardActions(scopeElement = document) {
+            const cards = scopeElement.querySelectorAll('#products-grid > div');
+            cards.forEach((card) => {
+                const wishlistButton = card.querySelector('[data-wishlist-id]');
+                const productId = resolveCardProductId(card);
+                if (wishlistButton && productId) {
+                    wishlistButton.setAttribute('data-wishlist-id', productId);
+                }
+
+                if (!productId) {
+                    return;
+                }
+
+                card.setAttribute('data-product-id', productId);
+                const product = typeof getProductById === 'function' ? getProductById(productId) : null;
+                const link = typeof getProductLink === 'function'
+                    ? getProductLink(productId)
+                    : `product-details.html?id=${encodeURIComponent(productId)}`;
+
+                const image = card.querySelector('img');
+                if (image) {
+                    image.onclick = () => {
+                        sessionStorage.setItem('buyit_last_product_id', productId);
+                        window.location.href = link;
+                    };
+                }
+
+                const titleAnchor = card.querySelector('a[href]');
+                if (titleAnchor) {
+                    titleAnchor.setAttribute('href', link);
+                    titleAnchor.addEventListener('click', () => {
+                        sessionStorage.setItem('buyit_last_product_id', productId);
+                    });
+                }
+
+                const buyNowButton = Array.from(card.querySelectorAll('button')).find((button) =>
+                    button.textContent.replace(/\s+/g, ' ').trim() === 'Buy Now'
+                );
+                if (buyNowButton && product) {
+                    buyNowButton.onclick = () => {
+                        buyNow({
+                            id: product.id,
+                            title: product.title,
+                            price: product.price,
+                            image: product.image
+                        });
+                    };
+                }
+
+                const addToCartButton = Array.from(card.querySelectorAll('button')).find((button) => {
+                    const icon = button.querySelector('.material-symbols-outlined');
+                    return icon && icon.textContent.trim() === 'add_shopping_cart';
+                });
+                if (addToCartButton && product) {
+                    addToCartButton.onclick = () => {
+                        addToCart({
+                            id: product.id,
+                            title: product.title,
+                            price: product.price,
+                            image: product.image
+                        });
+                    };
+                }
+
+                if (wishlistButton && product) {
+                    wishlistButton.onclick = () => {
+                        addToWishlist({
+                            id: product.id,
+                            title: product.title,
+                            price: product.price,
+                            image: product.image
+                        });
+                    };
+                }
+            });
+
+            const grid = document.getElementById('products-grid');
+            if (grid && !grid.dataset.navigationBound) {
+                grid.dataset.navigationBound = '1';
+                grid.addEventListener('click', (event) => {
+                    const interactive = event.target.closest('button, input, select, textarea');
+                    if (interactive) {
+                        return;
+                    }
+
+                    const card = event.target.closest('#products-grid > div');
+                    if (!card) {
+                        return;
+                    }
+
+                    const productId = resolveCardProductId(card);
+                    if (!productId) {
+                        return;
+                    }
+
+                    const link = typeof getProductLink === 'function'
+                        ? getProductLink(productId)
+                        : `product-details.html?id=${encodeURIComponent(productId)}`;
+
+                    event.preventDefault();
+                    sessionStorage.setItem('buyit_last_product_id', productId);
+                    window.location.href = link;
+                });
+            }
         }
 
         const extraProducts = [
@@ -842,7 +1006,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <a href="${getProductLink(p.id)}" class="hover:text-primary block"><h3 class="text-base font-semibold text-text-primary-light mb-2 truncate">${p.title}</h3></a>
                             <div class="flex flex-wrap gap-2 mb-3">${p.tags.map(t => `<span class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">${t}</span>`).join('')}</div>
                             <div class="flex items-center gap-1 mb-3 mt-auto">${stars}<span class="text-xs text-text-secondary-light ml-1">(${p.reviews})</span></div>
-                            <div class="flex items-center justify-between mb-3"><span class="text-lg font-bold text-text-primary-light ">?${p.price.toLocaleString('en-IN')}</span><button onclick="addToCart({id:'${p.id}',title:'${p.title}',price:${p.price},image:'${p.img}'})" class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
+                            <div class="flex items-center justify-between mb-3"><span class="text-lg font-bold text-text-primary-light ">${formatINR(p.price)}</span><button onclick="addToCart({id:'${p.id}',title:'${p.title}',price:${p.price},image:'${p.img}'})" class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
                             <button onclick="buyNow({id:'${p.id}',title:'${p.title}',price:${p.price},image:'${p.img}'})" class="w-full py-2 rounded-lg border-2 border-primary text-primary font-semibold text-sm hover:bg-primary hover:text-white transition-colors cursor-pointer">Buy Now</button>
                         </div>`;
                     grid.appendChild(card);
@@ -851,11 +1015,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 btn.innerHTML = '<span class="material-symbols-outlined text-[20px]">check_circle</span> All Products Loaded';
                 btn.className = btn.className.replace('bg-primary hover:bg-primary/90', 'bg-slate-400 cursor-default');
                 applyProductRouting();
+                bindProductCardActions();
+                normalizeProductPrices();
             }, 800);
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             applyProductRouting();
+            bindProductCardActions();
+            normalizeProductPrices();
         });
     </script>
 </body>

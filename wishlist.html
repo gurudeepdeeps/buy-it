@@ -216,6 +216,9 @@
         const wishlistGrid = document.getElementById('wishlist-grid');
         const wishlistEmpty = document.getElementById('wishlist-empty');
         let wishlist = JSON.parse(localStorage.getItem('buyit_wishlist')) || [];
+        const formatINRLocal = (value) => typeof window.formatINR === 'function'
+            ? window.formatINR(value)
+            : new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(Number(value || 0));
         function renderWishlist() {
             wishlistGrid.innerHTML = '';
             if (!wishlist.length) {
@@ -226,6 +229,7 @@
             wishlistEmpty.classList.add('hidden');
             wishlistGrid.classList.remove('hidden');
             wishlist.forEach(item => {
+                const itemPrice = Number(item.price || 0);
                 const div = document.createElement('div');
                 div.className = 'wishlist-card group bg-surface-light p-0 rounded-2xl border border-border-light shadow-md flex flex-col transition-all duration-300 hover:shadow-2xl hover:border-primary/40';
                 div.innerHTML = `
@@ -237,9 +241,9 @@
                         <h3 class="font-semibold text-text-main text-base mb-0.5 truncate cursor-pointer hover:text-primary" onclick="window.location.href='${getProductLink(item.id)}'">${item.title}</h3>
                         <p class="text-text-secondary text-xs mb-2 truncate">ID: ${item.id}</p>
                         <div class="flex items-center gap-2 mb-2">
-                            <span class="text-lg font-bold text-primary">â‚¹${item.price.toLocaleString()}</span>
+                            <span class="text-lg font-bold text-primary">${formatINRLocal(itemPrice)}</span>
                         </div>
-                        <button onclick="addToCart({id:'${item.id}', title:'${item.title}', price:${item.price}, image:'${item.image}'});window.dispatchEvent(new Event('cartUpdated'));" class="wishlist-action-btn add-to-cart flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-primary bg-primary text-white hover:bg-primary-dark text-sm font-semibold transition-colors mt-auto w-full shadow"><span class='material-symbols-outlined text-[18px]'>add_shopping_cart</span>Add to Cart</button>
+                        <button onclick="addToCart({id:'${item.id}', title:'${item.title}', price:${itemPrice}, image:'${item.image}'});window.dispatchEvent(new Event('cartUpdated'));" class="wishlist-action-btn add-to-cart flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-primary bg-primary text-white hover:bg-primary-dark text-sm font-semibold transition-colors mt-auto w-full shadow"><span class='material-symbols-outlined text-[18px]'>add_shopping_cart</span>Add to Cart</button>
                     </div>
                 `;
                 wishlistGrid.appendChild(div);

@@ -50,15 +50,116 @@ function getProductById(productId) {
 }
 
 function getProductLink(productId) {
-    if (!productId) {
-        return 'product.html';
-    }
-    return `product.html?id=${encodeURIComponent(productId)}`;
+    const safeProductId = productId || 'zenith-x1-ultra';
+    return `product-details.html?id=${encodeURIComponent(safeProductId)}`;
 }
 
 window.BUYIT_PRODUCT_CATALOG = BUYIT_PRODUCT_CATALOG;
 window.getProductById = getProductById;
 window.getProductLink = getProductLink;
+
+function parsePrice(value) {
+    if (typeof value === 'number' && Number.isFinite(value)) {
+        return value;
+    }
+    if (typeof value === 'string') {
+        const cleaned = value.replace(/[^\d.-]/g, '');
+        const parsed = Number(cleaned);
+        return Number.isFinite(parsed) ? parsed : 0;
+    }
+    return 0;
+}
+
+function formatINR(value) {
+    return new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        maximumFractionDigits: 0
+    }).format(parsePrice(value));
+}
+
+function findCatalogProduct(product) {
+    if (!product) {
+        return null;
+    }
+    if (product.id && BUYIT_PRODUCT_CATALOG[product.id]) {
+        return BUYIT_PRODUCT_CATALOG[product.id];
+    }
+    const title = String(product.title || '').trim().toLowerCase();
+    if (!title) {
+        return null;
+    }
+    return Object.values(BUYIT_PRODUCT_CATALOG).find((catalogItem) =>
+        String(catalogItem.title || '').trim().toLowerCase() === title
+    ) || null;
+}
+
+function normalizeProductInput(product) {
+    const catalogMatch = findCatalogProduct(product);
+    const fallbackTitle = String(product?.title || '').trim();
+    const fallbackId = fallbackTitle
+        ? fallbackTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+        : `item-${Date.now()}`;
+
+    const normalizedId = catalogMatch?.id || product?.id || fallbackId;
+    const normalizedTitle = catalogMatch?.title || fallbackTitle || 'Product';
+    const normalizedImage = product?.image || catalogMatch?.image || 'buyit-logo.png';
+    const normalizedPrice = parsePrice(catalogMatch?.price ?? product?.price);
+    const normalizedQuantity = Math.max(1, parseInt(product?.quantity, 10) || 1);
+
+    return {
+        id: normalizedId,
+        title: normalizedTitle,
+        image: normalizedImage,
+        price: normalizedPrice,
+        quantity: normalizedQuantity
+    };
+}
+
+function sanitizeCollection(items) {
+    if (!Array.isArray(items)) {
+        return [];
+    }
+    return items.map((item) => normalizeProductInput(item));
+}
+
+function migrateStoredOrders() {
+    const rawOrders = JSON.parse(localStorage.getItem('buyit_orders') || '[]');
+    if (!Array.isArray(rawOrders) || rawOrders.length === 0) {
+        return;
+    }
+
+    const migratedOrders = rawOrders.map((order) => {
+        const safeItems = Array.isArray(order.items) ? order.items.map((item) => {
+            const normalizedItem = normalizeProductInput(item);
+            return {
+                ...item,
+                id: normalizedItem.id,
+                title: normalizedItem.title,
+                image: normalizedItem.image,
+                price: normalizedItem.price,
+                quantity: normalizedItem.quantity
+            };
+        }) : [];
+
+        const computedAmount = safeItems.reduce((sum, item) => sum + (parsePrice(item.price) * (Number(item.quantity) || 1)), 0);
+
+        return {
+            ...order,
+            items: safeItems,
+            amount: parsePrice(order.amount || computedAmount)
+        };
+    });
+
+    localStorage.setItem('buyit_orders', JSON.stringify(migratedOrders));
+}
+
+cart = sanitizeCollection(cart);
+wishlist = sanitizeCollection(wishlist);
+migrateStoredOrders();
+localStorage.setItem('buyit_cart', JSON.stringify(cart));
+localStorage.setItem('buyit_wishlist', JSON.stringify(wishlist));
+window.formatINR = formatINR;
 
 // Core Functions
 function saveState() {
@@ -120,22 +221,24 @@ function updateHeaderCounts() {
 
 // Action Functions
 function addToCart(product) {
+    const normalizedProduct = normalizeProductInput(product);
     // Check if item already exists in cart based on an id or title
-    const existingIndex = cart.findIndex(item => item.id === product.id);
+    const existingIndex = cart.findIndex(item => item.id === normalizedProduct.id);
     if (existingIndex > -1) {
-        cart[existingIndex].quantity += (product.quantity || 1);
+        cart[existingIndex].quantity += normalizedProduct.quantity;
     } else {
-        cart.push({ ...product, quantity: product.quantity || 1 });
+        cart.push(normalizedProduct);
     }
     saveState();
 
     // Optional UI Feedback
-    showToast(`Added ${product.title} to Cart`);
+    showToast(`Added ${normalizedProduct.title} to Cart`);
 }
 
 function buyNow(product) {
+    const normalizedProduct = normalizeProductInput(product);
     // Store as single-item buy now session (doesn't affect cart)
-    sessionStorage.setItem('buyit_buynow', JSON.stringify({ ...product, quantity: 1 }));
+    sessionStorage.setItem('buyit_buynow', JSON.stringify({ ...normalizedProduct, quantity: 1 }));
     window.location.href = 'checkout.html';
 }
 
@@ -156,16 +259,17 @@ function updateCartQuantity(productId, newQuantity) {
 }
 
 function addToWishlist(product) {
-    const existingIndex = wishlist.findIndex(item => item.id === product.id);
+    const normalizedProduct = normalizeProductInput(product);
+    const existingIndex = wishlist.findIndex(item => item.id === normalizedProduct.id);
     if (existingIndex === -1) {
-        wishlist.push(product);
+        wishlist.push(normalizedProduct);
         saveState();
-        showToast(`Added ${product.title} to Wishlist`);
+        showToast(`Added ${normalizedProduct.title} to Wishlist`);
     } else {
         // Toggle off — remove from wishlist
         wishlist.splice(existingIndex, 1);
         saveState();
-        showToast(`Removed ${product.title} from Wishlist`);
+        showToast(`Removed ${normalizedProduct.title} from Wishlist`);
     }
 }
 

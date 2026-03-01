@@ -238,13 +238,13 @@
       <form id="login-form" autocomplete="off" class="login-form">
         <div class="login-form-email">
           <label class="login-label" for="login-email">Email</label>
-          <input class="login-input" type="email" id="login-email" placeholder="demo@hub.com (try this)" value="demo@hub.com" required>
+          <input class="login-input" type="email" id="login-email" placeholder="admin@buyit.com or demo@hub.com" value="demo@hub.com" required>
         </div>
         <div class="login-form-password">
           <label class="login-label" for="login-password">Password</label>
-          <input class="login-input" type="password" id="login-password" placeholder="demo1234 (try this)" value="demo1234" required>
+          <input class="login-input" type="password" id="login-password" placeholder="admin1234 or demo1234" value="demo1234" required>
           <button type="button" id="toggle-password" class="login-password-toggle" tabindex="-1">
-            <span id="eye-icon" class="material-symbols-outlined">visibility</span>
+            <span id="eye-icon">👁️</span>
           </button>
         </div>
         <a href="#" class="forgot-link">Forgot password?</a>
@@ -263,16 +263,43 @@
     togglePassword.addEventListener('click', function() {
       if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
-        eyeIcon.textContent = 'visibility_off';
+        eyeIcon.textContent = '🙈';
       } else {
         passwordInput.type = 'password';
-        eyeIcon.textContent = 'visibility';
+        eyeIcon.textContent = '👁️';
       }
     });
     document.getElementById('login-form').addEventListener('submit', function(e) {
       e.preventDefault();
-      localStorage.setItem('loggedIn', '1');
-      window.location.href = 'account.html';
+      const email = document.getElementById('login-email').value.trim().toLowerCase();
+      const password = document.getElementById('login-password').value;
+      let adminSettings = {};
+      try {
+        adminSettings = JSON.parse(localStorage.getItem('buyit_admin_settings') || '{}');
+      } catch (_error) {
+        adminSettings = {};
+      }
+
+      const adminEmail = (adminSettings.adminEmail || 'admin@buyit.com').toLowerCase();
+      const adminPassword = adminSettings.adminPassword || 'admin1234';
+      const demoEmail = 'demo@hub.com';
+      const demoPassword = 'demo1234';
+
+      if (email === adminEmail && password === adminPassword) {
+        localStorage.setItem('loggedIn', '1');
+        localStorage.setItem('role', 'admin');
+        window.location.href = 'admin.html';
+        return;
+      }
+
+      if (email === demoEmail && password === demoPassword) {
+        localStorage.setItem('loggedIn', '1');
+        localStorage.setItem('role', 'user');
+        window.location.href = 'index.html';
+        return;
+      }
+
+      alert('Invalid credentials. Use admin@buyit.com / admin1234 for Admin or demo@hub.com / demo1234 for User.');
     });
   </script>
 </body>

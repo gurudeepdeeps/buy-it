@@ -162,6 +162,9 @@
     function renderOrders() {
       const orders = JSON.parse(localStorage.getItem('buyit_orders') || '[]');
       const container = document.getElementById('orders-list');
+      const formatINRLocal = (value) => typeof window.formatINR === 'function'
+        ? window.formatINR(value)
+        : new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(Number(value || 0));
 
       if (!orders.length) {
         container.innerHTML = '<div class="placeholder">You have no orders yet.</div>';
@@ -192,7 +195,7 @@
                 <div style="font-weight:600;">${item.title}</div>
                 <div style="font-size:0.95rem; color:#444;">Qty: ${item.quantity || 1}</div>
               </div>
-              <div style="font-weight:600; color:#222;">â‚¹${item.price}</div>
+              <div style="font-weight:600; color:#222;">${formatINRLocal(item.price || 0)}</div>
             </div>
           `).join('')}
         </div>`;

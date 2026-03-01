@@ -121,25 +121,17 @@
                     <img id="main-product-image" alt="Flagship laptop open view with screen showing abstract art"
                         class="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-700"
                         src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSefGoXqjnp9ZQQZN46YTq9kGHAL19TSVn8VIUkiHoioqCN6FbVDhh3T7wQ8sIFMpb1XSI1B4TU2Eme3qbIvI2NjfK9ht7LlzD5v3YGJqs6JL5NgtD4MvJgdGJglO1v7PRRQsw9lPCC0VcLHyaj58NXpQnt2MKWtg5ZcyosrKMQtttBBzG3LjyIZ-tdByk1Io0Cew_LQ7LdxLLW51UjkOG21iCIwvZVdegwPl8T3dx3soRXgZsDfuc_Xo0iCzH4zuRX5rIDTW_YCzw" />
-                    <div class="absolute top-4 left-4 flex gap-2">
-                        <span
-                            class="bg-primary text-white text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-widest shadow-lg">New
-                            Release</span>
-                        <span
-                            class="bg-surface-dark text-white text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-widest shadow-lg border border-white/10">Ultra
-                            Series</span>
-                    </div>
                     <div
                         id="gallery-dots"
                         class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 bg-white/40 backdrop-blur-md p-1 rounded-full border border-white/20">
                     </div>
                     <button id="gallery-prev"
-                        class="absolute top-1/2 -translate-y-1/2 left-4 bg-white/90 p-2 rounded-full shadow-lg border border-border-light text-text-main hover:text-primary transition-all">
-                        <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+                        class="absolute top-1/2 -translate-y-1/2 left-4 w-11 h-11 inline-flex items-center justify-center bg-white/90 rounded-full shadow-lg border border-border-light text-text-main hover:text-primary transition-all">
+                        <span class="material-symbols-outlined text-[20px] leading-none">chevron_left</span>
                     </button>
                     <button id="gallery-next"
-                        class="absolute top-1/2 -translate-y-1/2 right-4 bg-white/90 p-2 rounded-full shadow-lg border border-border-light text-text-main hover:text-primary transition-all">
-                        <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+                        class="absolute top-1/2 -translate-y-1/2 right-4 w-11 h-11 inline-flex items-center justify-center bg-white/90 rounded-full shadow-lg border border-border-light text-text-main hover:text-primary transition-all">
+                        <span class="material-symbols-outlined text-[20px] leading-none">chevron_right</span>
                     </button>
                     <button id="open-gallery-fullscreen"
                         class="absolute bottom-6 right-6 bg-white p-3 rounded-full shadow-2xl border border-border-light text-text-main hover:text-primary transition-all scale-90 hover:scale-100">
@@ -153,27 +145,19 @@
                 <div class="mb-6">
                     <div class="flex items-center gap-3 mb-3">
                         <span class="text-primary font-bold text-xs tracking-widest uppercase">Zenith Computing</span>
-                        <span class="w-1.5 h-1.5 rounded-full bg-text-secondary opacity-30"></span>
-                        <div class="flex items-center gap-1 text-yellow-400">
-                            <span class="material-symbols-outlined text-[16px] fill-current">star</span>
-                            <span class="text-text-main text-sm font-bold ml-1">4.9</span>
-                            <span class="text-text-secondary text-xs font-medium">(842 reviews)</span>
-                        </div>
                     </div>
                     <h1
                         class="text-4xl md:text-5xl font-black text-text-main mb-6 tracking-tight leading-none">
                         Zenith X1 Carbon <span class="text-primary">Ultra</span></h1>
                     <div class="flex items-center gap-4 mb-8">
                         <div class="flex flex-col">
-                            <span class="text-sm text-text-secondary font-medium">Starting at</span>
-                            <p class="text-4xl font-black text-primary">â‚¹2,07,417</p>
+                            <p class="text-4xl font-black text-primary">₹2,07,417</p>
                         </div>
                         <div class="h-10 w-px bg-border-light mx-2"></div>
                         <div class="flex flex-col">
                             <span
                                 class="text-xs font-bold px-2.5 py-1 bg-green-100 text-green-700 rounded-lg inline-block w-fit">In
                                 Stock</span>
-                            <span class="text-[10px] text-text-secondary mt-1 font-medium">Ships in 24 hours</span>
                         </div>
                     </div>
                     <p class="text-text-secondary leading-relaxed mb-8 text-lg font-medium">
@@ -225,7 +209,7 @@
                         </div>
                     </div>
                     <div class="pt-6">
-                        <h3 class="text-sm font-black text-text-main uppercase tracking-wider mb-3">Why Buy it?</h3>
+                        <h3 class="text-sm font-black text-text-main tracking-wider mb-3 flex items-center gap-1">Why <span class="material-symbols-outlined text-[16px] text-red-500">shopping_cart</span><span class="text-red-500">Buy it</span>?</h3>
                         <div class="grid grid-cols-2 gap-3">
                             <div class="p-3 rounded-xl bg-white border border-border-light text-center text-xs font-bold text-text-main shadow-sm">Trusted</div>
                             <div class="p-3 rounded-xl bg-white border border-border-light text-center text-xs font-bold text-text-main shadow-sm">Budget-Friendly</div>
@@ -351,14 +335,38 @@
     <script src="shop.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const query = new URLSearchParams(window.location.search);
-            const requestedId = query.get('id') || 'zenith-x1-ultra';
-            const fallbackProduct = getProductById('zenith-x1-ultra');
-            const product = getProductById(requestedId) || fallbackProduct;
+            const formatINR = (amount) => new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                maximumFractionDigits: 0
+            }).format(Number(amount || 0));
 
-            if (!product) {
+            const query = new URLSearchParams(window.location.search);
+            let requestedId = query.get('id');
+            if (!requestedId) {
+                const lastProductId = sessionStorage.getItem('buyit_last_product_id');
+                if (lastProductId && getProductById(lastProductId)) {
+                    requestedId = lastProductId;
+                    const normalized = `product-details.html?id=${encodeURIComponent(requestedId)}`;
+                    if (!window.location.href.includes('?id=')) {
+                        window.history.replaceState(null, '', normalized);
+                    }
+                }
+            }
+
+            if (!requestedId) {
+                window.location.href = 'products.html';
                 return;
             }
+
+            const product = getProductById(requestedId);
+
+            if (!product) {
+                window.location.href = 'products.html';
+                return;
+            }
+
+            sessionStorage.setItem('buyit_last_product_id', product.id);
 
             document.title = `Buy it - ${product.title}`;
 
@@ -387,7 +395,7 @@
 
             const priceElement = document.querySelector('p.text-4xl.font-black.text-primary');
             if (priceElement) {
-                priceElement.textContent = `â‚¹${Number(product.price || 0).toLocaleString('en-IN')}`;
+                priceElement.textContent = formatINR(product.price || 0);
             }
 
             const descriptionElement = document.querySelector('p.text-text-secondary.leading-relaxed.mb-8.text-lg.font-medium');
