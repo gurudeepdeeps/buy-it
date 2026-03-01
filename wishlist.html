@@ -244,10 +244,18 @@
                 return null;
             }
 
-            const title = String(item.title || '').trim().toLowerCase();
-            const hasCatalog = !!window.BUYIT_PRODUCT_CATALOG;
+            const byId = typeof getProductById === 'function' ? getProductById(item.id) : null;
+            if (byId) {
+                return byId;
+            }
 
-            if (title && hasCatalog) {
+            const hasCatalog = !!window.BUYIT_PRODUCT_CATALOG;
+            if (!hasCatalog) {
+                return null;
+            }
+
+            const title = String(item.title || '').trim().toLowerCase();
+            if (title) {
                 const exactMatch = Object.values(window.BUYIT_PRODUCT_CATALOG).find((product) =>
                     String(product?.title || '').trim().toLowerCase() === title
                 );
@@ -256,9 +264,29 @@
                 }
             }
 
-            const byId = typeof getProductById === 'function' ? getProductById(item.id) : null;
-            if (byId) {
-                return byId;
+            const normalizeSlug = (value) => String(value || '')
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+
+            const titleSlug = normalizeSlug(item.title);
+            const idSlug = normalizeSlug(item.id);
+
+            const slugMatch = Object.values(window.BUYIT_PRODUCT_CATALOG).find((product) => {
+                const productTitleSlug = normalizeSlug(product?.title);
+                const productIdSlug = normalizeSlug(product?.id);
+
+                if (idSlug && (productIdSlug === idSlug || productTitleSlug === idSlug)) {
+                    return true;
+                }
+                if (titleSlug && (productTitleSlug === titleSlug || productIdSlug === titleSlug)) {
+                    return true;
+                }
+                return false;
+            }) || null;
+
+            if (slugMatch) {
+                return slugMatch;
             }
 
             const normalizeImageKey = (value) => {
@@ -274,44 +302,20 @@
             };
 
             const itemImageKey = normalizeImageKey(item.image);
-            if (itemImageKey && window.BUYIT_PRODUCT_CATALOG) {
-                const byImage = Object.values(window.BUYIT_PRODUCT_CATALOG).find((product) => {
-                    const productImageKey = normalizeImageKey(product?.image || product?.localImage || '');
-                    return productImageKey && productImageKey === itemImageKey;
-                });
-                if (byImage) {
-                    return byImage;
-                }
-            }
-
-            if (!hasCatalog) {
+            if (!itemImageKey) {
                 return null;
             }
 
-            const normalizeSlug = (value) => String(value || '')
-                .toLowerCase()
-                .replace(/[^a-z0-9]+/g, '-')
-                .replace(/^-+|-+$/g, '');
+            const byImage = Object.values(window.BUYIT_PRODUCT_CATALOG).find((product) => {
+                const productImageKey = normalizeImageKey(product?.image || product?.localImage || '');
+                return productImageKey && productImageKey === itemImageKey;
+            });
 
-            const titleSlug = normalizeSlug(item.title);
-            const idSlug = normalizeSlug(item.id);
-
-            return Object.values(window.BUYIT_PRODUCT_CATALOG).find((product) => {
-                const productTitleSlug = normalizeSlug(product?.title);
-                const productIdSlug = normalizeSlug(product?.id);
-
-                if (idSlug && (productIdSlug === idSlug || productTitleSlug === idSlug)) {
-                    return true;
-                }
-                if (titleSlug && (productTitleSlug === titleSlug || productIdSlug === titleSlug)) {
-                    return true;
-                }
-                return false;
-            }) || null;
+            return byImage || null;
         }
 
         function migrateWishlistStorage() {
-            const migrationVersion = 'wishlist_migration_v2';
+            const migrationVersion = 'wishlist_migration_v3';
             if (localStorage.getItem(migrationVersion) === 'done') {
                 return;
             }
@@ -331,17 +335,28 @@
                     return;
                 }
 
-                if (resolvedId !== item.id) {
+                const resolvedTitle = catalogProduct?.title || item.title || 'Product';
+                const resolvedImage = catalogProduct?.image || item.image || 'buyit-logo.png';
+                const resolvedPrice = Number(catalogProduct?.price ?? item.price ?? 0);
+                const resolvedRegularPrice = Number(catalogProduct?.regularPrice ?? item.regularPrice ?? calculateRegularPrice(catalogProduct?.price ?? item.price ?? 0));
+
+                if (
+                    resolvedId !== item.id ||
+                    resolvedTitle !== item.title ||
+                    resolvedImage !== item.image ||
+                    resolvedPrice !== Number(item.price ?? 0) ||
+                    resolvedRegularPrice !== Number(item.regularPrice ?? 0)
+                ) {
                     hasChanges = true;
                 }
 
                 migratedMap.set(resolvedId, {
                     ...item,
                     id: resolvedId,
-                    title: item.title || catalogProduct?.title || 'Product',
-                    image: catalogProduct?.image || item.image || 'buyit-logo.png',
-                    price: Number(catalogProduct?.price ?? item.price ?? 0),
-                    regularPrice: Number(catalogProduct?.regularPrice ?? item.regularPrice ?? calculateRegularPrice(catalogProduct?.price ?? item.price ?? 0))
+                    title: resolvedTitle,
+                    image: resolvedImage,
+                    price: resolvedPrice,
+                    regularPrice: resolvedRegularPrice
                 });
             });
 
@@ -372,16 +387,16 @@
                     : (catalogProduct?.id || '');
                 const itemPrice = Number(catalogProduct?.price ?? item.price ?? 0);
                 const regularPrice = Number(catalogProduct?.regularPrice ?? item.regularPrice ?? calculateRegularPrice(itemPrice));
-                const title = item.title || catalogProduct?.title || 'Product';
+                const title = catalogProduct?.title || item.title || 'Product';
                 const image = catalogProduct?.image || item.image || 'buyit-logo.png';
                 const category = catalogProduct?.category || 'General';
                 const inStock = catalogProduct?.inStock !== false;
                 const productLinkRelative = safeResolvedId
                     ? (typeof getProductLink === 'function'
-                        ? buildProductDetailsLink(safeResolvedId, title)
+                        ? `${getProductLink(safeResolvedId)}&title=${encodeURIComponent(title)}`
                         : buildProductDetailsLink(safeResolvedId, title))
                     : buildProductDetailsLink('', title);
-                const productLink = new URL(productLinkRelative, window.location.href).toString();
+                const productLink = productLinkRelative;
 
                 const div = document.createElement('div');
                 div.className = 'wishlist-card group bg-surface-light rounded-2xl border border-border-light overflow-hidden shadow-sm flex flex-col transition-all duration-300 hover:shadow-xl hover:border-primary/30';
@@ -390,7 +405,7 @@
                 div.setAttribute('data-view-link', productLink);
                 div.innerHTML = `
                     <div class="relative overflow-hidden bg-slate-50 border-b border-border-light h-52 flex items-center justify-center p-5">
-                        <a href="${productLink}" class="inline-flex items-center justify-center w-full h-full">
+                        <a href="${productLink}" data-action="view-product" class="inline-flex items-center justify-center w-full h-full">
                             <img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" class="w-auto h-full max-h-44 object-contain group-hover:scale-105 transition-transform duration-300 cursor-pointer" />
                         </a>
                         <span class="absolute top-3 left-3 inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold ${inStock ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${inStock ? 'In Stock' : 'Out of Stock'}</span>
@@ -398,7 +413,7 @@
                     </div>
                     <div class="flex flex-col flex-1 p-4 gap-2">
                         <p class="text-[11px] uppercase tracking-wide font-semibold text-text-secondary-light">${escapeHtml(category)}</p>
-                        <a href="${productLink}" class="text-base font-semibold text-text-primary-light leading-snug line-clamp-2 min-h-[3rem] cursor-pointer hover:text-primary">${escapeHtml(title)}</a>
+                        <a href="${productLink}" data-action="view-product" class="text-base font-semibold text-text-primary-light leading-snug line-clamp-2 min-h-[3rem] cursor-pointer hover:text-primary">${escapeHtml(title)}</a>
                         <div class="flex items-baseline gap-2">
                             <span class="text-lg font-bold text-red-600">${formatINRLocal(itemPrice)}</span>
                             <span class="text-sm text-text-secondary-light line-through">${formatINRLocal(regularPrice)}</span>
@@ -408,7 +423,7 @@
                                 <span class='material-symbols-outlined text-[18px]'>add_shopping_cart</span>
                                 Add
                             </button>
-                            <a href="${productLink}" class="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-border-light text-text-primary-light text-sm font-semibold hover:bg-slate-50 transition-colors">
+                            <a href="${productLink}" data-action="view-product" class="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-border-light text-text-primary-light text-sm font-semibold hover:bg-slate-50 transition-colors">
                                 <span class='material-symbols-outlined text-[18px]'>visibility</span>
                                 View
                             </a>
@@ -458,6 +473,13 @@
             }
 
             if (action === 'view-product') {
+                event.preventDefault();
+                const fallbackLink = card ? card.getAttribute('data-view-link') : '';
+                const targetLink = actionElement.getAttribute('href') || fallbackLink;
+                if (!targetLink) {
+                    return;
+                }
+                window.location.assign(targetLink);
                 return;
             }
         });
