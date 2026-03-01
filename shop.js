@@ -9,10 +9,11 @@ function clearCart() {
 // Initialize State
 let cart = JSON.parse(localStorage.getItem('buyit_cart')) || [];
 let wishlist = JSON.parse(localStorage.getItem('buyit_wishlist')) || [];
+const BUYIT_REGULAR_PRICE_MULTIPLIER = 2.1451612903;
 
 const BUYIT_PRODUCT_CATALOG = {
-    'elite-tab-pro': { id: 'elite-tab-pro', title: 'Elite Tab Pro 13.0', price: 91217, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC8HkLH_OsrpLvu-bp8uPttjK3ozesEMQn8dEIpL5YukgAp4wU1bEcmw0Fv_xZY2R8cDLwTxUfjA0gPlCtxs8DCuKXLXtwruzxc4evYKI0YoDCmuiAWBMsk7Jclx0jc9qaq1beCCOnVFp0OJqUKteG7LJiNTyGu2Qw5CsOM6sdyReEVPItX-Idb3_izI6hcIS1_w-t7JuoyQKUKlviCzFwU8End3Rufk3MrRxD5ilZ4LSgWR8NrGXRfHY_1vA6wXqbpim0xnC_3vhx_', category: 'Tablets', brand: 'Elite' },
-    'titan-sport-v2': { id: 'titan-sport-v2', title: 'Titan Sport Active V2', price: 28967, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBLvDKoi4zzOxtthUuIkDWpoamW-x_fQcJEenQ8eWiqnyVLfQMdcrpsuLly_lrUhZs3d6rDOKciRa-9KLqKzuX7i2IuZMZ6po08oAKXGIWAEC1EzyElHQfYru--gHp5ZLiiq1T_pRDM4SNohZIXPpNWeHc1mide9BXN9wMGZbaU4c0BvKMku1QVkBCjgcwUdEIKFVgaxKK0CWMNQQ4OSbAqJLDRxVKLsmPNS6YBxgln_7oDra8AlLxzSR0vXVxi9wpnu2AKpifrHwku', category: 'Wearables', brand: 'Titan' },
+    'iphone-17-pro-max': { id: 'iphone-17-pro-max', title: 'iPhone 17 Pro Max', price: 130000, regularPrice: 149999, localImage: 'product-images/smartphones/iphone1.jpg', category: 'smartphones'},
+    'titan-sport-v2': { id: 'titan-sport-v2', title: 'Titan Sport Active V2', price: 28967, regularPrice: 34999, localImage: 'product-images/wearables/iwatch1.jpg', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBLvDKoi4zzOxtthUuIkDWpoamW-x_fQcJEenQ8eWiqnyVLfQMdcrpsuLly_lrUhZs3d6rDOKciRa-9KLqKzuX7i2IuZMZ6po08oAKXGIWAEC1EzyElHQfYru--gHp5ZLiiq1T_pRDM4SNohZIXPpNWeHc1mide9BXN9wMGZbaU4c0BvKMku1QVkBCjgcwUdEIKFVgaxKK0CWMNQQ4OSbAqJLDRxVKLsmPNS6YBxgln_7oDra8AlLxzSR0vXVxi9wpnu2AKpifrHwku', category: 'Wearables', brand: 'Titan' },
     'nextgen-console-x': { id: 'nextgen-console-x', title: 'NextGen Console X Pro', price: 41417, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBoNvTmbpDl3xYLyHDXOgNocUClVgCDIg56BmIx1mLXhb9QR-kwh6EY3KcLuRxP_Zt9FFeC6q17_i-sttTTy7-IxK8eW5vh711_0Fu0xdaxPJGpZmPNBwiGQ_NtTo0J7pYOJR8MtCnR_rz9ZgNNJvDs1nMRYK5jqXO8juxZY398lCEvAjH8oa7PRG_vSTTiFVN2-aEbWrp-HEXG_T9GmM6l1e-Fy41eS2eOC9DonSgqY_7CKdPlhScZzRfcp4lfUOoAlTsYfMOKrBKB', category: 'Gaming', brand: 'NextGen' },
     'apex-rtx-4080': { id: 'apex-rtx-4080', title: 'Apex RTX 4080 Founders', price: 99517, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBwRMO7z2je82ZTm3hpu2eG6T1HmQgVQYrspH9xxeZpE-usWlmZQIka4hWuRh3VnZSS64UH8uyIYcmLUna5VsVWfGKyHbf8H2DMFDcT01_8BG5MfEnUNdXXj7gNaEyZmhwTGIAvi2z5hQLLc7M8C1DqmeVFGiWchCEClYpgHrkZDfvjsS9cXKwsHiZx4i6tQd3q2oSn8xHhJHkRd5dFOU7TTbXP2X09hs55cWz5ccMNGk7K4yx0mRsL9th9xZtJiJYNT0-5zpxf9r4t', category: 'Components', brand: 'Apex' },
     'studio-pro-anc': { id: 'studio-pro-anc', title: 'Studio Pro ANC Wireless', price: 24817, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC72_IR4svNMhKtT5sm8RaaDmpEGOpauk1kXFPvop4eVxZv73hFLRewhGgPXryPM_dLLa-HT5HBt63f8sP8o5IZA_s1iwEoel5BoVzziGzkM9ukhzIyp2DvLneMqxqAEdDdle3CoM_rNEwmSg5KKDqokrTt49Fbf1wqARuvFNim7Z45TA3qSqubIb15Y4hi5pKQlsjLqPXObsL2OdUso0LR18BkVj6Ryn_6PfiEQdJWrzW8mjRT77sipTGyaT7wTwNVaiVZDAfYYR1v', category: 'Audio', brand: 'Studio Pro' },
@@ -213,6 +214,14 @@ function normalizeCatalogCategory(category) {
 }
 
 Object.values(BUYIT_PRODUCT_CATALOG).forEach((product) => {
+    const normalizedPrice = parsePrice(product.price);
+    const normalizedRegularPrice = parsePrice(product.regularPrice);
+    product.price = normalizedPrice;
+    product.regularPrice = normalizedRegularPrice > 0
+        ? normalizedRegularPrice
+        : Math.round(normalizedPrice * BUYIT_REGULAR_PRICE_MULTIPLIER);
+    product.image = String(product.localImage || product.image || 'buyit-logo.png');
+
     if (!Array.isArray(product.specifications) || product.specifications.length === 0) {
         product.specifications = BUYIT_SPECS_BY_PRODUCT_ID[product.id] || [
             'Premium build quality and reliable daily performance.',
@@ -288,8 +297,9 @@ function normalizeProductInput(product) {
 
     const normalizedId = catalogMatch?.id || product?.id || fallbackId;
     const normalizedTitle = catalogMatch?.title || fallbackTitle || 'Product';
-    const normalizedImage = product?.image || catalogMatch?.image || 'buyit-logo.png';
+    const normalizedImage = product?.localImage || product?.image || catalogMatch?.localImage || catalogMatch?.image || 'buyit-logo.png';
     const normalizedPrice = parsePrice(catalogMatch?.price ?? product?.price);
+    const normalizedRegularPrice = parsePrice(catalogMatch?.regularPrice ?? product?.regularPrice) || Math.round(normalizedPrice * BUYIT_REGULAR_PRICE_MULTIPLIER);
     const normalizedQuantity = Math.max(1, parseInt(product?.quantity, 10) || 1);
 
     return {
@@ -297,6 +307,7 @@ function normalizeProductInput(product) {
         title: normalizedTitle,
         image: normalizedImage,
         price: normalizedPrice,
+        regularPrice: normalizedRegularPrice,
         quantity: normalizedQuantity
     };
 }
@@ -323,6 +334,7 @@ function migrateStoredOrders() {
                 title: normalizedItem.title,
                 image: normalizedItem.image,
                 price: normalizedItem.price,
+                regularPrice: normalizedItem.regularPrice,
                 quantity: normalizedItem.quantity
             };
         }) : [];

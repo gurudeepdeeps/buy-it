@@ -262,6 +262,7 @@
                 const product = (typeof getProductById === 'function' && resolvedProductId)
                     ? getProductById(resolvedProductId)
                     : null;
+                const regularPrice = parseAmount(product?.regularPrice || calculateRegularPrice(unitPrice));
                 const inStock = product ? product.inStock !== false : true;
                 const qtyMinus = quantity - 1;
                 const qtyPlus = quantity + 1;
@@ -284,7 +285,7 @@
                             </div>
                             <div class="mt-4 mb-4 flex flex-col gap-1">
                                 <span class="text-base font-black text-red-600 leading-tight">${saleFormatter(unitPrice)}</span>
-                                <span class="text-sm font-semibold text-slate-500 line-through leading-tight">${saleFormatter(calculateRegularPrice(unitPrice))}</span>
+                                <span class="text-sm font-semibold text-slate-500 line-through leading-tight">${saleFormatter(regularPrice)}</span>
                             </div>
                             <div class="flex items-center justify-between mt-auto gap-4">
                                 <div class="flex items-center border border-border-light rounded-lg bg-background-light overflow-hidden">

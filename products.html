@@ -1270,6 +1270,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 id: product.id,
                 title: product.title,
                 price: Number(product.price || 0),
+                regularPrice: Number(product.regularPrice || calculateRegularPrice(product.price || 0)),
                 category: product.category || 'General',
                 tags: getCardSpecifications(product).slice(0, 2),
                 reviews: '1.2k',
@@ -1289,7 +1290,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const card = document.createElement('div');
             card.setAttribute('data-price', String(product.price));
-            card.setAttribute('data-regular-price', String(calculateRegularPrice(product.price)));
+            card.setAttribute('data-regular-price', String(product.regularPrice));
             card.setAttribute('data-order', String(product.order));
             card.setAttribute('data-product-id', product.id);
             card.setAttribute('data-category', product.category || '');
