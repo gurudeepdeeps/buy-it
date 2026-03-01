@@ -151,10 +151,6 @@
                                 <span>Shipping</span>
                                 <span class="text-green-600 font-medium">FREE</span>
                             </div>
-                            <div class="flex justify-between text-text-muted">
-                                <span>Estimated Tax (8%)</span>
-                                <span id="cart-tax" class="text-text-main font-medium">₹0</span>
-                            </div>
                             <div class="pt-4 pb-2">
                                 <label class="sr-only" for="promo">Promo Code</label>
                                 <div class="flex gap-2">
@@ -229,14 +225,32 @@
             const formatter = (value) => typeof window.formatINR === 'function'
                 ? window.formatINR(value)
                 : new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(Number(value || 0));
+            const parseAmount = (value) => {
+                if (typeof value === 'number' && Number.isFinite(value)) {
+                    return value;
+                }
+                if (typeof value === 'string') {
+                    const cleaned = value.replace(/[^\d.-]/g, '');
+                    const parsed = Number(cleaned);
+                    return Number.isFinite(parsed) ? parsed : 0;
+                }
+                return 0;
+            };
+            const roundMoney = (value) => Math.round((Number(value) + Number.EPSILON) * 100) / 100;
+            const saleFormatter = (value) => new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                maximumFractionDigits: 0
+            }).format(Number(value || 0));
+            const calculateRegularPrice = (salePrice) => Math.round(Number(salePrice || 0) * 2.1451612903);
             let subtotal = 0;
             let totalItems = 0;
             let container = document.getElementById('cart-items-container');
             container.innerHTML = '';
             currentCart.forEach(item => {
-                const unitPrice = Number(item.price || 0);
+                const unitPrice = parseAmount(item.price);
                 const quantity = Math.max(1, Number(item.quantity || 1));
-                const itemTotal = unitPrice * quantity;
+                const itemTotal = roundMoney(unitPrice * quantity);
                 subtotal += itemTotal;
                 totalItems += quantity;
                 const safeTitle = item.title ? String(item.title).replace(/`/g, "'") : '';
@@ -245,42 +259,51 @@
                 const productLink = typeof getProductLink === 'function'
                     ? getProductLink(resolvedProductId)
                     : (resolvedProductId ? `product-details.html?id=${encodeURIComponent(resolvedProductId)}` : 'products.html');
+                const product = (typeof getProductById === 'function' && resolvedProductId)
+                    ? getProductById(resolvedProductId)
+                    : null;
+                const inStock = product ? product.inStock !== false : true;
                 const qtyMinus = quantity - 1;
                 const qtyPlus = quantity + 1;
-                const html = `<div class="group relative flex flex-col gap-4 p-5 bg-surface-light rounded-xl border border-border-light hover:border-primary/30 transition-all shadow-sm">
-                    <div class="flex flex-col sm:flex-row gap-6">
-                        <div class="shrink-0 w-full sm:w-32 aspect-square rounded-lg overflow-hidden bg-white border border-border-light p-1 flex items-center justify-center">
-                            <img alt="${safeTitle}" onclick="window.location.href='${productLink}'" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer" src="${item.image}" />
+                const html = `<div class="group relative p-5 bg-surface-light rounded-xl border border-border-light hover:border-primary/30 hover:shadow-lg transition-all duration-300">
+                    <div class="flex flex-col sm:flex-row gap-5">
+                        <div class="shrink-0 w-full sm:w-36 aspect-[4/3] rounded-xl overflow-hidden bg-white border border-border-light p-2 flex items-center justify-center">
+                            <img alt="${safeTitle}" onclick="window.location.href='${productLink}'" class="h-full w-full object-contain group-hover:scale-105 transition-transform duration-500 cursor-pointer" src="${item.image}" />
                         </div>
-                        <div class="flex flex-1 flex-col justify-between">
+                        <div class="flex flex-1 flex-col">
                             <div class="flex justify-between items-start gap-4">
                                 <div>
-                                    <h3 class="text-lg font-semibold text-text-main ">${safeTitle}</h3>
-                                    <p class="text-sm text-text-muted mt-1">${formatter(unitPrice)} each</p>
+                                    <a href="${productLink}" class="hover:text-primary transition-colors">
+                                        <h3 class="text-lg font-semibold text-text-main leading-tight">${safeTitle}</h3>
+                                    </a>
+                                    <span class="inline-flex items-center rounded-md px-2 py-1 text-[11px] font-bold mt-2 ${inStock ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${inStock ? 'In Stock' : 'Out of Stock'}</span>
                                 </div>
                                 <button onclick="removeFromCart('${safeId}')" aria-label="Remove item" class="text-text-muted hover:text-red-500 transition-colors p-1 cursor-pointer">
                                     <span class="material-symbols-outlined !text-[20px]">delete</span>
                                 </button>
                             </div>
-                            <div class="flex items-center justify-between mt-4">
-                                <div class="flex items-center border border-border-light rounded-lg bg-background-light ">
-                                    <button onclick="updateCartQuantity('${safeId}', ${qtyMinus})" class="px-3 py-1 hover:bg-gray-200 :bg-gray-700 transition-colors rounded-l-lg cursor-pointer text-text-main ">-</button>
+                            <div class="mt-4 mb-4 flex flex-col gap-1">
+                                <span class="text-base font-black text-red-600 leading-tight">${saleFormatter(unitPrice)}</span>
+                                <span class="text-sm font-semibold text-slate-500 line-through leading-tight">${saleFormatter(calculateRegularPrice(unitPrice))}</span>
+                            </div>
+                            <div class="flex items-center justify-between mt-auto gap-4">
+                                <div class="flex items-center border border-border-light rounded-lg bg-background-light overflow-hidden">
+                                    <button onclick="updateCartQuantity('${safeId}', ${qtyMinus})" ${quantity <= 1 ? 'disabled' : ''} class="px-3 py-1.5 hover:bg-gray-200 transition-colors text-text-main disabled:opacity-50 disabled:cursor-not-allowed">-</button>
                                     <label for="cart-qty-${safeId}" class="sr-only">Quantity for ${safeTitle}</label>
-                                    <input id="cart-qty-${safeId}" class="w-10 text-center bg-transparent border-none p-0 text-sm font-medium text-text-main focus:ring-0" readonly type="text" value="${quantity}" title="Quantity" placeholder="Qty" />
-                                    <button onclick="updateCartQuantity('${safeId}', ${qtyPlus})" class="px-3 py-1 hover:bg-gray-200 :bg-gray-700 transition-colors rounded-r-lg cursor-pointer text-text-main ">+</button>
+                                    <input id="cart-qty-${safeId}" class="w-10 text-center bg-transparent border-none p-0 text-sm font-semibold text-text-main focus:ring-0" readonly type="text" value="${quantity}" title="Quantity" placeholder="Qty" />
+                                    <button onclick="updateCartQuantity('${safeId}', ${qtyPlus})" class="px-3 py-1.5 hover:bg-gray-200 transition-colors text-text-main">+</button>
                                 </div>
-                                <span class="text-lg font-bold text-text-main ">${formatter(itemTotal)}</span>
+                                <span class="text-lg font-black text-red-600">${saleFormatter(itemTotal)}</span>
                             </div>
                         </div>
                     </div>
                 </div>`;
                 container.insertAdjacentHTML('beforeend', html);
             });
-            const tax = subtotal * 0.08;
-            const total = subtotal + tax;
+            subtotal = roundMoney(subtotal);
+            const total = roundMoney(subtotal);
             document.getElementById('cart-item-count').textContent = totalItems;
             document.getElementById('cart-subtotal').textContent = formatter(subtotal);
-            document.getElementById('cart-tax').textContent = formatter(tax);
             document.getElementById('cart-total').textContent = formatter(total);
         }
         window.addEventListener('cartUpdated', renderCart);
@@ -353,7 +376,7 @@
             </div>
             <div
                 class="border-t border-slate-100 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
-                    <p class="text-xs font-medium text-slate-400 w-full text-center">Â© 2026 Buy it Inc. All rights reserved.</p>
+                    <p class="text-xs font-medium text-slate-400 w-full text-center">© 2026 Buy it Inc. All rights reserved.</p>
                 <div class="flex gap-8 text-xs font-bold text-slate-400 uppercase tracking-widest">
                 </div>
             </div>

@@ -18,22 +18,101 @@
 <script>
 // Category filter logic
 document.addEventListener('DOMContentLoaded', function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const category = urlParams.get('category');
-    if (category) {
-        // Find all product cards
-        const cards = document.querySelectorAll('#products-grid > div');
-        cards.forEach(card => {
-            // Try to get category from product card (by text or data attribute)
-            const catLabel = card.querySelector('.text-xs.uppercase');
-            if (catLabel) {
-                const cardCat = catLabel.textContent.trim().toLowerCase();
-                if (!cardCat.includes(category)) {
-                    card.style.display = 'none';
-                }
+    const categoryMap = {
+        smartphones: 'smartphones',
+        smartphone: 'smartphones',
+        phones: 'smartphones',
+        phone: 'smartphones',
+        mobile: 'smartphones',
+        mobiles: 'smartphones',
+        laptops: 'laptops',
+        laptop: 'laptops',
+        computers: 'laptops',
+        computer: 'laptops',
+        tablets: 'tablets',
+        tablet: 'tablets',
+        computing: 'tablets',
+        audio: 'audio',
+        'smart home': 'audio',
+        smarthome: 'audio',
+        wearables: 'wearables',
+        wearable: 'wearables',
+        accessories: 'accessories',
+        accessory: 'accessories',
+        components: 'accessories',
+        component: 'accessories',
+        monitors: 'laptops',
+        monitor: 'laptops'
+    };
+
+    const categoryDisplayMap = {
+        smartphones: 'Smartphones',
+        laptops: 'Laptops',
+        tablets: 'Tablets',
+        audio: 'Audio',
+        wearables: 'Wearables',
+        accessories: 'Accessories'
+    };
+
+    const normalizeCategory = (value) => {
+        const cleaned = (value || '').toString().trim().toLowerCase();
+        return categoryMap[cleaned] || cleaned;
+    };
+
+    const requestedCategory = normalizeCategory(new URLSearchParams(window.location.search).get('category'));
+    window.BUYIT_NORMALIZE_CATEGORY = normalizeCategory;
+    window.BUYIT_ACTIVE_CATEGORY = requestedCategory;
+
+    const categorySelect = document.getElementById('category-select');
+    if (categorySelect) {
+        categorySelect.value = requestedCategory || 'all';
+        categorySelect.addEventListener('change', () => {
+            const selected = normalizeCategory(categorySelect.value);
+            if (!selected || selected === 'all') {
+                window.location.href = 'products.html';
+                return;
             }
+            window.location.href = `products.html?category=${encodeURIComponent(selected)}`;
         });
     }
+
+    document.querySelectorAll('[data-category-link]').forEach((link) => {
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
+            const category = link.getAttribute('data-category-link') || '';
+            window.location.href = `products.html?category=${encodeURIComponent(category)}`;
+        });
+    });
+
+    const activeCategoryWrap = document.getElementById('active-category-wrap');
+    const activeCategoryText = document.getElementById('active-category-text');
+    if (activeCategoryWrap && activeCategoryText) {
+        if (requestedCategory) {
+            activeCategoryText.textContent = categoryDisplayMap[requestedCategory] || requestedCategory;
+            activeCategoryWrap.classList.remove('hidden');
+        } else {
+            activeCategoryWrap.classList.add('hidden');
+        }
+    }
+
+    function applyCategoryFilter() {
+        const activeCategory = window.BUYIT_ACTIVE_CATEGORY;
+        if (!activeCategory) {
+            return;
+        }
+
+        const cards = document.querySelectorAll('#products-grid > div');
+        cards.forEach((card) => {
+            const normalizedFromData = normalizeCategory(card.getAttribute('data-category-normalized') || card.getAttribute('data-category') || '');
+            const catLabel = card.querySelector('.text-xs.uppercase');
+            const normalizedFromLabel = normalizeCategory(catLabel ? catLabel.textContent : '');
+            const cardCategory = normalizedFromData || normalizedFromLabel;
+            card.style.display = cardCategory === activeCategory ? '' : 'none';
+        });
+    }
+
+    window.BUYIT_APPLY_CATEGORY_FILTER = applyCategoryFilter;
+    applyCategoryFilter();
 });
 </script>
 
@@ -105,8 +184,26 @@ document.addEventListener('DOMContentLoaded', function() {
                         Tech &amp; Performance Gear</h1>
                     <p class="mt-2 text-text-secondary-light max-w-2xl">Browse our curated
                         selection of high-performance tablets, wearables, and cutting-edge PC components.</p>
+                    <p id="active-category-wrap" class="mt-3 hidden text-sm text-text-secondary-light">Showing category: <span id="active-category-text" class="font-semibold text-text-primary-light"></span></p>
                 </div>
                 <div class="flex items-center gap-3">
+                    <span class="text-sm text-text-secondary-light whitespace-nowrap">Category:</span>
+                    <div class="relative">
+                        <select id="category-select"
+                            class="appearance-none bg-surface-light border border-border-light text-text-primary-light text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 pr-8 cursor-pointer" title="Filter by category">
+                            <option value="all" selected>All Categories</option>
+                            <option value="smartphones">Smartphones</option>
+                            <option value="laptops">Laptops</option>
+                            <option value="tablets">Tablets</option>
+                            <option value="audio">Audio</option>
+                            <option value="wearables">Wearables</option>
+                            <option value="accessories">Accessories</option>
+                        </select>
+                        <div
+                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text-secondary-light ">
+                            <span class="material-symbols-outlined text-sm">expand_more</span>
+                        </div>
+                    </div>
                     <span class="text-sm text-text-secondary-light whitespace-nowrap">Sort
                         by:</span>
                     <div class="relative">
@@ -124,6 +221,38 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
         </div>
+        <section id="categories" class="py-6">
+            <div class="mb-8 text-center">
+                <h2 class="text-2xl font-black tracking-tight text-slate-900">Shop by Category</h2>
+                <p class="text-slate-500 mt-2">Find the perfect device for your needs</p>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 mb-10">
+                <a href="products.html?category=smartphones" data-category-link="smartphones" class="flex flex-col items-center bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-slate-100 group">
+                    <span class="material-symbols-outlined text-[40px] text-primary mb-2 group-hover:scale-110 transition-transform">smartphone</span>
+                    <span class="font-semibold text-slate-800">Smartphones</span>
+                </a>
+                <a href="products.html?category=laptops" data-category-link="laptops" class="flex flex-col items-center bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-slate-100 group">
+                    <span class="material-symbols-outlined text-[40px] text-primary mb-2 group-hover:scale-110 transition-transform">laptop</span>
+                    <span class="font-semibold text-slate-800">Laptops</span>
+                </a>
+                <a href="products.html?category=tablets" data-category-link="tablets" class="flex flex-col items-center bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-slate-100 group">
+                    <span class="material-symbols-outlined text-[40px] text-primary mb-2 group-hover:scale-110 transition-transform">tablet_mac</span>
+                    <span class="font-semibold text-slate-800">Tablets</span>
+                </a>
+                <a href="products.html?category=audio" data-category-link="audio" class="flex flex-col items-center bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-slate-100 group">
+                    <span class="material-symbols-outlined text-[40px] text-primary mb-2 group-hover:scale-110 transition-transform">headphones</span>
+                    <span class="font-semibold text-slate-800">Audio</span>
+                </a>
+                <a href="products.html?category=wearables" data-category-link="wearables" class="flex flex-col items-center bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-slate-100 group">
+                    <span class="material-symbols-outlined text-[40px] text-primary mb-2 group-hover:scale-110 transition-transform">watch</span>
+                    <span class="font-semibold text-slate-800">Wearables</span>
+                </a>
+                <a href="products.html?category=accessories" data-category-link="accessories" class="flex flex-col items-center bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-slate-100 group">
+                    <span class="material-symbols-outlined text-[40px] text-primary mb-2 group-hover:scale-110 transition-transform">cable</span>
+                    <span class="font-semibold text-slate-800">Accessories</span>
+                </a>
+            </div>
+        </section>
         <div id="products-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
             <div data-price="91217" data-order="6"
                 class="group bg-surface-light rounded-xl border border-border-light overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 flex flex-col">
@@ -161,7 +290,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             class="text-xs text-text-secondary-light ml-1">(2.4k)</span>
                     </div>
                     <div class="flex items-center justify-between mb-3"><span
-                            class="text-lg font-bold text-text-primary-light ">?91,217</span><button
+                            class="text-lg font-bold text-text-primary-light ">₹91,217</span><button
                             onclick="addToCart({id:'elite-tab-pro', title:'Elite Tab Pro 13.0', price:91217, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuC8HkLH_OsrpLvu-bp8uPttjK3ozesEMQn8dEIpL5YukgAp4wU1bEcmw0Fv_xZY2R8cDLwTxUfjA0gPlCtxs8DCuKXLXtwruzxc4evYKI0YoDCmuiAWBMsk7Jclx0jc9qaq1beCCOnVFp0OJqUKteG7LJiNTyGu2Qw5CsOM6sdyReEVPItX-Idb3_izI6hcIS1_w-t7JuoyQKUKlviCzFwU8End3Rufk3MrRxD5ilZ4LSgWR8NrGXRfHY_1vA6wXqbpim0xnC_3vhx_'})"
                             class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span
                                 class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
@@ -207,7 +336,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             class="text-xs text-text-secondary-light ml-1">(842)</span>
                     </div>
                     <div class="flex items-center justify-between mb-3"><span
-                            class="text-lg font-bold text-text-primary-light ">?28,967</span><button
+                            class="text-lg font-bold text-text-primary-light ">₹28,967</span><button
                             onclick="addToCart({id:'titan-sport-v2', title:'Titan Sport Active V2', price:28967, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuBLvDKoi4zzOxtthUuIkDWpoamW-x_fQcJEenQ8eWiqnyVLfQMdcrpsuLly_lrUhZs3d6rDOKciRa-9KLqKzuX7i2IuZMZ6po08oAKXGIWAEC1EzyElHQfYru--gHp5ZLiiq1T_pRDM4SNohZIXPpNWeHc1mide9BXN9wMGZbaU4c0BvKMku1QVkBCjgcwUdEIKFVgaxKK0CWMNQQ4OSbAqJLDRxVKLsmPNS6YBxgln_7oDra8AlLxzSR0vXVxi9wpnu2AKpifrHwku'})"
                             class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span
                                 class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
@@ -253,7 +382,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             class="text-xs text-text-secondary-light ml-1">(12.1k)</span>
                     </div>
                     <div class="flex items-center justify-between mb-3"><span
-                            class="text-lg font-bold text-text-primary-light ">?41,417</span><button
+                            class="text-lg font-bold text-text-primary-light ">₹41,417</span><button
                             onclick="addToCart({id:'nextgen-console-x', title:'NextGen Console X Pro', price:41417, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuBoNvTmbpDl3xYLyHDXOgNocUClVgCDIg56BmIx1mLXhb9QR-kwh6EY3KcLuRxP_Zt9FFeC6q17_i-sttTTy7-IxK8eW5vh711_0Fu0xdaxPJGpZmPNBwiGQ_NtTo0J7pYOJR8MtCnR_rz9ZgNNJvDs1nMRYK5jqXO8juxZY398lCEvAjH8oa7PRG_vSTTiFVN2-aEbWrp-HEXG_T9GmM6l1e-Fy41eS2eOC9DonSgqY_7CKdPlhScZzRfcp4lfUOoAlTsYfMOKrBKB'})"
                             class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span
                                 class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
@@ -299,7 +428,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             class="text-xs text-text-secondary-light ml-1">(312)</span>
                     </div>
                     <div class="flex items-center justify-between mb-3"><span
-                            class="text-lg font-bold text-text-primary-light ">?99,517</span><button
+                            class="text-lg font-bold text-text-primary-light ">₹99,517</span><button
                             onclick="addToCart({id:'apex-rtx-4080', title:'Apex RTX 4080 Founders', price:99517, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuBwRMO7z2je82ZTm3hpu2eG6T1HmQgVQYrspH9xxeZpE-usWlmZQIka4hWuRh3VnZSS64UH8uyIYcmLUna5VsVWfGKyHbf8H2DMFDcT01_8BG5MfEnUNdXXj7gNaEyZmhwTGIAvi2z5hQLLc7M8C1DqmeVFGiWchCEClYpgHrkZDfvjsS9cXKwsHiZx4i6tQd3q2oSn8xHhJHkRd5dFOU7TTbXP2X09hs55cWz5ccMNGk7K4yx0mRsL9th9xZtJiJYNT0-5zpxf9r4t'})"
                             class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span
                                 class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
@@ -345,7 +474,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             class="text-xs text-text-secondary-light ml-1">(1.8k)</span>
                     </div>
                     <div class="flex items-center justify-between mb-3"><span
-                            class="text-lg font-bold text-text-primary-light ">?24,817</span><button
+                            class="text-lg font-bold text-text-primary-light ">₹24,817</span><button
                             onclick="addToCart({id:'studio-pro-anc', title:'Studio Pro ANC Wireless', price:24817, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuC72_IR4svNMhKtT5sm8RaaDmpEGOpauk1kXFPvop4eVxZv73hFLRewhGgPXryPM_dLLa-HT5HBt63f8sP8o5IZA_s1iwEoel5BoVzziGzkM9ukhzIyp2DvLneMqxqAEdDdle3CoM_rNEwmSg5KKDqokrTt49Fbf1wqARuvFNim7Z45TA3qSqubIb15Y4hi5pKQlsjLqPXObsL2OdUso0LR18BkVj6Ryn_6PfiEQdJWrzW8mjRT77sipTGyaT7wTwNVaiVZDAfYYR1v'})"
                             class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span
                                 class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
@@ -391,7 +520,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             class="text-xs text-text-secondary-light ml-1">(512)</span>
                     </div>
                     <div class="flex items-center justify-between mb-3"><span
-                            class="text-lg font-bold text-text-primary-light ">?2,07,417</span><button
+                            class="text-lg font-bold text-text-primary-light ">₹2,07,417</span><button
                             onclick="addToCart({id:'alpha-vii-mirrorless', title:'Alpha VII Mirrorless 4K', price:207417, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuDs6rJpoRVW9Vfr2O34zg1KW0WSRF0Tw-GxbYYuRxuyey8KFTSm6SobKH5bZUxfQjVRyuir6ZrCmZyZ_D4sMO-GVw-EKNGqbJPnFqpQP5Y9ud1JMfObBDvToIyD0PdsqybkGCl89kJxI_YH5kWdwAsEN-KeHFZ1MLwpAAvsoQB9ByWbPU110ONhZN5pueX_FP1WDJqG6LgZ0cYEaD1tWigrfxJcAgdxRNdvpcqIpA-zuheG_oLEh6y266eRTZMA7k8GttJvh7hI3POu'})"
                             class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span
                                 class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
@@ -436,7 +565,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             class="text-xs text-text-secondary-light ml-1">(3.1k)</span>
                     </div>
                     <div class="flex items-center justify-between mb-3"><span
-                            class="text-lg font-bold text-text-primary-light ">?54,999</span><button
+                            class="text-lg font-bold text-text-primary-light ">₹54,999</span><button
                             onclick="addToCart({id:'snapx-5g', title:'SnapX 5G Pro', price:54999, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuBoNvTmbpDl3xYLyHDXOgNocUClVgCDIg56BmIx1mLXhb9QR-kwh6EY3KcLuRxP_Zt9FFeC6q17_i-sttTTy7-IxK8eW5vh711_0Fu0xdaxPJGpZmPNBwiGQ_NtTo0J7pYOJR8MtCnR_rz9ZgNNJvDs1nMRYK5jqXO8juxZY398lCEvAjH8oa7PRG_vSTTiFVN2-aEbWrp-HEXG_T9GmM6l1e-Fy41eS2eOC9DonSgqY_7CKdPlhScZzRfcp4lfUOoAlTsYfMOKrBKB'})"
                             class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span
                                 class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
@@ -482,7 +611,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             class="text-xs text-text-secondary-light ml-1">(1.2k)</span>
                     </div>
                     <div class="flex items-center justify-between mb-3"><span
-                            class="text-lg font-bold text-text-primary-light ">?1,49,999</span><button
+                            class="text-lg font-bold text-text-primary-light ">₹1,49,999</span><button
                             onclick="addToCart({id:'aero-book-x1', title:'AeroBook X1 Ultra', price:149999, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuC8HkLH_OsrpLvu-bp8uPttjK3ozesEMQn8dEIpL5YukgAp4wU1bEcmw0Fv_xZY2R8cDLwTxUfjA0gPlCtxs8DCuKXLXtwruzxc4evYKI0YoDCmuiAWBMsk7Jclx0jc9qaq1beCCOnVFp0OJqUKteG7LJiNTyGu2Qw5CsOM6sdyReEVPItX-Idb3_izI6hcIS1_w-t7JuoyQKUKlviCzFwU8End3Rufk3MrRxD5ilZ4LSgWR8NrGXRfHY_1vA6wXqbpim0xnC_3vhx_'})"
                             class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span
                                 class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
@@ -529,7 +658,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             class="text-xs text-text-secondary-light ml-1">(674)</span>
                     </div>
                     <div class="flex items-center justify-between mb-3"><span
-                            class="text-lg font-bold text-text-primary-light ">?37,499</span><button
+                            class="text-lg font-bold text-text-primary-light ">₹37,499</span><button
                             onclick="addToCart({id:'desk-drone-v3', title:'SkyView Drone V3', price:37499, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuBwRMO7z2je82ZTm3hpu2eG6T1HmQgVQYrspH9xxeZpE-usWlmZQIka4hWuRh3VnZSS64UH8uyIYcmLUna5VsVWfGKyHbf8H2DMFDcT01_8BG5MfEnUNdXXj7gNaEyZmhwTGIAvi2z5hQLLc7M8C1DqmeVFGiWchCEClYpgHrkZDfvjsS9cXKwsHiZx4i6tQd3q2oSn8xHhJHkRd5dFOU7TTbXP2X09hs55cWz5ccMNGk7K4yx0mRsL9th9xZtJiJYNT0-5zpxf9r4t'})"
                             class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span
                                 class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
@@ -578,7 +707,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             class="text-xs text-text-secondary-light ml-1">(5.6k)</span>
                     </div>
                     <div class="flex items-center justify-between mb-3"><span
-                            class="text-lg font-bold text-text-primary-light ">?12,999</span><button
+                            class="text-lg font-bold text-text-primary-light ">₹12,999</span><button
                             onclick="addToCart({id:'hyper-earbuds', title:'HyperBuds X Pro', price:12999, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuC72_IR4svNMhKtT5sm8RaaDmpEGOpauk1kXFPvop4eVxZv73hFLRewhGgPXryPM_dLLa-HT5HBt63f8sP8o5IZA_s1iwEoel5BoVzziGzkM9ukhzIyp2DvLneMqxqAEdDdle3CoM_rNEwmSg5KKDqokrTt49Fbf1wqARuvFNim7Z45TA3qSqubIb15Y4hi5pKQlsjLqPXObsL2OdUso0LR18BkVj6Ryn_6PfiEQdJWrzW8mjRT77sipTGyaT7wTwNVaiVZDAfYYR1v'})"
                             class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span
                                 class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
@@ -625,7 +754,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             class="text-xs text-text-secondary-light ml-1">(2.1k)</span>
                     </div>
                     <div class="flex items-center justify-between mb-3"><span
-                            class="text-lg font-bold text-text-primary-light ">?1,04,999</span><button
+                            class="text-lg font-bold text-text-primary-light ">₹1,04,999</span><button
                             onclick="addToCart({id:'odyssey-ultrawide', title:'Odyssey UltraWide', price:104999, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuAYugVACfRanIulRggXALKX2RvjDqsGzgS4u5zoW6jlw--VXFgMggb5TZPegxIpVx9suOdfu1diIZS_zeJr6Jce9eEnzLQJhttR5ThNBKUeecFFbLJ990XQYQHLO3IKfBtEbw0cU-GBIlF7PFHzGIUVMXQn4YqcsAX2b2Gu4z0WSi5LWKUHNg7hmD4UquEO94HDte6wLTR4YiYjmv8ILoC6MP01D6SmoUdiv3gPkeD-ON-Tl3wKcvIViCG896ijlFZj5iJwKfnY1CdN'})"
                             class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span
                                 class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
@@ -672,7 +801,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             class="text-xs text-text-secondary-light ml-1">(4.2k)</span>
                     </div>
                     <div class="flex items-center justify-between mb-3"><span
-                            class="text-lg font-bold text-text-primary-light ">?8,499</span><button
+                            class="text-lg font-bold text-text-primary-light ">₹8,499</span><button
                             onclick="addToCart({id:'stealth-mouse', title:'Stealth Gaming Mouse', price:8499, image:'https://lh3.googleusercontent.com/aida-public/AEdXbcoTpHs82-J0yW0U7Lw0e_t9i6-xL3WdYvC_q0P3gZ-W0Tz3Z1P5V0_k6L7NnQw5Jq_r_1Cj6oMw3G_tX6F1-2B8T2P_qT3N5g8Hw2jZwO9rQw2M8J6s7t6T8R9L1N9Kj1G0W9b8-z7V0L7wY2J3Q6N0E3_p6YpQw6eE2K3-h5P4K0-u0B4-mJ8'})"
                             class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span
                                 class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
@@ -756,13 +885,27 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
             <div
                 class="border-t border-slate-100 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
-                <p class="text-xs font-medium text-slate-400 w-full text-center">Â© 2026 Buy it Inc. All rights reserved.</p>
+                <p class="text-xs font-medium text-slate-400 w-full text-center">© 2026 Buy it Inc. All rights reserved.</p>
                 <!-- Privacy and Terms links removed -->
             </div>
         </div>
     </footer>
     <script src="shop.js"></script>
     <script>
+        function formatRs(amount) {
+            const value = Number(amount || 0);
+            return new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                maximumFractionDigits: 0
+            }).format(value);
+        }
+
+        function calculateRegularPrice(salePrice) {
+            const value = Number(salePrice || 0);
+            return Math.round(value * 2.1451612903);
+        }
+
         function formatINR(amount) {
             const value = Number(amount || 0);
             return new Intl.NumberFormat('en-IN', {
@@ -776,9 +919,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const cards = scopeElement.querySelectorAll('#products-grid > div[data-price]');
             cards.forEach((card) => {
                 const price = Number(card.getAttribute('data-price') || 0);
+                const regularPrice = Number(card.getAttribute('data-regular-price') || calculateRegularPrice(price));
                 const priceText = card.querySelector('div.flex.items-center.justify-between.mb-3 > span');
                 if (priceText) {
-                    priceText.textContent = formatINR(price);
+                    priceText.className = 'flex flex-col leading-tight';
+                    priceText.innerHTML = `
+                        <span class="text-base font-black text-red-600">${formatRs(price)}</span>
+                        <span class="text-sm font-semibold text-slate-500 line-through">${formatRs(regularPrice)}</span>
+                    `;
                 }
             });
         }
@@ -864,6 +1012,96 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
+        function getCardSpecifications(product) {
+            if (Array.isArray(product?.specifications) && product.specifications.length > 0) {
+                return product.specifications.slice(0, 2);
+            }
+            const category = String(product?.category || '').toLowerCase();
+            if (category.includes('audio')) {
+                return ['Rich high-fidelity sound', 'Noise optimized performance'];
+            }
+            if (category.includes('laptop') || category.includes('computer') || category.includes('monitor')) {
+                return ['High-performance chipset', 'Premium display quality'];
+            }
+            if (category.includes('tablet') || category.includes('mobile')) {
+                return ['Smooth high refresh display', 'All-day battery backup'];
+            }
+            if (category.includes('wearable')) {
+                return ['Health and activity tracking', 'Long standby battery'];
+            }
+            return ['Top-tier build quality', 'Reliable everyday performance'];
+        }
+
+        function decorateProductCards(scopeElement = document) {
+            const cards = scopeElement.querySelectorAll('#products-grid > div');
+            cards.forEach((card) => {
+                const productId = resolveCardProductId(card);
+                if (!productId || typeof getProductById !== 'function') {
+                    return;
+                }
+
+                const product = getProductById(productId);
+                if (!product) {
+                    return;
+                }
+
+                const normalizedCategory = typeof window.BUYIT_NORMALIZE_CATEGORY === 'function'
+                    ? window.BUYIT_NORMALIZE_CATEGORY(product.category || '')
+                    : String(product.category || '').toLowerCase();
+
+                card.setAttribute('data-category', product.category || '');
+                card.setAttribute('data-category-normalized', normalizedCategory);
+
+                const categoryLabel = card.querySelector('.text-xs.font-medium.text-text-secondary-light.uppercase.tracking-wide.mb-1');
+                if (categoryLabel) {
+                    categoryLabel.textContent = product.category || 'General';
+                    categoryLabel.classList.add('hidden');
+                }
+
+                const titleAnchor = card.querySelector('a[href]');
+                if (titleAnchor) {
+                    const featureTags = card.querySelector('.flex.flex-wrap.gap-2.mb-3');
+                    if (featureTags) {
+                        featureTags.remove();
+                    }
+
+                    let stockBadge = card.querySelector('[data-stock-badge]');
+                    if (!stockBadge) {
+                        stockBadge = document.createElement('span');
+                        stockBadge.setAttribute('data-stock-badge', '1');
+                        stockBadge.className = 'inline-flex items-center rounded-md px-2 py-1 text-[11px] font-bold mb-3 w-fit';
+                        titleAnchor.insertAdjacentElement('afterend', stockBadge);
+                    }
+
+                    const inStock = product.inStock !== false;
+                    stockBadge.textContent = inStock ? 'In Stock' : 'Out of Stock';
+                    stockBadge.className = `inline-flex items-center rounded-md px-2 py-1 text-[11px] font-bold mb-3 w-fit ${inStock ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`;
+
+                    const specsList = card.querySelector('[data-product-specs]');
+                    if (specsList) {
+                        specsList.remove();
+                    }
+
+                    const buyNowButton = Array.from(card.querySelectorAll('button')).find((button) =>
+                        button.textContent.replace(/\s+/g, ' ').trim() === 'Buy Now'
+                    );
+                    const addToCartButton = Array.from(card.querySelectorAll('button')).find((button) => {
+                        const icon = button.querySelector('.material-symbols-outlined');
+                        return icon && icon.textContent.trim() === 'add_shopping_cart';
+                    });
+
+                    [buyNowButton, addToCartButton].forEach((button) => {
+                        if (!button) {
+                            return;
+                        }
+                        button.disabled = !inStock;
+                        button.classList.toggle('opacity-50', !inStock);
+                        button.classList.toggle('cursor-not-allowed', !inStock);
+                    });
+                }
+            });
+        }
+
         function bindProductCardActions(scopeElement = document) {
             const cards = scopeElement.querySelectorAll('#products-grid > div');
             cards.forEach((card) => {
@@ -882,6 +1120,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 const link = typeof getProductLink === 'function'
                     ? getProductLink(productId)
                     : `product-details.html?id=${encodeURIComponent(productId)}`;
+
+                if (product) {
+                    card.setAttribute('data-category', product.category || '');
+                    if (typeof window.BUYIT_NORMALIZE_CATEGORY === 'function') {
+                        card.setAttribute('data-category-normalized', window.BUYIT_NORMALIZE_CATEGORY(product.category || ''));
+                    }
+                }
 
                 const image = card.querySelector('img');
                 if (image) {
@@ -968,62 +1213,176 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.location.href = link;
                 });
             }
+
+            decorateProductCards(scopeElement);
         }
 
-        const extraProducts = [
-            { id: 'hologram-display', title: 'HoloView 3D Monitor', price: 84999, order: 13, category: 'Monitors', tags: ['Holographic', '4K'], stars: 5, reviews: '812', badge: '', img: 'https://lh3.googleusercontent.com/aida-public/AEdXbcoTpHs82-J0yW0U7Lw0e_t9i6-xL3WdYvC_q0P3gZ-W0Tz3Z1P5V0_k6L7NnQw5Jq_r_1Cj6oMw3G_tX6F1-2B8T2P_qT3N5g8Hw2jZwO9rQw2M8J6s7t6T8R9L1N9Kj1G0W9b8-z7V0L7wY2J3Q6N0E3_p6YpQw6eE2K3-h5P4K0-u0B4-mJ8' },
-            { id: 'smart-ring-g2', title: 'Aura Smart Ring Gen 2', price: 18499, order: 14, category: 'Wearables', tags: ['HRV', 'Sleep tracking'], stars: 4, reviews: '2.4k', badge: '', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAYugVACfRanIulRggXALKX2RvjDqsGzgS4u5zoW6jlw--VXFgMggb5TZPegxIpVx9suOdfu1diIZS_zeJr6Jce9eEnzLQJhttR5ThNBKUeecFFbLJ990XQYQHLO3IKfBtEbw0cU-GBIlF7PFHzGIUVMXQn4YqcsAX2b2Gu4z0WSi5LWKUHNg7hmD4UquEO94HDte6wLTR4YiYjmv8ILoC6MP01D6SmoUdiv3gPkeD-ON-Tl3wKcvIViCG896ijlFZj5iJwKfnY1CdN' },
-            { id: 'mech-keyboard', title: 'Pro Keys Wireless Mech', price: 15999, order: 15, category: 'Accessories', tags: ['Hot-swappable', 'RGB'], stars: 5, reviews: '4.8k', badge: '', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBwRMO7z2je82ZTm3hpu2eG6T1HmQgVQYrspH9xxeZpE-usWlmZQIka4hWuRh3VnZSS64UH8uyIYcmLUna5VsVWfGKyHbf8H2DMFDcT01_8BG5MfEnUNdXXj7gNaEyZmhwTGIAvi2z5hQLLc7M8C1DqmeVFGiWchCEClYpgHrkZDfvjsS9cXKwsHiZx4i6tQd3q2oSn8xHhJHkRd5dFOU7TTbXP2X09hs55cWz5ccMNGk7K4yx0mRsL9th9xZtJiJYNT0-5zpxf9r4t' },
-            { id: 'streaming-mic', title: 'StudioCast Condenser', price: 11499, order: 16, category: 'Audio', tags: ['USB-C', 'Podcast'], stars: 4, reviews: '956', badge: '', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC72_IR4svNMhKtT5sm8RaaDmpEGOpauk1kXFPvop4eVxZv73hFLRewhGgPXryPM_dLLa-HT5HBt63f8sP8o5IZA_s1iwEoel5BoVzziGzkM9ukhzIyp2DvLneMqxqAEdDdle3CoM_rNEwmSg5KKDqokrTt49Fbf1wqARuvFNim7Z45TA3qSqubIb15Y4hi5pKQlsjLqPXObsL2OdUso0LR18BkVj6Ryn_6PfiEQdJWrzW8mjRT77sipTGyaT7wTwNVaiVZDAfYYR1v' },
-        ];
-        let loaded = false;
+        const PRODUCT_CARD_BATCH_SIZE = 12;
+        let catalogProductsForGrid = [];
+        let renderedProductCount = 0;
 
-        function loadMoreProducts() {
-            if (loaded) return;
-            const btn = document.getElementById('load-more-btn');
-            btn.disabled = true;
-            btn.innerHTML = '<span class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span> Loading...';
+        function escapeHtml(value) {
+            return String(value || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
 
-            setTimeout(() => {
-                const grid = document.getElementById('products-grid');
-                extraProducts.forEach(p => {
-                    const stars = Array.from({ length: 5 }, (_, i) =>
-                        `<span class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span>`
-                    ).join('');
-                    const badge = p.badge ? `<span class="absolute top-3 left-3 bg-primary text-white text-[10px] font-bold px-2 py-1 rounded uppercase">${p.badge}</span>` : '';
-                    const card = document.createElement('div');
-                    card.setAttribute('data-price', p.price);
-                    card.setAttribute('data-order', p.order);
-                    card.className = 'group bg-surface-light rounded-xl border border-border-light overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 flex flex-col';
-                    card.innerHTML = `
-                        <div class="relative aspect-[4/3] bg-white overflow-hidden p-8 flex items-center justify-center">
-                            <img alt="${p.title}" class="w-auto h-full max-h-[90%] object-contain group-hover:scale-105 transition-transform duration-500 cursor-pointer" src="${p.img}" onclick="window.location.href='${getProductLink(p.id)}'" />
-                            <button data-wishlist-id="${p.id}" onclick="addToWishlist({id:'${p.id}',title:'${p.title}',price:${p.price},image:'${p.img}'})" class="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full text-text-secondary-light hover:text-red-500 transition-colors"><span class="material-symbols-outlined text-[20px]">favorite</span></button>
-                            ${badge}
-                        </div>
-                        <div class="p-4 flex-1 flex flex-col">
-                            <div class="text-xs font-medium text-text-secondary-light uppercase tracking-wide mb-1">${p.category}</div>
-                            <a href="${getProductLink(p.id)}" class="hover:text-primary block"><h3 class="text-base font-semibold text-text-primary-light mb-2 truncate">${p.title}</h3></a>
-                            <div class="flex flex-wrap gap-2 mb-3">${p.tags.map(t => `<span class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">${t}</span>`).join('')}</div>
-                            <div class="flex items-center gap-1 mb-3 mt-auto">${stars}<span class="text-xs text-text-secondary-light ml-1">(${p.reviews})</span></div>
-                            <div class="flex items-center justify-between mb-3"><span class="text-lg font-bold text-text-primary-light ">${formatINR(p.price)}</span><button onclick="addToCart({id:'${p.id}',title:'${p.title}',price:${p.price},image:'${p.img}'})" class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
-                            <button onclick="buyNow({id:'${p.id}',title:'${p.title}',price:${p.price},image:'${p.img}'})" class="w-full py-2 rounded-lg border-2 border-primary text-primary font-semibold text-sm hover:bg-primary hover:text-white transition-colors cursor-pointer">Buy Now</button>
-                        </div>`;
-                    grid.appendChild(card);
+        function getCatalogGridProducts() {
+            if (!window.BUYIT_PRODUCT_CATALOG) {
+                return [];
+            }
+
+            const preferredOrder = [
+                'elite-tab-pro',
+                'titan-sport-v2',
+                'nextgen-console-x',
+                'apex-rtx-4080',
+                'studio-pro-anc',
+                'alpha-vii-mirrorless',
+                'snapx-5g',
+                'aero-book-x1',
+                'desk-drone-v3',
+                'hyper-earbuds',
+                'odyssey-ultrawide',
+                'stealth-mouse',
+                'hologram-display',
+                'smart-ring-g2',
+                'mech-keyboard',
+                'streaming-mic'
+            ];
+
+            const orderMap = new Map(preferredOrder.map((id, index) => [id, index + 1]));
+            const products = Object.values(window.BUYIT_PRODUCT_CATALOG)
+                .filter((product) => product && product.id && product.title)
+                .sort((a, b) => {
+                    const aOrder = orderMap.get(a.id) || Number.MAX_SAFE_INTEGER;
+                    const bOrder = orderMap.get(b.id) || Number.MAX_SAFE_INTEGER;
+                    if (aOrder !== bOrder) {
+                        return aOrder - bOrder;
+                    }
+                    return String(a.title).localeCompare(String(b.title));
                 });
-                loaded = true;
-                btn.innerHTML = '<span class="material-symbols-outlined text-[20px]">check_circle</span> All Products Loaded';
-                btn.className = btn.className.replace('bg-primary hover:bg-primary/90', 'bg-slate-400 cursor-default');
-                applyProductRouting();
-                bindProductCardActions();
-                normalizeProductPrices();
-            }, 800);
+
+            return products.map((product, index) => ({
+                id: product.id,
+                title: product.title,
+                price: Number(product.price || 0),
+                category: product.category || 'General',
+                tags: getCardSpecifications(product).slice(0, 2),
+                reviews: '1.2k',
+                img: product.image || 'buyit-logo.png',
+                order: index + 1
+            }));
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        function createProductCardElement(product) {
+            const safeTitle = escapeHtml(product.title);
+            const safeCategory = escapeHtml(product.category);
+            const safeReviews = escapeHtml(product.reviews);
+            const tags = (Array.isArray(product.tags) ? product.tags : []).slice(0, 2);
+            const tagsHtml = tags.map((tag) => `<span class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">${escapeHtml(tag)}</span>`).join('');
+            const stars = Array.from({ length: 4 }, () => '<span class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span>').join('')
+                + '<span class="material-symbols-outlined text-yellow-400 text-[14px] star-half-filled">star_half</span>';
+
+            const card = document.createElement('div');
+            card.setAttribute('data-price', String(product.price));
+            card.setAttribute('data-regular-price', String(calculateRegularPrice(product.price)));
+            card.setAttribute('data-order', String(product.order));
+            card.setAttribute('data-product-id', product.id);
+            card.setAttribute('data-category', product.category || '');
+            card.className = 'group bg-surface-light rounded-xl border border-border-light overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 flex flex-col';
+            card.innerHTML = `
+                <div class="relative aspect-[4/3] bg-white overflow-hidden p-8 flex items-center justify-center">
+                    <img alt="${safeTitle}" class="w-auto h-full max-h-[90%] object-contain group-hover:scale-105 transition-transform duration-500 cursor-pointer" src="${escapeHtml(product.img)}" />
+                    <button data-wishlist-id="${product.id}" class="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full text-text-secondary-light hover:text-red-500 transition-colors"><span class="material-symbols-outlined text-[20px]">favorite</span></button>
+                </div>
+                <div class="p-4 flex-1 flex flex-col">
+                    <div class="text-xs font-medium text-text-secondary-light uppercase tracking-wide mb-1">${safeCategory}</div>
+                    <a href="#" class="hover:text-primary block"><h3 class="text-base font-semibold text-text-primary-light mb-2 truncate">${safeTitle}</h3></a>
+                    <div class="flex flex-wrap gap-2 mb-3">${tagsHtml}</div>
+                    <div class="flex items-center gap-1 mb-3 mt-auto">${stars}<span class="text-xs text-text-secondary-light ml-1">(${safeReviews})</span></div>
+                    <div class="flex items-center justify-between mb-3"><span class="text-lg font-bold text-text-primary-light ">${formatRs(product.price)}</span><button class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
+                    <button class="w-full py-2 rounded-lg border-2 border-primary text-primary font-semibold text-sm hover:bg-primary hover:text-white transition-colors cursor-pointer">Buy Now</button>
+                </div>`;
+            return card;
+        }
+
+        function syncLoadMoreButton() {
+            const btn = document.getElementById('load-more-btn');
+            if (!btn) {
+                return;
+            }
+
+            const allLoaded = renderedProductCount >= catalogProductsForGrid.length;
+            if (allLoaded) {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="material-symbols-outlined text-[20px]">check_circle</span> All Products Loaded';
+                if (!btn.className.includes('bg-slate-400')) {
+                    btn.className = btn.className.replace('bg-primary hover:bg-primary/90', 'bg-slate-400 cursor-default');
+                }
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = '<span class="material-symbols-outlined text-[20px]">expand_more</span> Load More Products';
+                if (!btn.className.includes('bg-primary')) {
+                    btn.className = btn.className.replace('bg-slate-400 cursor-default', 'bg-primary hover:bg-primary/90');
+                }
+            }
+        }
+
+        function renderNextProductBatch(batchSize = PRODUCT_CARD_BATCH_SIZE) {
+            const grid = document.getElementById('products-grid');
+            if (!grid) {
+                return;
+            }
+
+            const nextItems = catalogProductsForGrid.slice(renderedProductCount, renderedProductCount + batchSize);
+            nextItems.forEach((product) => {
+                grid.appendChild(createProductCardElement(product));
+            });
+            renderedProductCount += nextItems.length;
+
             applyProductRouting();
             bindProductCardActions();
             normalizeProductPrices();
+            if (typeof window.BUYIT_APPLY_CATEGORY_FILTER === 'function') {
+                window.BUYIT_APPLY_CATEGORY_FILTER();
+            }
+            syncLoadMoreButton();
+        }
+
+        function initializeCatalogDrivenGrid() {
+            const grid = document.getElementById('products-grid');
+            if (!grid) {
+                return;
+            }
+            catalogProductsForGrid = getCatalogGridProducts();
+            renderedProductCount = 0;
+            grid.innerHTML = '';
+            renderNextProductBatch(PRODUCT_CARD_BATCH_SIZE);
+        }
+
+        function loadMoreProducts() {
+            if (renderedProductCount >= catalogProductsForGrid.length) {
+                syncLoadMoreButton();
+                return;
+            }
+
+            const btn = document.getElementById('load-more-btn');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span> Loading...';
+            }
+
+            setTimeout(() => {
+                renderNextProductBatch(PRODUCT_CARD_BATCH_SIZE);
+            }, 500);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeCatalogDrivenGrid();
         });
     </script>
 </body>

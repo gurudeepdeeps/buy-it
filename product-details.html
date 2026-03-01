@@ -143,28 +143,19 @@
             </div>
             <div class="flex flex-col">
                 <div class="mb-6">
-                    <div class="flex items-center gap-3 mb-3">
-                        <span class="text-primary font-bold text-xs tracking-widest uppercase">Zenith Computing</span>
+                    <div class="flex items-center mb-3">
+                        <span id="product-stock-badge" class="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-green-100 text-green-700 uppercase tracking-wide">In Stock</span>
                     </div>
                     <h1
                         class="text-4xl md:text-5xl font-black text-text-main mb-6 tracking-tight leading-none">
                         Zenith X1 Carbon <span class="text-primary">Ultra</span></h1>
                     <div class="flex items-center gap-4 mb-8">
                         <div class="flex flex-col">
-                            <p class="text-4xl font-black text-primary">₹2,07,417</p>
-                        </div>
-                        <div class="h-10 w-px bg-border-light mx-2"></div>
-                        <div class="flex flex-col">
-                            <span
-                                class="text-xs font-bold px-2.5 py-1 bg-green-100 text-green-700 rounded-lg inline-block w-fit">In
-                                Stock</span>
+                            <p id="product-sale-price" class="text-4xl font-black text-red-600">₹186</p>
+                            <p id="product-regular-price" class="text-base font-semibold text-slate-500 line-through">₹399</p>
                         </div>
                     </div>
-                    <p class="text-text-secondary leading-relaxed mb-8 text-lg font-medium">
-                        The ultimate creator's machine. Unibody aluminum chassis housing the powerful M4 Ultra chip,
-                        featuring a stunning 16-inch Mini-LED display and all-day battery life for uncompromising
-                        performance.
-                    </p>
+                    <p class="text-sm text-text-secondary mb-6">Category: <a id="product-category-link" href="products.html?category=laptops" class="font-semibold text-primary hover:underline">Laptops</a></p>
                 </div>
                 <div class="space-y-8">
                     <div class="flex flex-col gap-4 pt-4 sticky bottom-6 z-10 lg:static">
@@ -184,15 +175,16 @@
                                     <span class="material-symbols-outlined text-[20px]">add</span>
                                 </button>
                             </div>
+                            <button onclick="window.location.href='checkout.html'"
+                                class="flex-[2] h-14 bg-primary hover:bg-blue-700 text-white font-bold rounded-2xl transition-all shadow-xl shadow-primary/30 flex items-center justify-center gap-2 transform active:scale-95">
+                                <span class="material-symbols-outlined text-[22px]">bolt</span>
+                                Buy Now
+                            </button>
                             <button
                                 onclick="addToCart({ id: 'zenith-x1-ultra', title: 'Zenith X1 Carbon Ultra', price: 207417, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDvcZLPrU-hLvrkRaN840CcHQZef_ijXdIDgCsmgDd6jI3DgGbcW6yIZp2pTw0Aw14vC4kLRaZHSWLMXG3wXrelh5thka19QRl4irHSwAGOC34vnlzUG0FobitA8DUUhCHSP07LYxCu96feqcW05uOtSlio_fH9rYk7InFlDIvKnr6Cey7uaURMKLGFYLUVuKtVj3Y8ohLLJYIrXJqQ5MHiA7DEQEK1LgS3gI3geUy_SVdu_hl9uKQWJiV1EnMbDYxkHkIUMlXdrknW', quantity: parseInt(document.getElementById('product-qty').value) })"
-                                class="flex-[2] h-14 bg-primary hover:bg-blue-700 text-white font-bold rounded-2xl transition-all shadow-xl shadow-primary/30 flex items-center justify-center gap-2 transform active:scale-95">
+                                class="flex-1 h-14 bg-white border-2 border-primary text-primary font-bold rounded-2xl hover:bg-primary/5 transition-all flex items-center justify-center gap-2 shadow-sm">
                                 <span class="material-symbols-outlined text-[24px]">shopping_cart</span>
                                 Add to Cart
-                            </button>
-                            <button onclick="window.location.href='checkout.html'"
-                                class="flex-1 h-14 bg-white border-2 border-primary text-primary font-bold rounded-2xl hover:bg-primary/5 transition-all flex items-center justify-center gap-2 shadow-sm">
-                                Buy Now
                             </button>
                         </div>
                         <div class="flex gap-3">
@@ -233,7 +225,7 @@
                         <h3 class="text-2xl font-black text-text-main ">Product Specifications</h3>
                     </div>
                     <div class="bg-white rounded-3xl border border-border-light overflow-hidden shadow-sm p-8">
-                        <ul class="space-y-4 text-sm text-text-main font-medium list-disc pl-5">
+                        <ul id="product-spec-list" class="space-y-4 text-sm text-text-main font-medium list-disc pl-5">
                             <li>Powerful multi-core processor tuned for fast performance and smooth multitasking.</li>
                             <li>High-resolution display with rich colors and clear details for work and entertainment.</li>
                             <li>Long battery backup designed for all-day productivity and media usage.</li>
@@ -326,7 +318,7 @@
             </div>
             <div
                 class="border-t border-slate-100 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
-                    <p class="text-xs font-medium text-slate-400 w-full text-center">Â© 2026 Buy it Inc. All rights reserved.</p>
+                    <p class="text-xs font-medium text-slate-400 w-full text-center">© 2026 Buy it Inc. All rights reserved.</p>
                 <div class="flex gap-8 text-xs font-bold text-slate-400 uppercase tracking-widest">
                 </div>
             </div>
@@ -340,6 +332,12 @@
                 currency: 'INR',
                 maximumFractionDigits: 0
             }).format(Number(amount || 0));
+            const formatRs = (amount) => new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                maximumFractionDigits: 0
+            }).format(Number(amount || 0));
+            const calculateRegularPrice = (salePrice) => Math.round(Number(salePrice || 0) * 2.1451612903);
 
             const query = new URLSearchParams(window.location.search);
             let requestedId = query.get('id');
@@ -366,6 +364,38 @@
                 return;
             }
 
+            const categoryMap = {
+                smartphones: 'smartphones',
+                smartphone: 'smartphones',
+                phones: 'smartphones',
+                phone: 'smartphones',
+                mobile: 'smartphones',
+                mobiles: 'smartphones',
+                laptops: 'laptops',
+                laptop: 'laptops',
+                computers: 'laptops',
+                computer: 'laptops',
+                monitors: 'laptops',
+                monitor: 'laptops',
+                tablets: 'tablets',
+                tablet: 'tablets',
+                computing: 'tablets',
+                audio: 'audio',
+                'smart home': 'audio',
+                smarthome: 'audio',
+                wearables: 'wearables',
+                wearable: 'wearables',
+                accessories: 'accessories',
+                accessory: 'accessories',
+                components: 'accessories',
+                component: 'accessories'
+            };
+
+            const normalizeCategory = (value) => {
+                const cleaned = String(value || '').trim().toLowerCase();
+                return categoryMap[cleaned] || cleaned;
+            };
+
             sessionStorage.setItem('buyit_last_product_id', product.id);
 
             document.title = `Buy it - ${product.title}`;
@@ -383,9 +413,18 @@
                 }
             }
 
-            const brandElement = document.querySelector('span.text-primary.font-bold.text-xs.tracking-widest.uppercase');
-            if (brandElement) {
-                brandElement.textContent = product.brand || 'Buy it';
+            const categoryLink = document.getElementById('product-category-link');
+            if (categoryLink) {
+                const normalizedCategory = normalizeCategory(product.category || '');
+                categoryLink.textContent = product.category || 'General';
+                categoryLink.setAttribute('href', `products.html?category=${encodeURIComponent(normalizedCategory || 'all')}`);
+            }
+
+            const stockBadge = document.getElementById('product-stock-badge');
+            const inStock = product.inStock !== false;
+            if (stockBadge) {
+                stockBadge.textContent = inStock ? 'In Stock' : 'Out of Stock';
+                stockBadge.className = `text-[11px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wide ${inStock ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`;
             }
 
             const titleElement = document.querySelector('h1.text-4xl.md\\:text-5xl.font-black.text-text-main');
@@ -393,14 +432,24 @@
                 titleElement.textContent = product.title;
             }
 
-            const priceElement = document.querySelector('p.text-4xl.font-black.text-primary');
-            if (priceElement) {
-                priceElement.textContent = formatINR(product.price || 0);
+            const salePriceElement = document.getElementById('product-sale-price');
+            if (salePriceElement) {
+                salePriceElement.textContent = formatRs(product.price || 0);
             }
 
-            const descriptionElement = document.querySelector('p.text-text-secondary.leading-relaxed.mb-8.text-lg.font-medium');
-            if (descriptionElement) {
-                descriptionElement.textContent = product.description || 'Premium product with top-tier quality and performance.';
+            const regularPriceElement = document.getElementById('product-regular-price');
+            if (regularPriceElement) {
+                regularPriceElement.textContent = formatRs(product.regularPrice || calculateRegularPrice(product.price || 0));
+            }
+
+            const specListElement = document.getElementById('product-spec-list');
+            if (specListElement) {
+                const specifications = Array.isArray(product.specifications) && product.specifications.length > 0
+                    ? product.specifications
+                    : ['Specifications will be updated soon.'];
+                specListElement.innerHTML = specifications
+                    .map((spec) => `<li>${spec}</li>`)
+                    .join('');
             }
 
             const defaultGalleryImages = [
@@ -549,6 +598,9 @@
             const addToCartButton = normalizedButtons.find((entry) => entry.label === 'Add to Cart');
             if (addToCartButton) {
                 addToCartButton.button.onclick = () => {
+                    if (!inStock) {
+                        return;
+                    }
                     const quantityInput = document.getElementById('product-qty');
                     const quantity = quantityInput ? parseInt(quantityInput.value, 10) || 1 : 1;
                     addToCart({
@@ -564,6 +616,9 @@
             const buyNowButton = normalizedButtons.find((entry) => entry.label === 'Buy Now');
             if (buyNowButton) {
                 buyNowButton.button.onclick = () => {
+                    if (!inStock) {
+                        return;
+                    }
                     buyNow({
                         id: product.id,
                         title: product.title,
@@ -571,6 +626,15 @@
                         image: product.image
                     });
                 };
+                buyNowButton.button.disabled = !inStock;
+                buyNowButton.button.classList.toggle('opacity-50', !inStock);
+                buyNowButton.button.classList.toggle('cursor-not-allowed', !inStock);
+            }
+
+            if (addToCartButton) {
+                addToCartButton.button.disabled = !inStock;
+                addToCartButton.button.classList.toggle('opacity-50', !inStock);
+                addToCartButton.button.classList.toggle('cursor-not-allowed', !inStock);
             }
 
             const addToWishlistButton = normalizedButtons.find((entry) => entry.label === 'Add to Wishlist');

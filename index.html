@@ -190,27 +190,27 @@
                         <p class="text-slate-500 mt-2">Find the perfect device for your needs</p>
                     </div>
                     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
-                        <a href="products.html?category=smartphones" class="flex flex-col items-center bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-slate-100 group">
+                        <a href="products.html?category=smartphones" data-category-link="smartphones" class="flex flex-col items-center bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-slate-100 group">
                             <span class="material-symbols-outlined text-[40px] text-primary mb-2 group-hover:scale-110 transition-transform">smartphone</span>
                             <span class="font-semibold text-slate-800">Smartphones</span>
                         </a>
-                        <a href="products.html?category=laptops" class="flex flex-col items-center bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-slate-100 group">
+                        <a href="products.html?category=laptops" data-category-link="laptops" class="flex flex-col items-center bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-slate-100 group">
                             <span class="material-symbols-outlined text-[40px] text-primary mb-2 group-hover:scale-110 transition-transform">laptop</span>
                             <span class="font-semibold text-slate-800">Laptops</span>
                         </a>
-                        <a href="products.html?category=tablets" class="flex flex-col items-center bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-slate-100 group">
+                        <a href="products.html?category=tablets" data-category-link="tablets" class="flex flex-col items-center bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-slate-100 group">
                             <span class="material-symbols-outlined text-[40px] text-primary mb-2 group-hover:scale-110 transition-transform">tablet_mac</span>
                             <span class="font-semibold text-slate-800">Tablets</span>
                         </a>
-                        <a href="products.html?category=audio" class="flex flex-col items-center bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-slate-100 group">
+                        <a href="products.html?category=audio" data-category-link="audio" class="flex flex-col items-center bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-slate-100 group">
                             <span class="material-symbols-outlined text-[40px] text-primary mb-2 group-hover:scale-110 transition-transform">headphones</span>
                             <span class="font-semibold text-slate-800">Audio</span>
                         </a>
-                        <a href="products.html?category=wearables" class="flex flex-col items-center bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-slate-100 group">
+                        <a href="products.html?category=wearables" data-category-link="wearables" class="flex flex-col items-center bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-slate-100 group">
                             <span class="material-symbols-outlined text-[40px] text-primary mb-2 group-hover:scale-110 transition-transform">watch</span>
                             <span class="font-semibold text-slate-800">Wearables</span>
                         </a>
-                        <a href="products.html?category=accessories" class="flex flex-col items-center bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-slate-100 group">
+                        <a href="products.html?category=accessories" data-category-link="accessories" class="flex flex-col items-center bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-slate-100 group">
                             <span class="material-symbols-outlined text-[40px] text-primary mb-2 group-hover:scale-110 transition-transform">cable</span>
                             <span class="font-semibold text-slate-800">Accessories</span>
                         </a>
@@ -283,12 +283,23 @@
             </div>
             <div
                 class="border-t border-slate-100 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
-                <p class="text-xs font-medium text-slate-400 w-full text-center">Â© 2026 Buy it Inc. All rights reserved.</p>
+                <p class="text-xs font-medium text-slate-400 w-full text-center">© 2026 Buy it Inc. All rights reserved.</p>
                 <!-- Privacy and Terms links removed -->
             </div>
         </div>
     </footer>
     <script src="shop.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-category-link]').forEach((link) => {
+                link.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    const category = link.getAttribute('data-category-link') || '';
+                    window.location.href = `products.html?category=${encodeURIComponent(category)}`;
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

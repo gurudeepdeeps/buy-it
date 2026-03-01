@@ -112,7 +112,6 @@
                                     <div id="order-items-list"></div>
                                     <div class="flex flex-col gap-1 mt-4">
                                         <div>Subtotal: <span id="order-subtotal"></span></div>
-                                        <div>Tax: <span id="order-tax"></span></div>
                                         <div>Shipping: <span id="order-shipping"></span></div>
                                         <div class="font-bold">Total: <span id="order-total"></span></div>
                                     </div>
@@ -253,7 +252,7 @@
             </div>
             <div
                 class="border-t border-slate-100 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
-                    <p class="text-xs font-medium text-slate-400 w-full text-center">Â© 2026 Buy it Inc. All rights reserved.</p>
+                    <p class="text-xs font-medium text-slate-400 w-full text-center">© 2026 Buy it Inc. All rights reserved.</p>
                 <div class="flex gap-8 text-xs font-bold text-slate-400 uppercase tracking-widest">
                 </div>
             </div>
@@ -263,7 +262,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const SHIPPING = 1245;
-            const TAX_RATE = 0.18;
             const fmt = n => typeof window.formatINR === 'function'
                 ? window.formatINR(n)
                 : new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(Number(n || 0));
@@ -281,7 +279,6 @@
             const list = document.getElementById('order-items-list');
             const countEl = document.getElementById('order-item-count');
             const subtotalEl = document.getElementById('order-subtotal');
-            const taxEl = document.getElementById('order-tax');
             const totalEl = document.getElementById('order-total');
             const shippingEl = document.getElementById('order-shipping');
 
@@ -292,7 +289,6 @@
             if (items.length === 0) {
                 list.innerHTML = '<p class="text-sm text-text-sub-light text-center py-4">Your order is empty.</p>';
                 subtotalEl.textContent = fmt(0);
-                taxEl.textContent = fmt(0);
                 totalEl.textContent = fmt(SHIPPING);
                 countEl.textContent = '0 Items';
                 return;
@@ -322,13 +318,11 @@
             </div>`;
             });
 
-            const tax = subtotal * TAX_RATE;
-            const total = subtotal + tax + SHIPPING;
+            const total = subtotal + SHIPPING;
             const totalQty = items.reduce((s, i) => s + Math.max(1, Number(i.quantity || 1)), 0);
 
             countEl.textContent = totalQty + (totalQty === 1 ? ' Item' : ' Items');
             subtotalEl.textContent = fmt(subtotal);
-            taxEl.textContent = fmt(tax);
             totalEl.textContent = fmt(total);
         });
     </script>
