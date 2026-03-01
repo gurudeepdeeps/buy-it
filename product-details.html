@@ -341,27 +341,64 @@
 
             const query = new URLSearchParams(window.location.search);
             let requestedId = query.get('id');
-            if (!requestedId) {
-                const lastProductId = sessionStorage.getItem('buyit_last_product_id');
-                if (lastProductId && getProductById(lastProductId)) {
-                    requestedId = lastProductId;
-                    const normalized = `product-details.html?id=${encodeURIComponent(requestedId)}`;
-                    if (!window.location.href.includes('?id=')) {
-                        window.history.replaceState(null, '', normalized);
-                    }
+            const requestedTitle = String(query.get('title') || '').trim();
+
+            const normalizeSlug = (value) => String(value || '')
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+
+            const findProductByTitle = (titleValue) => {
+                const normalizedTitle = String(titleValue || '').trim().toLowerCase();
+                if (!normalizedTitle || !window.BUYIT_PRODUCT_CATALOG) {
+                    return null;
+                }
+
+                const exact = Object.values(window.BUYIT_PRODUCT_CATALOG).find((catalogItem) =>
+                    String(catalogItem?.title || '').trim().toLowerCase() === normalizedTitle
+                );
+                if (exact) {
+                    return exact;
+                }
+
+                const slug = normalizeSlug(normalizedTitle);
+                return Object.values(window.BUYIT_PRODUCT_CATALOG).find((catalogItem) => {
+                    const itemTitleSlug = normalizeSlug(catalogItem?.title);
+                    const itemIdSlug = normalizeSlug(catalogItem?.id);
+                    return itemTitleSlug === slug || itemIdSlug === slug;
+                }) || null;
+            };
+
+            let product = null;
+
+            if (requestedTitle) {
+                const byTitle = findProductByTitle(requestedTitle);
+                if (byTitle) {
+                    product = byTitle;
+                    requestedId = byTitle.id;
                 }
             }
 
-            if (!requestedId) {
-                window.location.href = 'products.html';
-                return;
+            if (!product && requestedId) {
+                product = getProductById(requestedId);
             }
 
-            const product = getProductById(requestedId);
+            if (!product) {
+                const lastProductId = sessionStorage.getItem('buyit_last_product_id');
+                if (lastProductId && getProductById(lastProductId)) {
+                    requestedId = lastProductId;
+                    product = getProductById(lastProductId);
+                }
+            }
 
             if (!product) {
                 window.location.href = 'products.html';
                 return;
+            }
+
+            const normalized = `product-details.html?id=${encodeURIComponent(product.id)}&title=${encodeURIComponent(product.title)}`;
+            if (window.location.search !== `?id=${encodeURIComponent(product.id)}&title=${encodeURIComponent(product.title)}`) {
+                window.history.replaceState(null, '', normalized);
             }
 
             const categoryMap = {

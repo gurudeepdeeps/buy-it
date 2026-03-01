@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Buy it</title>
-    <link rel="icon" href="buyit-logo.png" type="image/png">
+    <link rel="icon" href="buyit-logo-tansperant.png" type="image/png">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
@@ -215,11 +215,146 @@
     document.addEventListener('DOMContentLoaded', function() {
         const wishlistGrid = document.getElementById('wishlist-grid');
         const wishlistEmpty = document.getElementById('wishlist-empty');
-        let wishlist = JSON.parse(localStorage.getItem('buyit_wishlist')) || [];
+        const readWishlist = () => JSON.parse(localStorage.getItem('buyit_wishlist')) || [];
         const formatINRLocal = (value) => typeof window.formatINR === 'function'
             ? window.formatINR(value)
             : new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(Number(value || 0));
+        const calculateRegularPrice = (price) => Math.round(Number(price || 0) * 2.1451612903);
+        const escapeHtml = (value) => String(value || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+
+        function buildProductDetailsLink(productId, title) {
+            const params = new URLSearchParams();
+            if (productId) {
+                params.set('id', productId);
+            }
+            if (title) {
+                params.set('title', title);
+            }
+            const query = params.toString();
+            return query ? `product-details.html?${query}` : 'product-details.html';
+        }
+
+        function resolveCatalogProduct(item) {
+            if (!item) {
+                return null;
+            }
+
+            const title = String(item.title || '').trim().toLowerCase();
+            const hasCatalog = !!window.BUYIT_PRODUCT_CATALOG;
+
+            if (title && hasCatalog) {
+                const exactMatch = Object.values(window.BUYIT_PRODUCT_CATALOG).find((product) =>
+                    String(product?.title || '').trim().toLowerCase() === title
+                );
+                if (exactMatch) {
+                    return exactMatch;
+                }
+            }
+
+            const byId = typeof getProductById === 'function' ? getProductById(item.id) : null;
+            if (byId) {
+                return byId;
+            }
+
+            const normalizeImageKey = (value) => {
+                const raw = String(value || '').trim().toLowerCase();
+                if (!raw) {
+                    return '';
+                }
+                const withoutQuery = raw.split('?')[0].split('#')[0];
+                const normalizedSlashes = withoutQuery.replace(/\\/g, '/');
+                const parts = normalizedSlashes.split('/').filter(Boolean);
+                const file = parts[parts.length - 1] || '';
+                return file;
+            };
+
+            const itemImageKey = normalizeImageKey(item.image);
+            if (itemImageKey && window.BUYIT_PRODUCT_CATALOG) {
+                const byImage = Object.values(window.BUYIT_PRODUCT_CATALOG).find((product) => {
+                    const productImageKey = normalizeImageKey(product?.image || product?.localImage || '');
+                    return productImageKey && productImageKey === itemImageKey;
+                });
+                if (byImage) {
+                    return byImage;
+                }
+            }
+
+            if (!hasCatalog) {
+                return null;
+            }
+
+            const normalizeSlug = (value) => String(value || '')
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+
+            const titleSlug = normalizeSlug(item.title);
+            const idSlug = normalizeSlug(item.id);
+
+            return Object.values(window.BUYIT_PRODUCT_CATALOG).find((product) => {
+                const productTitleSlug = normalizeSlug(product?.title);
+                const productIdSlug = normalizeSlug(product?.id);
+
+                if (idSlug && (productIdSlug === idSlug || productTitleSlug === idSlug)) {
+                    return true;
+                }
+                if (titleSlug && (productTitleSlug === titleSlug || productIdSlug === titleSlug)) {
+                    return true;
+                }
+                return false;
+            }) || null;
+        }
+
+        function migrateWishlistStorage() {
+            const migrationVersion = 'wishlist_migration_v2';
+            if (localStorage.getItem(migrationVersion) === 'done') {
+                return;
+            }
+
+            const wishlist = readWishlist();
+            if (!Array.isArray(wishlist) || wishlist.length === 0) {
+                localStorage.setItem(migrationVersion, 'done');
+                return;
+            }
+
+            const migratedMap = new Map();
+            let hasChanges = false;
+            wishlist.forEach((item) => {
+                const catalogProduct = resolveCatalogProduct(item);
+                const resolvedId = catalogProduct?.id || item.id;
+                if (!resolvedId) {
+                    return;
+                }
+
+                if (resolvedId !== item.id) {
+                    hasChanges = true;
+                }
+
+                migratedMap.set(resolvedId, {
+                    ...item,
+                    id: resolvedId,
+                    title: item.title || catalogProduct?.title || 'Product',
+                    image: catalogProduct?.image || item.image || 'buyit-logo.png',
+                    price: Number(catalogProduct?.price ?? item.price ?? 0),
+                    regularPrice: Number(catalogProduct?.regularPrice ?? item.regularPrice ?? calculateRegularPrice(catalogProduct?.price ?? item.price ?? 0))
+                });
+            });
+
+            const migratedWishlist = Array.from(migratedMap.values());
+            if (hasChanges || migratedWishlist.length !== wishlist.length) {
+                localStorage.setItem('buyit_wishlist', JSON.stringify(migratedWishlist));
+                window.dispatchEvent(new Event('wishlistUpdated'));
+            }
+            localStorage.setItem(migrationVersion, 'done');
+        }
+
         function renderWishlist() {
+            const wishlist = readWishlist();
             wishlistGrid.innerHTML = '';
             if (!wishlist.length) {
                 wishlistEmpty.classList.remove('hidden');
@@ -229,27 +364,106 @@
             wishlistEmpty.classList.add('hidden');
             wishlistGrid.classList.remove('hidden');
             wishlist.forEach(item => {
-                const itemPrice = Number(item.price || 0);
+                const catalogProduct = resolveCatalogProduct(item);
+                const sourceId = item.id;
+                const resolvedId = catalogProduct?.id || sourceId;
+                const safeResolvedId = (resolvedId && typeof getProductById === 'function' && getProductById(resolvedId))
+                    ? resolvedId
+                    : (catalogProduct?.id || '');
+                const itemPrice = Number(catalogProduct?.price ?? item.price ?? 0);
+                const regularPrice = Number(catalogProduct?.regularPrice ?? item.regularPrice ?? calculateRegularPrice(itemPrice));
+                const title = item.title || catalogProduct?.title || 'Product';
+                const image = catalogProduct?.image || item.image || 'buyit-logo.png';
+                const category = catalogProduct?.category || 'General';
+                const inStock = catalogProduct?.inStock !== false;
+                const productLinkRelative = safeResolvedId
+                    ? (typeof getProductLink === 'function'
+                        ? buildProductDetailsLink(safeResolvedId, title)
+                        : buildProductDetailsLink(safeResolvedId, title))
+                    : buildProductDetailsLink('', title);
+                const productLink = new URL(productLinkRelative, window.location.href).toString();
+
                 const div = document.createElement('div');
-                div.className = 'wishlist-card group bg-surface-light p-0 rounded-2xl border border-border-light shadow-md flex flex-col transition-all duration-300 hover:shadow-2xl hover:border-primary/40';
+                div.className = 'wishlist-card group bg-surface-light rounded-2xl border border-border-light overflow-hidden shadow-sm flex flex-col transition-all duration-300 hover:shadow-xl hover:border-primary/30';
+                div.setAttribute('data-product-id', safeResolvedId || resolvedId || '');
+                div.setAttribute('data-source-id', sourceId);
+                div.setAttribute('data-view-link', productLink);
                 div.innerHTML = `
-                    <div class="relative overflow-hidden rounded-t-2xl bg-gray-100 flex items-center justify-center h-48">
-                        <img src="${item.image}" alt="${item.title}" class="w-auto h-40 object-contain group-hover:scale-105 transition-transform duration-300 cursor-pointer" onclick="window.location.href='${getProductLink(item.id)}'" />
-                        <button onclick="removeFromWishlist('${item.id}');window.location.reload();" class="wishlist-action-btn remove absolute top-3 right-3 flex items-center gap-1 px-2 py-1 rounded-full border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 text-xs font-medium transition-colors shadow"><span class='material-symbols-outlined text-[16px]'>delete</span></button>
+                    <div class="relative overflow-hidden bg-slate-50 border-b border-border-light h-52 flex items-center justify-center p-5">
+                        <a href="${productLink}" class="inline-flex items-center justify-center w-full h-full">
+                            <img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" class="w-auto h-full max-h-44 object-contain group-hover:scale-105 transition-transform duration-300 cursor-pointer" />
+                        </a>
+                        <span class="absolute top-3 left-3 inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold ${inStock ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${inStock ? 'In Stock' : 'Out of Stock'}</span>
+                        <button data-action="remove-wishlist" class="absolute top-3 right-3 h-9 w-9 inline-flex items-center justify-center rounded-full border border-red-200 bg-white text-red-600 hover:bg-red-50 transition-colors" title="Remove from wishlist"><span class='material-symbols-outlined text-[18px]'>delete</span></button>
                     </div>
-                    <div class="flex flex-col flex-1 p-5 gap-2">
-                        <h3 class="font-semibold text-text-main text-base mb-0.5 truncate cursor-pointer hover:text-primary" onclick="window.location.href='${getProductLink(item.id)}'">${item.title}</h3>
-                        <p class="text-text-secondary text-xs mb-2 truncate">ID: ${item.id}</p>
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="text-lg font-bold text-primary">${formatINRLocal(itemPrice)}</span>
+                    <div class="flex flex-col flex-1 p-4 gap-2">
+                        <p class="text-[11px] uppercase tracking-wide font-semibold text-text-secondary-light">${escapeHtml(category)}</p>
+                        <a href="${productLink}" class="text-base font-semibold text-text-primary-light leading-snug line-clamp-2 min-h-[3rem] cursor-pointer hover:text-primary">${escapeHtml(title)}</a>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-lg font-bold text-red-600">${formatINRLocal(itemPrice)}</span>
+                            <span class="text-sm text-text-secondary-light line-through">${formatINRLocal(regularPrice)}</span>
                         </div>
-                        <button onclick="addToCart({id:'${item.id}', title:'${item.title}', price:${itemPrice}, image:'${item.image}'});window.dispatchEvent(new Event('cartUpdated'));" class="wishlist-action-btn add-to-cart flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-primary bg-primary text-white hover:bg-primary-dark text-sm font-semibold transition-colors mt-auto w-full shadow"><span class='material-symbols-outlined text-[18px]'>add_shopping_cart</span>Add to Cart</button>
+                        <div class="mt-auto grid grid-cols-2 gap-2 pt-2">
+                            <button data-action="add-to-cart" class="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors ${inStock ? '' : 'opacity-50 cursor-not-allowed'}" ${inStock ? '' : 'disabled'}>
+                                <span class='material-symbols-outlined text-[18px]'>add_shopping_cart</span>
+                                Add
+                            </button>
+                            <a href="${productLink}" class="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-border-light text-text-primary-light text-sm font-semibold hover:bg-slate-50 transition-colors">
+                                <span class='material-symbols-outlined text-[18px]'>visibility</span>
+                                View
+                            </a>
+                        </div>
                     </div>
                 `;
                 wishlistGrid.appendChild(div);
             });
         }
+
+        wishlistGrid.addEventListener('click', (event) => {
+            const actionElement = event.target.closest('[data-action]');
+            if (!actionElement) {
+                return;
+            }
+
+            const card = actionElement.closest('[data-product-id]');
+            const productId = card ? card.getAttribute('data-product-id') : '';
+            const sourceId = card ? card.getAttribute('data-source-id') : '';
+
+            const action = actionElement.getAttribute('data-action');
+            const product = typeof getProductById === 'function' ? getProductById(productId) : null;
+
+            if (action === 'remove-wishlist') {
+                if (!productId && !sourceId) {
+                    return;
+                }
+                removeFromWishlist(sourceId || productId);
+                return;
+            }
+
+            if (action === 'add-to-cart') {
+                if (!productId) {
+                    return;
+                }
+                if (!product) {
+                    return;
+                }
+                addToCart({
+                    id: product.id,
+                    title: product.title,
+                    price: product.price,
+                    image: product.image
+                });
+                window.dispatchEvent(new Event('cartUpdated'));
+                return;
+            }
+
+            if (action === 'view-product') {
+                return;
+            }
+        });
+
         window.addEventListener('wishlistUpdated', renderWishlist);
+        migrateWishlistStorage();
         renderWishlist();
     });
     </script>

@@ -110,14 +110,29 @@
                                     <div id="address-select-container" class="mb-6"></div>
                                     <div id="order-item-count" class="text-base font-semibold mb-2"></div>
                                     <div id="order-items-list"></div>
-                                    <div class="flex flex-col gap-1 mt-4">
-                                        <div>Subtotal: <span id="order-subtotal"></span></div>
-                                        <div>Shipping: <span id="order-shipping"></span></div>
-                                        <div class="font-bold">Total: <span id="order-total"></span></div>
+                                </div>
+                        </div>
+
+                        <aside class="w-full lg:w-[360px] lg:sticky lg:top-24">
+                            <div class="bg-surface-light border border-border-light rounded-2xl p-5 shadow-sm">
+                                <h3 class="text-lg font-black tracking-tight mb-4">Order Summary</h3>
+                                <div class="space-y-3 text-sm">
+                                    <div class="flex items-center justify-between text-text-sub-light">
+                                        <span>Subtotal</span>
+                                        <span id="order-subtotal" class="font-semibold text-text-main-light"></span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-text-sub-light">
+                                        <span>Shipping</span>
+                                        <span id="order-shipping" class="font-semibold text-text-main-light"></span>
+                                    </div>
+                                    <div class="border-t border-border-light pt-3 flex items-center justify-between text-base font-black text-text-main-light">
+                                        <span>Total</span>
+                                        <span id="order-total" class="text-primary"></span>
                                     </div>
                                 </div>
-                                <button id="place-order-btn" class="bg-primary hover:bg-primary-hover text-white font-semibold py-3 px-8 rounded-lg shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 mt-8 w-full">Place Order</button>
-                        </div>
+                                <button id="place-order-btn" class="bg-primary hover:bg-primary-hover text-white font-semibold py-3 px-8 rounded-lg shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 mt-6 w-full">Place Order</button>
+                            </div>
+                        </aside>
                 </div>
         <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -286,6 +301,10 @@
                 shippingEl.textContent = fmt(SHIPPING);
             }
 
+            if (list) {
+                list.className = 'space-y-3';
+            }
+
             if (items.length === 0) {
                 list.innerHTML = '<p class="text-sm text-text-sub-light text-center py-4">Your order is empty.</p>';
                 subtotalEl.textContent = fmt(0);
@@ -297,23 +316,32 @@
             let subtotal = 0;
             list.innerHTML = '';
             items.forEach(item => {
+                const catalogProduct = typeof getProductById === 'function' ? getProductById(item.id) : null;
                 const unitPrice = Number(item.price || 0);
+                const regularPrice = Number(item.regularPrice || catalogProduct?.regularPrice || Math.round(unitPrice * 2.1451612903));
                 const quantity = Math.max(1, Number(item.quantity || 1));
                 const lineTotal = unitPrice * quantity;
                 subtotal += lineTotal;
                 list.innerHTML += `
-            <div class="flex gap-4 group">
-                <div class="relative size-20 rounded-xl overflow-hidden bg-background-light flex-shrink-0 border border-border-light group-hover:border-primary transition-colors">
-                    <img alt="${item.title}" class="object-cover w-full h-full" src="${item.image || ''}" onerror="this.src='buyit-logo.png'" />
-                    <span class="absolute top-1 right-1 bg-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md shadow-sm">x${quantity}</span>
-                </div>
-                <div class="flex flex-col flex-1 justify-center">
-                    <h4 class="font-bold text-sm leading-tight text-text-main-light group-hover:text-primary transition-colors">${item.title}</h4>
-                    <p class="text-[11px] text-text-sub-light mt-1">Qty: ${quantity}</p>
-                    <div class="mt-2 flex justify-between items-center">
-                        <div class="text-sm font-bold text-text-main-light ">${fmt(lineTotal)}</div>
+            <div class="group rounded-2xl border border-border-light bg-white p-3 sm:p-4 shadow-sm hover:shadow-md hover:border-primary/30 transition-all">
+                <div class="flex gap-3 sm:gap-4">
+                    <div class="relative size-24 sm:size-28 rounded-xl overflow-hidden bg-slate-50 border border-border-light flex-shrink-0">
+                        <img alt="${item.title}" class="object-contain w-full h-full p-2" src="${item.image || ''}" onerror="this.src='buyit-logo.png'" />
+                        <span class="absolute top-1.5 right-1.5 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm">x${quantity}</span>
                     </div>
-                    <div class="text-[10px] text-green-600 font-bold mt-1">In Stock</div>
+                    <div class="flex flex-col flex-1 min-w-0">
+                        <div class="text-[10px] uppercase tracking-wide font-semibold text-text-sub-light mb-1">Checkout Item</div>
+                        <h4 class="font-bold text-sm sm:text-base leading-tight text-text-main-light truncate">${item.title}</h4>
+                        <div class="mt-2 flex items-baseline gap-2">
+                            <span class="text-base sm:text-lg font-black text-red-600">${fmt(unitPrice)}</span>
+                            <span class="text-xs sm:text-sm font-semibold text-slate-500 line-through">${fmt(regularPrice)}</span>
+                        </div>
+                        <div class="mt-2 flex items-center justify-between">
+                            <span class="inline-flex items-center rounded-full bg-slate-100 text-slate-700 text-[11px] font-semibold px-2.5 py-1">Qty: ${quantity}</span>
+                            <span class="text-sm sm:text-base font-black text-text-main-light">${fmt(lineTotal)}</span>
+                        </div>
+                        <div class="text-[11px] text-green-600 font-bold mt-2">In Stock</div>
+                    </div>
                 </div>
             </div>`;
             });
