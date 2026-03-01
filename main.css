@@ -1,0 +1,279 @@
+/* Sidebar list styles to match screenshot */
+.sidebar-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: #222;
+    cursor: pointer;
+    padding: 0.2em 0.1em 0.2em 0;
+    border-radius: 0.3em;
+    transition: color 0.15s, background 0.15s;
+}
+.sidebar-item .sidebar-icon {
+    font-size: 1.5em;
+    margin-right: 0.7em;
+}
+.sidebar-item.active, .sidebar-item:hover {
+    color: #ed1c24;
+    font-weight: 700;
+    background: #f6f6f8;
+}
+.sidebar-label {
+    font-weight: 600;
+}
+/* Account address form styles moved from inline */
+.address-btn-row {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.add-address-btn {
+    margin: 0 auto 1.5rem auto;
+    display: block;
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: #ed1c24;
+    background: #fff;
+    border: none;
+}
+.address-form-container {
+    display: block;
+    max-width: 900px;
+    margin: 0 auto;
+}
+.address-form {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 1rem;
+    padding: 2rem 2.5rem;
+    box-shadow: 0 2px 8px 0 rgba(16,24,40,0.08);
+}
+.address-form-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+}
+.address-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.2rem 1.5rem;
+    align-items: center;
+}
+.address-input {
+    width: 90%;
+    padding: 0.4rem 0.7rem;
+    border: 1px solid #ccc;
+    border-radius: 0.4rem;
+}
+.address-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    margin-top: 1.2em;
+}
+.address-checkbox {
+    margin-right: 0.5em;
+}
+.address-form-actions {
+    margin-top: 2.2rem;
+    display: flex;
+    gap: 1.2rem;
+}
+.address-form-btn {
+    background: #ed1c24;
+    color: #fff;
+    font-weight: 600;
+    padding: 0.7rem 2.5rem;
+    border: none;
+    border-radius: 0.4rem;
+    font-size: 1.1rem;
+}
+/* Logo background for wishlist header */
+.logo-bg {
+    background: #fff;
+}
+/* Wishlist card redesign */
+.wishlist-card {
+    box-shadow: 0 2px 8px 0 rgba(16, 24, 40, 0.08);
+    border-radius: 1rem;
+    overflow: hidden;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.2s, border 0.2s;
+}
+.wishlist-card:hover {
+    box-shadow: 0 8px 32px 0 rgba(19, 91, 236, 0.12);
+    border-color: #135bec44;
+}
+.wishlist-card img {
+    transition: transform 0.3s;
+}
+.wishlist-card .wishlist-action-btn {
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 4px 0 rgba(19, 91, 236, 0.04);
+}
+.wishlist-card .wishlist-action-btn.add-to-cart {
+    background: linear-gradient(90deg, #135bec 60%, #0f4bc4 100%);
+    color: #fff;
+    border: none;
+}
+.wishlist-card .wishlist-action-btn.add-to-cart:hover {
+    background: linear-gradient(90deg, #0f4bc4 60%, #135bec 100%);
+}
+.wishlist-card .wishlist-action-btn.remove {
+    background: #fff0f0;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+.wishlist-card .wishlist-action-btn.remove:hover {
+    background: #ffe4e6;
+    border-color: #fca5a5;
+}
+/* Wishlist action buttons */
+.wishlist-action-btn {
+    outline: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s, border 0.2s;
+}
+.wishlist-action-btn.add-to-cart {
+    background: #135bec;
+    color: #fff;
+    border-color: #135bec;
+}
+.wishlist-action-btn.add-to-cart:hover {
+    background: #0f4bc4;
+    border-color: #0f4bc4;
+}
+.wishlist-action-btn.remove {
+    background: #fef2f2;
+    color: #dc2626;
+    border-color: #fecaca;
+}
+.wishlist-action-btn.remove:hover {
+    background: #fee2e2;
+    border-color: #fca5a5;
+}
+/* Custom utility for red and bold text */
+.buyit-red-bold {
+    color: red;
+    font-weight: bold;
+}
+
+/* Custom utility for logo max sizing in story section */
+.story-logo-max {
+    max-width: 100%;
+    max-height: 100%;
+}
+/* Utility class for centering headings */
+.center-heading {
+    text-align: center;
+    display: block;
+    width: 100%;
+}
+/* Admin Orders page background images */
+.admin-orders-profile {
+    background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDeumBgbp_Yqka91mxDHz71lGhArUIb0X4CwuU9XzLFf73eittr6sDUYwMIcCCwi6LCOZ2BpevKqihGYFFZ0SIqthV5wzy3LbHLFBlDry6hO6n72jGn5_S5V5olu36Xl_qp79rfxzZ532MvY0DSlyKqSS1zmYo9EYqZ3-NvQMt0j8vE1iLYj1ilYlZQDlhocQ4Iwi05ky-3EzP_Ep52LN7Xup2ncFzPohBTRF807-g5mEMFQR_01jlbr79DpXyRwF1OHFOJV-0SER2Z');
+}
+.admin-orders-location {
+    background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBON0ym44AxFCIEGJfeZ1BcY-FJOj8tDJ7cuH2x1wfR_JgCJwmcRdEeI8izrrz4Oz86dIJRqGwsYBtJqK1VVIxlAjkTCOYev6WSujGvruNTAEknBn7YBf8kBHQ1sfd_D5hF2_dLHR0Zke_vp9ZIJkjjUGApUruOBavKw0FghQC2DxbrD1dxfHcKU9HkSXC7sbnS-5s18_d_M3aqrJJzd0ilDC_Lq9wOjcGuwQZAMNzjlthtvCp3G0Htj5Fm_0phrw-Fazv6ajNqnPFT');
+}
+/* Account page background images */
+.account-avatar {
+    background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCQY0ETjXuWWLSJ5SOq9uP3WqGWfW23TfU4OFnYR91yOoXRbba6BIxYnGo0_J7EFqB894mwqPTNCjxB65uV7aKSSd5iIgmv3KkeLCCbv5UzbVvMnA-lV5Dq1q_giK7fnrUdlxX9IPQXPpBe-ffqTGH5lDJqInTsuisIOUxyu5Q9Gpa8upOfC1le7VJIW5jTz78ISKyUduBoD41JK7ZThVnbNNQ3ZgNnucnp1NeoC6b6a499vvo_9hkiqNTXn8mp5NKouH3BwZVh8wcr");
+}
+.account-device-1 {
+    background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBbc9r6lSSD5LkBnyh-58h2onmdK3XHO23m0mj7_7eqNiUiGjHewDY5sY1aDA2Lt_bSJpeLc3KPv0xmpXqYAL3aD7PtOQQspoa6wxQLrfU4z9yKE7FWMUS1C3YPfWhQ9r_FLo6UITgq7guYKDix3N5uksAFlIkJk08XaausEzYe_PMT-_vE0G8PE5eU8s_LqvIrndSpVBTwki-RV0LjXGc-Wu5uWg-S40X8qxipBdmJoMGbWruGJrBLg95g3DckBxhnVe0ecRHRKtyO");
+}
+.account-device-2 {
+    background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBPrkJT7tWBSknlyovYwPzobm8LD4PLMS8KO3Nu_dxiz5C_qqSsclkRECwl_hFxyY0nmC6r_KM33QTip3T9H964mmbgE_YKsMdRj1kJq53b_iZh2k-WYPYHI0p1O2IZ904dgSnNiTOHJJsC5f3MIoLWkvrqaF9QQ2aqFbkvjpdfYGOD7wOM1Ym4wRhspxkEsSTl6NYFBGcNP0OHkcqcMBtDWc7wwnUPuE89e2uooEo9AdEUJF7vzbz_oDt_K4IAJSTfsSrzoTXep05a");
+}
+.account-recent-1 {
+    background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDM3h890sJTBvqEevP7N7EHFxAbxOf7BMo15N7KA62htFtJTVJkEqyJfPbrWvuGhuw9giC0gDwGpyJqHJrHWMTpHq6yff1xBkQ_XX1wuxANjLzDfsZ_OsOTaJgqFTUrvNon5gxFiywucRO9mUJ3QcIzJOpRRlQsnFpqSWVrsUN7MxvzJTpuckiUTvrzYQimza--5Wa9jjTcl4qEIA4ImEQB7Ig3_De1swfMGVfBym8cuYeGO8GVD6Tz1V7EAZGpO_fkyVQ7pBnQFzv4");
+}
+.account-recent-2 {
+    background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAGiT1kOmPqmSMdTBFO8T15TvAGIQjJaXYRCVlq-MpieGmqTWQeqISbD-2irvg3XnlXztF5b55KToMCPJkZLgFbPL_DTKZp1MANZyJtuEfBh8gWL9QLkvDVatsui6AYL9DtC73Fge2JlF5CSXqX0MkaaDRR5lbgzIOQXjbJYi_5yyaO6PhdC73nNGiqEnhmt9MAEhdVkV_bAGhY2a6_1wZXXcpaSeittsiz393KCnZBkI_8vN2qa5RYvK4UXkdgu7aXqNmHgHaQsfle");
+}
+.account-recent-3 {
+    background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC48bG7hg7PGGDtSDaUf4MyvyTXMjyYsaimQlXNtDaSd94rqfqMGkPFj9oEmNmh1wyzrHqObX0bQA3tVhJruO6xhMlFzDGLC1FvZv75rNLqI8_CUIuzEIBvxPN1t41ASHqiG1qMz8WBLPPEzGXM4w443jYW0c4v0H-yfXMYtV0XrsBlD1J-Ksk_e1At2-0dXOMRlgh7Nf-r5cIdiBQpvc_XuHiW4P7g231jsoETImUCkkjaOnngLtjC4Cqq1SDjyfYpLpHMBAsGPkVb");
+}
+.account-recent-4 {
+    background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDLMu-rWEN2DMDaH-Qjxv48n4a-GgeZ4N1oBAYaNycK0Hwp_dPR58o4VKxc1uzSrwDwkF1DOvSj5RnlfIhHWUmP5BpWo-K7LWZpX0CYJlLfnipKNYmerp4SFjjrKGQ8CXIjpf50b70M84LLAl5drOTwILbxjE_H09UBhPpNezZ3sUNBSlUbl1v_4BeGXgYrJ5opOr9JmxHXJyVMraaTlBhbDDjRYPxu5GTATuT4poqYIqXEYBVgnUMK3R3b4DVzBbRZCvN5lskjL4G9");
+}
+body { font-family: 'Inter', sans-serif; }
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+.dark ::-webkit-scrollbar-thumb {
+    background: #475569;
+}
+.range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #135bec;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 0 0 1px #135bec;
+}
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; }
+.star-filled { font-variation-settings: 'FILL' 1; }
+.star-half-filled { font-variation-settings: 'FILL' 1; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+.toggle-checkbox:checked {
+    right: 0;
+    border-color: #135bec;
+}
+.toggle-checkbox:checked + .toggle-label {
+    background-color: #135bec;
+}
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+}
+
+/* Add to main.css */
+.admin-profile-pic {
+  background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDx6DgGP_5ETfVt7MSS588gywjsoSgv5N28TEGb7TNWsIfCHh_Zfk4kOPiCCtWiCtPPA4sNmp4Iz6_ft7za05mU4VrF025a-zjGHvH0P705YE8agvl6iXEOK0SbnvbOQwEq1af30DSubCw7GP71CJS6eDAy8s_u6pv85JWtfTMuobuUq0qgmUwsnQyahCYpOfi5yq2hi3T4AYmJS9B1zebDkFWv-hOJifPRxGCcWoC97_fLCTV9D1RPdwaOhs5QEz4oD2t9VmnXnfWU");
+}
+.admin-clip-1 { clip-path: polygon(0 100%, 0 60%, 20% 70%, 40% 40%, 60% 50%, 80% 20%, 100% 30%, 100% 100%); }
+.admin-clip-2 { clip-path: polygon(0 100%, 0 70%, 25% 65%, 50% 80%, 75% 50%, 100% 40%, 100% 100%); }
+.admin-clip-3 { clip-path: polygon(0 100%, 0 80%, 30% 70%, 60% 75%, 100% 40%, 100% 100%); }
+.admin-clip-4 { clip-path: polygon(0 100%, 0 50%, 30% 60%, 60% 30%, 80% 40%, 100% 20%, 100% 100%); }
+.admin-order-pic-1 {
+  background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD5DFoldJIZM9tgzrzqiiBsi-IuDMIJov7jGqa8EYmsfGrvGZ1w4TG34fGl8f9UX_4q9ZXRxMT-z6LKrFC0W6pn346jkaj0xQXjmJDKqwCtWRCnjn_dYq3WEsd85qXB9tliSvT6a8kceJpklyJ-eKQQnWMD25lkF9sotS6jSkGltrz0tQhDgCK24baAc7xx9V-YHDylW9YLIMddWw5Ukyp--0v7T2FBAa5sKsmFLc0Q4F03Z9VRAdF2KVCdvTfD2v19uBhJhT28Mnve');
+}
+.admin-order-pic-2 {
+  background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDfIcMD4KsCYB8kMMdd29hf8AHMbBtNGzyea6UWPOXgvw7H7EvJpKokNtGc-GXwLUSSe3hR7wQt3TSPP0IROLPf6HMMmoMZ7_cBmYXZkMutYw5Uexw3dakvfnV62Be4-_Fprk2BDpOUGkxNBnYl58_c13JH1IhBose6c_tmGxltWH1oiiVKYnd9bTAFMqO_nJbMRBYSOV5qbgCwH51XYehegXjfvJRAxWmc4LK8s2xK3y9mSBRrhaprnTZ2kiPhoHkWbTR3dF5wFEqV');
+}
+.admin-order-pic-3 {
+  background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDPA0Ej6qUXPBTifv7U5M34W5SG_2XrtJxj2s-liAKcUDYWbIjKEHRXzN26cF5CFO1_p8nFLnacYR44dJfR06YundFHColymXBPE3XI5lLLzhHukzLT6oeUZuK7QeE8ZC3zDr-lXzfFgiAeiIw77tSeF4fDeiWavPrbYABHbWDPuina4Rxm8YIZkCs20bEtpm4Y8zVbiO_p2loX3mxwIMJWyYqO92goSpc_AnHZMW0LTZM2hdaFK_k1FlpqC17Y-0NVOwvwklY3WPam');
+}

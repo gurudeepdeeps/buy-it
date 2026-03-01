@@ -1,0 +1,16 @@
+body { font-family: 'Inter', sans-serif; }
+.range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #135bec;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 0 0 1px #135bec;
+}
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; }
+.star-filled { font-variation-settings: 'FILL' 1; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }

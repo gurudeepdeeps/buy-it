@@ -1,0 +1,866 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Buy it - Products</title>
+    <link rel="icon" href="buyit-logo-tansperant.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>        tailwind.config = { darkMode: "class", theme: { extend: { colors: { "primary": "#135bec", "background-light": "#f6f6f8", "background-dark": "#101622", "surface-light": "#ffffff", "surface-dark": "#1e293b", "text-primary-light": "#0f172a", "text-primary-dark": "#f1f5f9", "text-secondary-light": "#64748b", "text-secondary-dark": "#94a3b8", "border-light": "#e2e8f0", "border-dark": "#334155", }, fontFamily: { "display": ["Inter", "sans-serif"] }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, }, }, }    </script>
+    <link rel="stylesheet" href="main.css">
+</head>
+<script>
+// Category filter logic
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const category = urlParams.get('category');
+    if (category) {
+        // Find all product cards
+        const cards = document.querySelectorAll('#products-grid > div');
+        cards.forEach(card => {
+            // Try to get category from product card (by text or data attribute)
+            const catLabel = card.querySelector('.text-xs.uppercase');
+            if (catLabel) {
+                const cardCat = catLabel.textContent.trim().toLowerCase();
+                if (!cardCat.includes(category)) {
+                    card.style.display = 'none';
+                }
+            }
+        });
+    }
+});
+</script>
+
+<body
+    class="bg-background-light text-text-primary-light font-display antialiased min-h-screen flex flex-col">
+    <header
+        class="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-200 ">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex h-16 items-center justify-between gap-4 sm:gap-8">                                <a href="index.html" class="flex items-center gap-2 flex-shrink-0 group">
+                    <div class="justify-center">
+                        <img src="buyit-logo-tansperant.png" alt="Buy it Logo" class="h-24 w-auto object-contain">
+                    </div>
+ <!--                   <h1 class="text-xl font-bold tracking-tight text-slate-900 hidden sm:block transition-colors group-hover:text-primary">Buy it</h1>  -->
+                </a>
+                <div class="hidden lg:flex flex-1 max-w-lg">
+                    <div class="relative w-full group">
+                        <div
+                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                            <span class="material-symbols-outlined text-[20px]">search</span>
+                        </div>
+                        <input
+                            class="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-lg leading-5 bg-slate-50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-all"
+                            placeholder="Search premium smartphones, laptops..." type="text" />
+                    </div>
+                </div>
+                <nav class="hidden md:flex items-center gap-6">
+                    <a class="text-sm font-medium text-slate-700 hover:text-primary :text-primary transition-colors"
+                        href="products.html">Products</a>
+                    <a class="text-sm font-medium text-slate-700 hover:text-primary :text-primary transition-colors"
+                        href="about.html">About Us</a>
+                    <a class="text-sm font-medium text-slate-700 hover:text-primary :text-primary transition-colors"
+                        href="contact.html">Contact</a>
+                </nav>
+                <div class="flex items-center gap-2 sm:gap-4">
+                    <button
+                        class="p-2 text-slate-500 hover:text-primary  :text-primary transition-colors lg:hidden">
+                        <span class="material-symbols-outlined">search</span>
+                    </button>
+                    <a href="wishlist.html" class="relative p-2 text-slate-500 hover:text-primary transition-colors"
+                        title="Wishlist">
+                        <span class="material-symbols-outlined">favorite</span>
+                        <span id="wishlist-count"
+                            class="absolute top-1 right-0 hidden h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white ring-2 ring-white">0</span>
+                    </a>
+                    <a href="cart.html" class="relative p-2 text-slate-500 hover:text-primary transition-colors"
+                        title="Cart">
+                        <span class="material-symbols-outlined">shopping_cart</span>
+                        <span id="cart-count"
+                            class="absolute top-1 right-0 hidden h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white ring-2 ring-white">0</span>
+                    </a>
+                    <a href="account.html"
+                        class="flex items-center gap-2 p-1 pl-2 pr-1 rounded-full border border-slate-200 hover:bg-slate-50 transition-colors ml-2"
+                        title="Account / Login">
+                        <div class="size-6 rounded-full bg-slate-200 overflow-hidden"><img alt="User Avatar"
+                                class="h-full w-full object-cover"
+                                src="https://ui-avatars.com/api/?name=User&background=random" />
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="flex-grow w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex flex-col gap-6 mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                <div>
+                    <h1
+                        class="text-3xl sm:text-4xl font-bold text-text-primary-light tracking-tight">
+                        Tech &amp; Performance Gear</h1>
+                    <p class="mt-2 text-text-secondary-light max-w-2xl">Browse our curated
+                        selection of high-performance tablets, wearables, and cutting-edge PC components.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-sm text-text-secondary-light whitespace-nowrap">Sort
+                        by:</span>
+                    <div class="relative">
+                        <select id="sort-select" onchange="sortProducts()"
+                            class="appearance-none bg-surface-light border border-border-light text-text-primary-light text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 pr-8 cursor-pointer" title="Sort products">
+                            <option value="newest" selected>Newly Added</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                        </select>
+                        <div
+                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text-secondary-light ">
+                            <span class="material-symbols-outlined text-sm">expand_more</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="products-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div data-price="91217" data-order="6"
+                class="group bg-surface-light rounded-xl border border-border-light overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 flex flex-col">
+                <div
+                    class="relative aspect-[4/3] bg-white overflow-hidden p-8 flex items-center justify-center">
+                    <img alt="Elite Tab Pro 13"
+                        class="w-auto h-full max-h-[90%] object-contain group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8HkLH_OsrpLvu-bp8uPttjK3ozesEMQn8dEIpL5YukgAp4wU1bEcmw0Fv_xZY2R8cDLwTxUfjA0gPlCtxs8DCuKXLXtwruzxc4evYKI0YoDCmuiAWBMsk7Jclx0jc9qaq1beCCOnVFp0OJqUKteG7LJiNTyGu2Qw5CsOM6sdyReEVPItX-Idb3_izI6hcIS1_w-t7JuoyQKUKlviCzFwU8End3Rufk3MrRxD5ilZ4LSgWR8NrGXRfHY_1vA6wXqbpim0xnC_3vhx_"
+                         />
+                    <button data-wishlist-id="elite-tab-pro"
+                        onclick="addToWishlist({id:'elite-tab-pro', title:'Elite Tab Pro 13.0', price:91217, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuC8HkLH_OsrpLvu-bp8uPttjK3ozesEMQn8dEIpL5YukgAp4wU1bEcmw0Fv_xZY2R8cDLwTxUfjA0gPlCtxs8DCuKXLXtwruzxc4evYKI0YoDCmuiAWBMsk7Jclx0jc9qaq1beCCOnVFp0OJqUKteG7LJiNTyGu2Qw5CsOM6sdyReEVPItX-Idb3_izI6hcIS1_w-t7JuoyQKUKlviCzFwU8End3Rufk3MrRxD5ilZ4LSgWR8NrGXRfHY_1vA6wXqbpim0xnC_3vhx_'})"
+                        class="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full text-text-secondary-light hover:text-red-500 transition-colors"><span
+                            class="material-symbols-outlined text-[20px]">favorite</span></button>
+                </div>
+                <div class="p-4 flex-1 flex flex-col">
+                    <div
+                        class="text-xs font-medium text-text-secondary-light uppercase tracking-wide mb-1">
+                        Tablets</div>
+                    <a href="#" class="hover:text-primary block">
+                        <h3
+                            class="text-base font-semibold text-text-primary-light mb-2 truncate">
+                            Elite Tab Pro 13.0</h3>
+                    </a>
+                    <div class="flex flex-wrap gap-2 mb-3"><span
+                            class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">120Hz
+                            AMOLED</span><span
+                            class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">16GB
+                            RAM</span></div>
+                    <div class="flex items-center gap-1 mb-3 mt-auto"><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-half-filled">star_half</span><span
+                            class="text-xs text-text-secondary-light ml-1">(2.4k)</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-3"><span
+                            class="text-lg font-bold text-text-primary-light ">?91,217</span><button
+                            onclick="addToCart({id:'elite-tab-pro', title:'Elite Tab Pro 13.0', price:91217, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuC8HkLH_OsrpLvu-bp8uPttjK3ozesEMQn8dEIpL5YukgAp4wU1bEcmw0Fv_xZY2R8cDLwTxUfjA0gPlCtxs8DCuKXLXtwruzxc4evYKI0YoDCmuiAWBMsk7Jclx0jc9qaq1beCCOnVFp0OJqUKteG7LJiNTyGu2Qw5CsOM6sdyReEVPItX-Idb3_izI6hcIS1_w-t7JuoyQKUKlviCzFwU8End3Rufk3MrRxD5ilZ4LSgWR8NrGXRfHY_1vA6wXqbpim0xnC_3vhx_'})"
+                            class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span
+                                class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
+                    <button
+                        onclick="buyNow({id:'elite-tab-pro', title:'Elite Tab Pro 13.0', price:91217, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuC8HkLH_OsrpLvu-bp8uPttjK3ozesEMQn8dEIpL5YukgAp4wU1bEcmw0Fv_xZY2R8cDLwTxUfjA0gPlCtxs8DCuKXLXtwruzxc4evYKI0YoDCmuiAWBMsk7Jclx0jc9qaq1beCCOnVFp0OJqUKteG7LJiNTyGu2Qw5CsOM6sdyReEVPItX-Idb3_izI6hcIS1_w-t7JuoyQKUKlviCzFwU8End3Rufk3MrRxD5ilZ4LSgWR8NrGXRfHY_1vA6wXqbpim0xnC_3vhx_'})"
+                        class="w-full py-2 rounded-lg border-2 border-primary text-primary font-semibold text-sm hover:bg-primary hover:text-white transition-colors cursor-pointer">Buy
+                        Now</button>
+                </div>
+            </div>
+            <div data-price="28967" data-order="5"
+                class="group bg-surface-light rounded-xl border border-border-light overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 flex flex-col">
+                <div
+                    class="relative aspect-[4/3] bg-white overflow-hidden p-8 flex items-center justify-center">
+                    <img alt="Titan Sport Watch"
+                        class="w-auto h-full max-h-[90%] object-contain group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLvDKoi4zzOxtthUuIkDWpoamW-x_fQcJEenQ8eWiqnyVLfQMdcrpsuLly_lrUhZs3d6rDOKciRa-9KLqKzuX7i2IuZMZ6po08oAKXGIWAEC1EzyElHQfYru--gHp5ZLiiq1T_pRDM4SNohZIXPpNWeHc1mide9BXN9wMGZbaU4c0BvKMku1QVkBCjgcwUdEIKFVgaxKK0CWMNQQ4OSbAqJLDRxVKLsmPNS6YBxgln_7oDra8AlLxzSR0vXVxi9wpnu2AKpifrHwku")
+                         />
+                    <button data-wishlist-id="titan-sport-v2"
+                        onclick="addToWishlist({id:'titan-sport-v2', title:'Titan Sport Active V2', price:28967, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuBLvDKoi4zzOxtthUuIkDWpoamW-x_fQcJEenQ8eWiqnyVLfQMdcrpsuLly_lrUhZs3d6rDOKciRa-9KLqKzuX7i2IuZMZ6po08oAKXGIWAEC1EzyElHQfYru--gHp5ZLiiq1T_pRDM4SNohZIXPpNWeHc1mide9BXN9wMGZbaU4c0BvKMku1QVkBCjgcwUdEIKFVgaxKK0CWMNQQ4OSbAqJLDRxVKLsmPNS6YBxgln_7oDra8AlLxzSR0vXVxi9wpnu2AKpifrHwku'})"
+                        class="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full text-text-secondary-light hover:text-red-500 transition-colors"><span
+                            class="material-symbols-outlined text-[20px]">favorite</span></button>
+                </div>
+                <div class="p-4 flex-1 flex flex-col">
+                    <div
+                        class="text-xs font-medium text-text-secondary-light uppercase tracking-wide mb-1">
+                        Wearables</div>
+                    <a href="#" class="hover:text-primary block">
+                        <h3
+                            class="text-base font-semibold text-text-primary-light mb-2 truncate">
+                            Titan Sport Active V2</h3>
+                    </a>
+                    <div class="flex flex-wrap gap-2 mb-3"><span
+                            class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">ECG
+                            Tracking</span><span
+                            class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">5ATM
+                            Water</span></div>
+                    <div class="flex items-center gap-1 mb-3 mt-auto"><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-half-filled">star_half</span><span
+                            class="text-xs text-text-secondary-light ml-1">(842)</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-3"><span
+                            class="text-lg font-bold text-text-primary-light ">?28,967</span><button
+                            onclick="addToCart({id:'titan-sport-v2', title:'Titan Sport Active V2', price:28967, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuBLvDKoi4zzOxtthUuIkDWpoamW-x_fQcJEenQ8eWiqnyVLfQMdcrpsuLly_lrUhZs3d6rDOKciRa-9KLqKzuX7i2IuZMZ6po08oAKXGIWAEC1EzyElHQfYru--gHp5ZLiiq1T_pRDM4SNohZIXPpNWeHc1mide9BXN9wMGZbaU4c0BvKMku1QVkBCjgcwUdEIKFVgaxKK0CWMNQQ4OSbAqJLDRxVKLsmPNS6YBxgln_7oDra8AlLxzSR0vXVxi9wpnu2AKpifrHwku'})"
+                            class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span
+                                class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
+                    <button
+                        onclick="buyNow({id:'titan-sport-v2', title:'Titan Sport Active V2', price:28967, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuBLvDKoi4zzOxtthUuIkDWpoamW-x_fQcJEenQ8eWiqnyVLfQMdcrpsuLly_lrUhZs3d6rDOKciRa-9KLqKzuX7i2IuZMZ6po08oAKXGIWAEC1EzyElHQfYru--gHp5ZLiiq1T_pRDM4SNohZIXPpNWeHc1mide9BXN9wMGZbaU4c0BvKMku1QVkBCjgcwUdEIKFVgaxKK0CWMNQQ4OSbAqJLDRxVKLsmPNS6YBxgln_7oDra8AlLxzSR0vXVxi9wpnu2AKpifrHwku'})"
+                        class="w-full py-2 rounded-lg border-2 border-primary text-primary font-semibold text-sm hover:bg-primary hover:text-white transition-colors cursor-pointer">Buy
+                        Now</button>
+                </div>
+            </div>
+            <div data-price="41417" data-order="4"
+                class="group bg-surface-light rounded-xl border border-border-light overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 flex flex-col">
+                <div
+                    class="relative aspect-[4/3] bg-white overflow-hidden p-8 flex items-center justify-center">
+                    <img alt="NextGen Console X"
+                        class="w-auto h-full max-h-[90%] object-contain group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoNvTmbpDl3xYLyHDXOgNocUClVgCDIg56BmIx1mLXhb9QR-kwh6EY3KcLuRxP_Zt9FFeC6q17_i-sttTTy7-IxK8eW5vh711_0Fu0xdaxPJGpZmPNBwiGQ_NtTo0J7pYOJR8MtCnR_rz9ZgNNJvDs1nMRYK5jqXO8juxZY398lCEvAjH8oa7PRG_vSTTiFVN2-aEbWrp-HEXG_T9GmM6l1e-Fy41eS2eOC9DonSgqY_7CKdPlhScZzRfcp4lfUOoAlTsYfMOKrBKB"
+                         />
+                    <button data-wishlist-id="nextgen-console-x"
+                        onclick="addToWishlist({id:'nextgen-console-x', title:'NextGen Console X Pro', price:41417, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuBoNvTmbpDl3xYLyHDXOgNocUClVgCDIg56BmIx1mLXhb9QR-kwh6EY3KcLuRxP_Zt9FFeC6q17_i-sttTTy7-IxK8eW5vh711_0Fu0xdaxPJGpZmPNBwiGQ_NtTo0J7pYOJR8MtCnR_rz9ZgNNJvDs1nMRYK5jqXO8juxZY398lCEvAjH8oa7PRG_vSTTiFVN2-aEbWrp-HEXG_T9GmM6l1e-Fy41eS2eOC9DonSgqY_7CKdPlhScZzRfcp4lfUOoAlTsYfMOKrBKB'})"
+                        class="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full text-text-secondary-light hover:text-red-500 transition-colors"><span
+                            class="material-symbols-outlined text-[20px]">favorite</span></button>
+                </div>
+                <div class="p-4 flex-1 flex flex-col">
+                    <div
+                        class="text-xs font-medium text-text-secondary-light uppercase tracking-wide mb-1">
+                        Gaming</div>
+                    <a href="#" class="hover:text-primary block">
+                        <h3
+                            class="text-base font-semibold text-text-primary-light mb-2 truncate">
+                            NextGen Console X Pro</h3>
+                    </a>
+                    <div class="flex flex-wrap gap-2 mb-3"><span
+                            class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">4K
+                            120FPS</span><span
+                            class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">1TB
+                            SSD</span></div>
+                    <div class="flex items-center gap-1 mb-3 mt-auto"><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-half-filled">star_half</span><span
+                            class="text-xs text-text-secondary-light ml-1">(12.1k)</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-3"><span
+                            class="text-lg font-bold text-text-primary-light ">?41,417</span><button
+                            onclick="addToCart({id:'nextgen-console-x', title:'NextGen Console X Pro', price:41417, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuBoNvTmbpDl3xYLyHDXOgNocUClVgCDIg56BmIx1mLXhb9QR-kwh6EY3KcLuRxP_Zt9FFeC6q17_i-sttTTy7-IxK8eW5vh711_0Fu0xdaxPJGpZmPNBwiGQ_NtTo0J7pYOJR8MtCnR_rz9ZgNNJvDs1nMRYK5jqXO8juxZY398lCEvAjH8oa7PRG_vSTTiFVN2-aEbWrp-HEXG_T9GmM6l1e-Fy41eS2eOC9DonSgqY_7CKdPlhScZzRfcp4lfUOoAlTsYfMOKrBKB'})"
+                            class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span
+                                class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
+                    <button
+                        onclick="buyNow({id:'nextgen-console-x', title:'NextGen Console X Pro', price:41417, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuBoNvTmbpDl3xYLyHDXOgNocUClVgCDIg56BmIx1mLXhb9QR-kwh6EY3KcLuRxP_Zt9FFeC6q17_i-sttTTy7-IxK8eW5vh711_0Fu0xdaxPJGpZmPNBwiGQ_NtTo0J7pYOJR8MtCnR_rz9ZgNNJvDs1nMRYK5jqXO8juxZY398lCEvAjH8oa7PRG_vSTTiFVN2-aEbWrp-HEXG_T9GmM6l1e-Fy41eS2eOC9DonSgqY_7CKdPlhScZzRfcp4lfUOoAlTsYfMOKrBKB'})"
+                        class="w-full py-2 rounded-lg border-2 border-primary text-primary font-semibold text-sm hover:bg-primary hover:text-white transition-colors cursor-pointer">Buy
+                        Now</button>
+                </div>
+            </div>
+            <div data-price="99517" data-order="3"
+                class="group bg-surface-light rounded-xl border border-border-light overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 flex flex-col">
+                <div
+                    class="relative aspect-[4/3] bg-white overflow-hidden p-8 flex items-center justify-center">
+                    <img alt="RTX Graphic Card"
+                        class="w-auto h-full max-h-[90%] object-contain group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwRMO7z2je82ZTm3hpu2eG6T1HmQgVQYrspH9xxeZpE-usWlmZQIka4hWuRh3VnZSS64UH8uyIYcmLUna5VsVWfGKyHbf8H2DMFDcT01_8BG5MfEnUNdXXj7gNaEyZmhwTGIAvi2z5hQLLc7M8C1DqmeVFGiWchCEClYpgHrkZDfvjsS9cXKwsHiZx4i6tQd3q2oSn8xHhJHkRd5dFOU7TTbXP2X09hs55cWz5ccMNGk7K4yx0mRsL9th9xZtJiJYNT0-5zpxf9r4t"
+                         />
+                    <button data-wishlist-id="apex-rtx-4080"
+                        onclick="addToWishlist({id:'apex-rtx-4080', title:'Apex RTX 4080 Founders', price:99517, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuBwRMO7z2je82ZTm3hpu2eG6T1HmQgVQYrspH9xxeZpE-usWlmZQIka4hWuRh3VnZSS64UH8uyIYcmLUna5VsVWfGKyHbf8H2DMFDcT01_8BG5MfEnUNdXXj7gNaEyZmhwTGIAvi2z5hQLLc7M8C1DqmeVFGiWchCEClYpgHrkZDfvjsS9cXKwsHiZx4i6tQd3q2oSn8xHhJHkRd5dFOU7TTbXP2X09hs55cWz5ccMNGk7K4yx0mRsL9th9xZtJiJYNT0-5zpxf9r4t'})"
+                        class="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full text-text-secondary-light hover:text-red-500 transition-colors"><span
+                            class="material-symbols-outlined text-[20px]">favorite</span></button>
+                </div>
+                <div class="p-4 flex-1 flex flex-col">
+                    <div
+                        class="text-xs font-medium text-text-secondary-light uppercase tracking-wide mb-1">
+                        PC Components</div>
+                    <a href="#" class="hover:text-primary block">
+                        <h3
+                            class="text-base font-semibold text-text-primary-light mb-2 truncate">
+                            Apex RTX 4080 Founders</h3>
+                    </a>
+                    <div class="flex flex-wrap gap-2 mb-3"><span
+                            class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">16GB
+                            GDDR6X</span><span
+                            class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">Ray
+                            Tracing</span></div>
+                    <div class="flex items-center gap-1 mb-3 mt-auto"><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-half-filled">star_half</span><span
+                            class="text-xs text-text-secondary-light ml-1">(312)</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-3"><span
+                            class="text-lg font-bold text-text-primary-light ">?99,517</span><button
+                            onclick="addToCart({id:'apex-rtx-4080', title:'Apex RTX 4080 Founders', price:99517, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuBwRMO7z2je82ZTm3hpu2eG6T1HmQgVQYrspH9xxeZpE-usWlmZQIka4hWuRh3VnZSS64UH8uyIYcmLUna5VsVWfGKyHbf8H2DMFDcT01_8BG5MfEnUNdXXj7gNaEyZmhwTGIAvi2z5hQLLc7M8C1DqmeVFGiWchCEClYpgHrkZDfvjsS9cXKwsHiZx4i6tQd3q2oSn8xHhJHkRd5dFOU7TTbXP2X09hs55cWz5ccMNGk7K4yx0mRsL9th9xZtJiJYNT0-5zpxf9r4t'})"
+                            class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span
+                                class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
+                    <button
+                        onclick="buyNow({id:'apex-rtx-4080', title:'Apex RTX 4080 Founders', price:99517, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuBwRMO7z2je82ZTm3hpu2eG6T1HmQgVQYrspH9xxeZpE-usWlmZQIka4hWuRh3VnZSS64UH8uyIYcmLUna5VsVWfGKyHbf8H2DMFDcT01_8BG5MfEnUNdXXj7gNaEyZmhwTGIAvi2z5hQLLc7M8C1DqmeVFGiWchCEClYpgHrkZDfvjsS9cXKwsHiZx4i6tQd3q2oSn8xHhJHkRd5dFOU7TTbXP2X09hs55cWz5ccMNGk7K4yx0mRsL9th9xZtJiJYNT0-5zpxf9r4t'})"
+                        class="w-full py-2 rounded-lg border-2 border-primary text-primary font-semibold text-sm hover:bg-primary hover:text-white transition-colors cursor-pointer">Buy
+                        Now</button>
+                </div>
+            </div>
+            <div data-price="24817" data-order="2"
+                class="group bg-surface-light rounded-xl border border-border-light overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 flex flex-col">
+                <div
+                    class="relative aspect-[4/3] bg-white overflow-hidden p-8 flex items-center justify-center">
+                    <img alt="Studio Headphones"
+                        class="w-auto h-full max-h-[90%] object-contain group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuC72_IR4svNMhKtT5sm8RaaDmpEGOpauk1kXFPvop4eVxZv73hFLRewhGgPXryPM_dLLa-HT5HBt63f8sP8o5IZA_s1iwEoel5BoVzziGzkM9ukhzIyp2DvLneMqxqAEdDdle3CoM_rNEwmSg5KKDqokrTt49Fbf1wqARuvFNim7Z45TA3qSqubIb15Y4hi5pKQlsjLqPXObsL2OdUso0LR18BkVj6Ryn_6PfiEQdJWrzW8mjRT77sipTGyaT7wTwNVaiVZDAfYYR1v"
+                         />
+                    <button data-wishlist-id="studio-pro-anc"
+                        onclick="addToWishlist({id:'studio-pro-anc', title:'Studio Pro ANC Wireless', price:24817, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuC72_IR4svNMhKtT5sm8RaaDmpEGOpauk1kXFPvop4eVxZv73hFLRewhGgPXryPM_dLLa-HT5HBt63f8sP8o5IZA_s1iwEoel5BoVzziGzkM9ukhzIyp2DvLneMqxqAEdDdle3CoM_rNEwmSg5KKDqokrTt49Fbf1wqARuvFNim7Z45TA3qSqubIb15Y4hi5pKQlsjLqPXObsL2OdUso0LR18BkVj6Ryn_6PfiEQdJWrzW8mjRT77sipTGyaT7wTwNVaiVZDAfYYR1v'})"
+                        class="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full text-text-secondary-light hover:text-red-500 transition-colors"><span
+                            class="material-symbols-outlined text-[20px]">favorite</span></button>
+                </div>
+                <div class="p-4 flex-1 flex flex-col">
+                    <div
+                        class="text-xs font-medium text-text-secondary-light uppercase tracking-wide mb-1">
+                        Audio</div>
+                    <a href="#" class="hover:text-primary block">
+                        <h3
+                            class="text-base font-semibold text-text-primary-light mb-2 truncate">
+                            Studio Pro ANC Wireless</h3>
+                    </a>
+                    <div class="flex flex-wrap gap-2 mb-3"><span
+                            class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">40h
+                            Battery</span><span
+                            class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">LDAC
+                            Support</span></div>
+                    <div class="flex items-center gap-1 mb-3 mt-auto"><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-half-filled">star_half</span><span
+                            class="text-xs text-text-secondary-light ml-1">(1.8k)</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-3"><span
+                            class="text-lg font-bold text-text-primary-light ">?24,817</span><button
+                            onclick="addToCart({id:'studio-pro-anc', title:'Studio Pro ANC Wireless', price:24817, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuC72_IR4svNMhKtT5sm8RaaDmpEGOpauk1kXFPvop4eVxZv73hFLRewhGgPXryPM_dLLa-HT5HBt63f8sP8o5IZA_s1iwEoel5BoVzziGzkM9ukhzIyp2DvLneMqxqAEdDdle3CoM_rNEwmSg5KKDqokrTt49Fbf1wqARuvFNim7Z45TA3qSqubIb15Y4hi5pKQlsjLqPXObsL2OdUso0LR18BkVj6Ryn_6PfiEQdJWrzW8mjRT77sipTGyaT7wTwNVaiVZDAfYYR1v'})"
+                            class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span
+                                class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
+                    <button
+                        onclick="buyNow({id:'studio-pro-anc', title:'Studio Pro ANC Wireless', price:24817, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuC72_IR4svNMhKtT5sm8RaaDmpEGOpauk1kXFPvop4eVxZv73hFLRewhGgPXryPM_dLLa-HT5HBt63f8sP8o5IZA_s1iwEoel5BoVzziGzkM9ukhzIyp2DvLneMqxqAEdDdle3CoM_rNEwmSg5KKDqokrTt49Fbf1wqARuvFNim7Z45TA3qSqubIb15Y4hi5pKQlsjLqPXObsL2OdUso0LR18BkVj6Ryn_6PfiEQdJWrzW8mjRT77sipTGyaT7wTwNVaiVZDAfYYR1v'})"
+                        class="w-full py-2 rounded-lg border-2 border-primary text-primary font-semibold text-sm hover:bg-primary hover:text-white transition-colors cursor-pointer">Buy
+                        Now</button>
+                </div>
+            </div>
+            <div data-price="207417" data-order="1"
+                class="group bg-surface-light rounded-xl border border-border-light overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 flex flex-col">
+                <div
+                    class="relative aspect-[4/3] bg-white overflow-hidden p-8 flex items-center justify-center">
+                    <img alt="Mirrorless Camera"
+                        class="w-auto h-full max-h-[90%] object-contain group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDs6rJpoRVW9Vfr2O34zg1KW0WSRF0Tw-GxbYYuRxuyey8KFTSm6SobKH5bZUxfQjVRyuir6ZrCmZyZ_D4sMO-GVw-EKNGqbJPnFqpQP5Y9ud1JMfObBDvToIyD0PdsqybkGCl89kJxI_YH5kWdwAsEN-KeHFZ1MLwpAAvsoQB9ByWbPU110ONhZN5pueX_FP1WDJqG6LgZ0cYEaD1tWigrfxJcAgdxRNdvpcqIpA-zuheG_oLEh6y266eRTZMA7k8GttJvh7hI3POu"
+                         />
+                    <button data-wishlist-id="alpha-vii-mirrorless"
+                        onclick="addToWishlist({id:'alpha-vii-mirrorless', title:'Alpha VII Mirrorless 4K', price:207417, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuDs6rJpoRVW9Vfr2O34zg1KW0WSRF0Tw-GxbYYuRxuyey8KFTSm6SobKH5bZUxfQjVRyuir6ZrCmZyZ_D4sMO-GVw-EKNGqbJPnFqpQP5Y9ud1JMfObBDvToIyD0PdsqybkGCl89kJxI_YH5kWdwAsEN-KeHFZ1MLwpAAvsoQB9ByWbPU110ONhZN5pueX_FP1WDJqG6LgZ0cYEaD1tWigrfxJcAgdxRNdvpcqIpA-zuheG_oLEh6y266eRTZMA7k8GttJvh7hI3POu'})"
+                        class="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full text-text-secondary-light hover:text-red-500 transition-colors"><span
+                            class="material-symbols-outlined text-[20px]">favorite</span></button>
+                </div>
+                <div class="p-4 flex-1 flex flex-col">
+                    <div
+                        class="text-xs font-medium text-text-secondary-light uppercase tracking-wide mb-1">
+                        Cameras</div>
+                    <a href="#" class="hover:text-primary block">
+                        <h3
+                            class="text-base font-semibold text-text-primary-light mb-2 truncate">
+                            Alpha VII Mirrorless 4K</h3>
+                    </a>
+                    <div class="flex flex-wrap gap-2 mb-3"><span
+                            class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">32.5
+                            MP</span><span
+                            class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">8K
+                            Video</span></div>
+                    <div class="flex items-center gap-1 mb-3 mt-auto"><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-half-filled">star_half</span><span
+                            class="text-xs text-text-secondary-light ml-1">(512)</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-3"><span
+                            class="text-lg font-bold text-text-primary-light ">?2,07,417</span><button
+                            onclick="addToCart({id:'alpha-vii-mirrorless', title:'Alpha VII Mirrorless 4K', price:207417, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuDs6rJpoRVW9Vfr2O34zg1KW0WSRF0Tw-GxbYYuRxuyey8KFTSm6SobKH5bZUxfQjVRyuir6ZrCmZyZ_D4sMO-GVw-EKNGqbJPnFqpQP5Y9ud1JMfObBDvToIyD0PdsqybkGCl89kJxI_YH5kWdwAsEN-KeHFZ1MLwpAAvsoQB9ByWbPU110ONhZN5pueX_FP1WDJqG6LgZ0cYEaD1tWigrfxJcAgdxRNdvpcqIpA-zuheG_oLEh6y266eRTZMA7k8GttJvh7hI3POu'})"
+                            class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span
+                                class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
+                    <button
+                        onclick="buyNow({id:'alpha-vii-mirrorless', title:'Alpha VII Mirrorless 4K', price:207417, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuDs6rJpoRVW9Vfr2O34zg1KW0WSRF0Tw-GxbYYuRxuyey8KFTSm6SobKH5bZUxfQjVRyuir6ZrCmZyZ_D4sMO-GVw-EKNGqbJPnFqpQP5Y9ud1JMfObBDvToIyD0PdsqybkGCl89kJxI_YH5kWdwAsEN-KeHFZ1MLwpAAvsoQB9ByWbPU110ONhZN5pueX_FP1WDJqG6LgZ0cYEaD1tWigrfxJcAgdxRNdvpcqIpA-zuheG_oLEh6y266eRTZMA7k8GttJvh7hI3POu'})"
+                        class="w-full py-2 rounded-lg border-2 border-primary text-primary font-semibold text-sm hover:bg-primary hover:text-white transition-colors cursor-pointer">Buy
+                        Now</button>
+                </div>
+            </div>
+            <div data-price="54999" data-order="7"
+                class="group bg-surface-light rounded-xl border border-border-light overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 flex flex-col">
+                <div
+                    class="relative aspect-[4/3] bg-white overflow-hidden p-8 flex items-center justify-center">
+                    <img alt="SnapX 5G Pro"
+                        class="w-auto h-full max-h-[90%] object-contain group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoNvTmbpDl3xYLyHDXOgNocUClVgCDIg56BmIx1mLXhb9QR-kwh6EY3KcLuRxP_Zt9FFeC6q17_i-sttTTy7-IxK8eW5vh711_0Fu0xdaxPJGpZmPNBwiGQ_NtTo0J7pYOJR8MtCnR_rz9ZgNNJvDs1nMRYK5jqXO8juxZY398lCEvAjH8oa7PRG_vSTTiFVN2-aEbWrp-HEXG_T9GmM6l1e-Fy41eS2eOC9DonSgqY_7CKdPlhScZzRfcp4lfUOoAlTsYfMOKrBKB"
+                         />
+                    <button data-wishlist-id="snapx-5g"
+                        onclick="addToWishlist({id:'snapx-5g', title:'SnapX 5G Pro', price:54999, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuBoNvTmbpDl3xYLyHDXOgNocUClVgCDIg56BmIx1mLXhb9QR-kwh6EY3KcLuRxP_Zt9FFeC6q17_i-sttTTy7-IxK8eW5vh711_0Fu0xdaxPJGpZmPNBwiGQ_NtTo0J7pYOJR8MtCnR_rz9ZgNNJvDs1nMRYK5jqXO8juxZY398lCEvAjH8oa7PRG_vSTTiFVN2-aEbWrp-HEXG_T9GmM6l1e-Fy41eS2eOC9DonSgqY_7CKdPlhScZzRfcp4lfUOoAlTsYfMOKrBKB'})"
+                        class="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full text-text-secondary-light hover:text-red-500 transition-colors"><span
+                            class="material-symbols-outlined text-[20px]">favorite</span></button>
+                </div>
+                <div class="p-4 flex-1 flex flex-col">
+                    <div
+                        class="text-xs font-medium text-text-secondary-light uppercase tracking-wide mb-1">
+                        Smartphones</div>
+                    <a href="#" class="hover:text-primary block">
+                        <h3
+                            class="text-base font-semibold text-text-primary-light mb-2 truncate">
+                            SnapX 5G Pro</h3>
+                    </a>
+                    <div class="flex flex-wrap gap-2 mb-3"><span
+                            class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">5G</span><span
+                            class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">108MP</span>
+                    </div>
+                    <div class="flex items-center gap-1 mb-3 mt-auto"><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-half-filled">star_half</span><span
+                            class="text-xs text-text-secondary-light ml-1">(3.1k)</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-3"><span
+                            class="text-lg font-bold text-text-primary-light ">?54,999</span><button
+                            onclick="addToCart({id:'snapx-5g', title:'SnapX 5G Pro', price:54999, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuBoNvTmbpDl3xYLyHDXOgNocUClVgCDIg56BmIx1mLXhb9QR-kwh6EY3KcLuRxP_Zt9FFeC6q17_i-sttTTy7-IxK8eW5vh711_0Fu0xdaxPJGpZmPNBwiGQ_NtTo0J7pYOJR8MtCnR_rz9ZgNNJvDs1nMRYK5jqXO8juxZY398lCEvAjH8oa7PRG_vSTTiFVN2-aEbWrp-HEXG_T9GmM6l1e-Fy41eS2eOC9DonSgqY_7CKdPlhScZzRfcp4lfUOoAlTsYfMOKrBKB'})"
+                            class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span
+                                class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
+                    <button
+                        onclick="buyNow({id:'snapx-5g', title:'SnapX 5G Pro', price:54999, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuBoNvTmbpDl3xYLyHDXOgNocUClVgCDIg56BmIx1mLXhb9QR-kwh6EY3KcLuRxP_Zt9FFeC6q17_i-sttTTy7-IxK8eW5vh711_0Fu0xdaxPJGpZmPNBwiGQ_NtTo0J7pYOJR8MtCnR_rz9ZgNNJvDs1nMRYK5jqXO8juxZY398lCEvAjH8oa7PRG_vSTTiFVN2-aEbWrp-HEXG_T9GmM6l1e-Fy41eS2eOC9DonSgqY_7CKdPlhScZzRfcp4lfUOoAlTsYfMOKrBKB'})"
+                        class="w-full py-2 rounded-lg border-2 border-primary text-primary font-semibold text-sm hover:bg-primary hover:text-white transition-colors cursor-pointer">Buy
+                        Now</button>
+                </div>
+            </div>
+
+            <div data-price="149999" data-order="8"
+                class="group bg-surface-light rounded-xl border border-border-light overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 flex flex-col">
+                <div
+                    class="relative aspect-[4/3] bg-white overflow-hidden p-8 flex items-center justify-center">
+                    <img alt="AeroBook X1 Ultra"
+                        class="w-auto h-full max-h-[90%] object-contain group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8HkLH_OsrpLvu-bp8uPttjK3ozesEMQn8dEIpL5YukgAp4wU1bEcmw0Fv_xZY2R8cDLwTxUfjA0gPlCtxs8DCuKXLXtwruzxc4evYKI0YoDCmuiAWBMsk7Jclx0jc9qaq1beCCOnVFp0OJqUKteG7LJiNTyGu2Qw5CsOM6sdyReEVPItX-Idb3_izI6hcIS1_w-t7JuoyQKUKlviCzFwU8End3Rufk3MrRxD5ilZ4LSgWR8NrGXRfHY_1vA6wXqbpim0xnC_3vhx_"
+                         />
+                    <button data-wishlist-id="aero-book-x1"
+                        onclick="addToWishlist({id:'aero-book-x1', title:'AeroBook X1 Ultra', price:149999, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuC8HkLH_OsrpLvu-bp8uPttjK3ozesEMQn8dEIpL5YukgAp4wU1bEcmw0Fv_xZY2R8cDLwTxUfjA0gPlCtxs8DCuKXLXtwruzxc4evYKI0YoDCmuiAWBMsk7Jclx0jc9qaq1beCCOnVFp0OJqUKteG7LJiNTyGu2Qw5CsOM6sdyReEVPItX-Idb3_izI6hcIS1_w-t7JuoyQKUKlviCzFwU8End3Rufk3MrRxD5ilZ4LSgWR8NrGXRfHY_1vA6wXqbpim0xnC_3vhx_'})"
+                        class="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full text-text-secondary-light hover:text-red-500 transition-colors"><span
+                            class="material-symbols-outlined text-[20px]">favorite</span></button>
+                </div>
+                <div class="p-4 flex-1 flex flex-col">
+                    <div
+                        class="text-xs font-medium text-text-secondary-light uppercase tracking-wide mb-1">
+                        Laptops</div>
+                    <a href="#" class="hover:text-primary block">
+                        <h3
+                            class="text-base font-semibold text-text-primary-light mb-2 truncate">
+                            AeroBook X1 Ultra</h3>
+                    </a>
+                    <div class="flex flex-wrap gap-2 mb-3"><span
+                            class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">OLED</span><span
+                            class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">32GB
+                            RAM</span></div>
+                    <div class="flex items-center gap-1 mb-3 mt-auto"><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-half-filled">star_half</span><span
+                            class="text-xs text-text-secondary-light ml-1">(1.2k)</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-3"><span
+                            class="text-lg font-bold text-text-primary-light ">?1,49,999</span><button
+                            onclick="addToCart({id:'aero-book-x1', title:'AeroBook X1 Ultra', price:149999, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuC8HkLH_OsrpLvu-bp8uPttjK3ozesEMQn8dEIpL5YukgAp4wU1bEcmw0Fv_xZY2R8cDLwTxUfjA0gPlCtxs8DCuKXLXtwruzxc4evYKI0YoDCmuiAWBMsk7Jclx0jc9qaq1beCCOnVFp0OJqUKteG7LJiNTyGu2Qw5CsOM6sdyReEVPItX-Idb3_izI6hcIS1_w-t7JuoyQKUKlviCzFwU8End3Rufk3MrRxD5ilZ4LSgWR8NrGXRfHY_1vA6wXqbpim0xnC_3vhx_'})"
+                            class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span
+                                class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
+                    <button
+                        onclick="buyNow({id:'aero-book-x1', title:'AeroBook X1 Ultra', price:149999, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuC8HkLH_OsrpLvu-bp8uPttjK3ozesEMQn8dEIpL5YukgAp4wU1bEcmw0Fv_xZY2R8cDLwTxUfjA0gPlCtxs8DCuKXLXtwruzxc4evYKI0YoDCmuiAWBMsk7Jclx0jc9qaq1beCCOnVFp0OJqUKteG7LJiNTyGu2Qw5CsOM6sdyReEVPItX-Idb3_izI6hcIS1_w-t7JuoyQKUKlviCzFwU8End3Rufk3MrRxD5ilZ4LSgWR8NrGXRfHY_1vA6wXqbpim0xnC_3vhx_'})"
+                        class="w-full py-2 rounded-lg border-2 border-primary text-primary font-semibold text-sm hover:bg-primary hover:text-white transition-colors cursor-pointer">Buy
+                        Now</button>
+                </div>
+            </div>
+
+            <div data-price="37499" data-order="9"
+                class="group bg-surface-light rounded-xl border border-border-light overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 flex flex-col">
+                <div
+                    class="relative aspect-[4/3] bg-white overflow-hidden p-8 flex items-center justify-center">
+                    <img alt="SkyView Drone V3"
+                        class="w-auto h-full max-h-[90%] object-contain group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwRMO7z2je82ZTm3hpu2eG6T1HmQgVQYrspH9xxeZpE-usWlmZQIka4hWuRh3VnZSS64UH8uyIYcmLUna5VsVWfGKyHbf8H2DMFDcT01_8BG5MfEnUNdXXj7gNaEyZmhwTGIAvi2z5hQLLc7M8C1DqmeVFGiWchCEClYpgHrkZDfvjsS9cXKwsHiZx4i6tQd3q2oSn8xHhJHkRd5dFOU7TTbXP2X09hs55cWz5ccMNGk7K4yx0mRsL9th9xZtJiJYNT0-5zpxf9r4t"
+                         />
+                    <button data-wishlist-id="desk-drone-v3"
+                        onclick="addToWishlist({id:'desk-drone-v3', title:'SkyView Drone V3', price:37499, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuBwRMO7z2je82ZTm3hpu2eG6T1HmQgVQYrspH9xxeZpE-usWlmZQIka4hWuRh3VnZSS64UH8uyIYcmLUna5VsVWfGKyHbf8H2DMFDcT01_8BG5MfEnUNdXXj7gNaEyZmhwTGIAvi2z5hQLLc7M8C1DqmeVFGiWchCEClYpgHrkZDfvjsS9cXKwsHiZx4i6tQd3q2oSn8xHhJHkRd5dFOU7TTbXP2X09hs55cWz5ccMNGk7K4yx0mRsL9th9xZtJiJYNT0-5zpxf9r4t'})"
+                        class="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full text-text-secondary-light hover:text-red-500 transition-colors"><span
+                            class="material-symbols-outlined text-[20px]">favorite</span></button>
+                </div>
+                <div class="p-4 flex-1 flex flex-col">
+                    <div
+                        class="text-xs font-medium text-text-secondary-light uppercase tracking-wide mb-1">
+                        Drones</div>
+                    <a href="#" class="hover:text-primary block">
+                        <h3
+                            class="text-base font-semibold text-text-primary-light mb-2 truncate">
+                            SkyView Drone V3</h3>
+                    </a>
+                    <div class="flex flex-wrap gap-2 mb-3"><span
+                            class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">4K
+                            Camera</span><span
+                            class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">40min
+                            Flight</span></div>
+                    <div class="flex items-center gap-1 mb-3 mt-auto"><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-gray-300 text-[14px]">star</span><span
+                            class="text-xs text-text-secondary-light ml-1">(674)</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-3"><span
+                            class="text-lg font-bold text-text-primary-light ">?37,499</span><button
+                            onclick="addToCart({id:'desk-drone-v3', title:'SkyView Drone V3', price:37499, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuBwRMO7z2je82ZTm3hpu2eG6T1HmQgVQYrspH9xxeZpE-usWlmZQIka4hWuRh3VnZSS64UH8uyIYcmLUna5VsVWfGKyHbf8H2DMFDcT01_8BG5MfEnUNdXXj7gNaEyZmhwTGIAvi2z5hQLLc7M8C1DqmeVFGiWchCEClYpgHrkZDfvjsS9cXKwsHiZx4i6tQd3q2oSn8xHhJHkRd5dFOU7TTbXP2X09hs55cWz5ccMNGk7K4yx0mRsL9th9xZtJiJYNT0-5zpxf9r4t'})"
+                            class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span
+                                class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
+                    <button
+                        onclick="buyNow({id:'desk-drone-v3', title:'SkyView Drone V3', price:37499, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuBwRMO7z2je82ZTm3hpu2eG6T1HmQgVQYrspH9xxeZpE-usWlmZQIka4hWuRh3VnZSS64UH8uyIYcmLUna5VsVWfGKyHbf8H2DMFDcT01_8BG5MfEnUNdXXj7gNaEyZmhwTGIAvi2z5hQLLc7M8C1DqmeVFGiWchCEClYpgHrkZDfvjsS9cXKwsHiZx4i6tQd3q2oSn8xHhJHkRd5dFOU7TTbXP2X09hs55cWz5ccMNGk7K4yx0mRsL9th9xZtJiJYNT0-5zpxf9r4t'})"
+                        class="w-full py-2 rounded-lg border-2 border-primary text-primary font-semibold text-sm hover:bg-primary hover:text-white transition-colors cursor-pointer">Buy
+                        Now</button>
+                </div>
+            </div>
+
+            <div data-price="12999" data-order="10"
+                class="group bg-surface-light rounded-xl border border-border-light overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 flex flex-col">
+                <div
+                    class="relative aspect-[4/3] bg-white overflow-hidden p-8 flex items-center justify-center">
+                    <img alt="HyperBuds X Pro"
+                        class="w-auto h-full max-h-[90%] object-contain group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuC72_IR4svNMhKtT5sm8RaaDmpEGOpauk1kXFPvop4eVxZv73hFLRewhGgPXryPM_dLLa-HT5HBt63f8sP8o5IZA_s1iwEoel5BoVzziGzkM9ukhzIyp2DvLneMqxqAEdDdle3CoM_rNEwmSg5KKDqokrTt49Fbf1wqARuvFNim7Z45TA3qSqubIb15Y4hi5pKQlsjLqPXObsL2OdUso0LR18BkVj6Ryn_6PfiEQdJWrzW8mjRT77sipTGyaT7wTwNVaiVZDAfYYR1v"
+                         />
+                    <button data-wishlist-id="hyper-earbuds"
+                        onclick="addToWishlist({id:'hyper-earbuds', title:'HyperBuds X Pro', price:12999, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuC72_IR4svNMhKtT5sm8RaaDmpEGOpauk1kXFPvop4eVxZv73hFLRewhGgPXryPM_dLLa-HT5HBt63f8sP8o5IZA_s1iwEoel5BoVzziGzkM9ukhzIyp2DvLneMqxqAEdDdle3CoM_rNEwmSg5KKDqokrTt49Fbf1wqARuvFNim7Z45TA3qSqubIb15Y4hi5pKQlsjLqPXObsL2OdUso0LR18BkVj6Ryn_6PfiEQdJWrzW8mjRT77sipTGyaT7wTwNVaiVZDAfYYR1v'})"
+                        class="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full text-text-secondary-light hover:text-red-500 transition-colors"><span
+                            class="material-symbols-outlined text-[20px]">favorite</span></button>
+                    <span
+                        class="absolute top-3 left-3 bg-primary text-white text-[10px] font-bold px-2 py-1 rounded uppercase">Best
+                        Seller</span>
+                </div>
+                <div class="p-4 flex-1 flex flex-col">
+                    <div
+                        class="text-xs font-medium text-text-secondary-light uppercase tracking-wide mb-1">
+                        Audio</div>
+                    <a href="#" class="hover:text-primary block">
+                        <h3
+                            class="text-base font-semibold text-text-primary-light mb-2 truncate">
+                            HyperBuds X Pro</h3>
+                    </a>
+                    <div class="flex flex-wrap gap-2 mb-3"><span
+                            class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">ANC</span><span
+                            class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">Hi-Res
+                            Audio</span></div>
+                    <div class="flex items-center gap-1 mb-3 mt-auto"><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-half-filled">star_half</span><span
+                            class="text-xs text-text-secondary-light ml-1">(5.6k)</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-3"><span
+                            class="text-lg font-bold text-text-primary-light ">?12,999</span><button
+                            onclick="addToCart({id:'hyper-earbuds', title:'HyperBuds X Pro', price:12999, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuC72_IR4svNMhKtT5sm8RaaDmpEGOpauk1kXFPvop4eVxZv73hFLRewhGgPXryPM_dLLa-HT5HBt63f8sP8o5IZA_s1iwEoel5BoVzziGzkM9ukhzIyp2DvLneMqxqAEdDdle3CoM_rNEwmSg5KKDqokrTt49Fbf1wqARuvFNim7Z45TA3qSqubIb15Y4hi5pKQlsjLqPXObsL2OdUso0LR18BkVj6Ryn_6PfiEQdJWrzW8mjRT77sipTGyaT7wTwNVaiVZDAfYYR1v'})"
+                            class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span
+                                class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
+                    <button
+                        onclick="buyNow({id:'hyper-earbuds', title:'HyperBuds X Pro', price:12999, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuC72_IR4svNMhKtT5sm8RaaDmpEGOpauk1kXFPvop4eVxZv73hFLRewhGgPXryPM_dLLa-HT5HBt63f8sP8o5IZA_s1iwEoel5BoVzziGzkM9ukhzIyp2DvLneMqxqAEdDdle3CoM_rNEwmSg5KKDqokrTt49Fbf1wqARuvFNim7Z45TA3qSqubIb15Y4hi5pKQlsjLqPXObsL2OdUso0LR18BkVj6Ryn_6PfiEQdJWrzW8mjRT77sipTGyaT7wTwNVaiVZDAfYYR1v'})"
+                        class="w-full py-2 rounded-lg border-2 border-primary text-primary font-semibold text-sm hover:bg-primary hover:text-white transition-colors cursor-pointer">Buy
+                        Now</button>
+                </div>
+            </div>
+
+            <div data-price="104999" data-order="11"
+                class="group bg-surface-light rounded-xl border border-border-light overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 flex flex-col">
+                <div
+                    class="relative aspect-[4/3] bg-white overflow-hidden p-8 flex items-center justify-center">
+                    <img alt="Odyssey UltraWide"
+                        class="w-auto h-full max-h-[90%] object-contain group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYugVACfRanIulRggXALKX2RvjDqsGzgS4u5zoW6jlw--VXFgMggb5TZPegxIpVx9suOdfu1diIZS_zeJr6Jce9eEnzLQJhttR5ThNBKUeecFFbLJ990XQYQHLO3IKfBtEbw0cU-GBIlF7PFHzGIUVMXQn4YqcsAX2b2Gu4z0WSi5LWKUHNg7hmD4UquEO94HDte6wLTR4YiYjmv8ILoC6MP01D6SmoUdiv3gPkeD-ON-Tl3wKcvIViCG896ijlFZj5iJwKfnY1CdN"
+                         />
+                    <button data-wishlist-id="odyssey-ultrawide"
+                        onclick="addToWishlist({id:'odyssey-ultrawide', title:'Odyssey UltraWide', price:104999, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuAYugVACfRanIulRggXALKX2RvjDqsGzgS4u5zoW6jlw--VXFgMggb5TZPegxIpVx9suOdfu1diIZS_zeJr6Jce9eEnzLQJhttR5ThNBKUeecFFbLJ990XQYQHLO3IKfBtEbw0cU-GBIlF7PFHzGIUVMXQn4YqcsAX2b2Gu4z0WSi5LWKUHNg7hmD4UquEO94HDte6wLTR4YiYjmv8ILoC6MP01D6SmoUdiv3gPkeD-ON-Tl3wKcvIViCG896ijlFZj5iJwKfnY1CdN'})"
+                        class="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full text-text-secondary-light hover:text-red-500 transition-colors"><span
+                            class="material-symbols-outlined text-[20px]">favorite</span></button>
+                </div>
+                <div class="p-4 flex-1 flex flex-col">
+                    <div
+                        class="text-xs font-medium text-text-secondary-light uppercase tracking-wide mb-1">
+                        Monitors</div>
+                    <a href="#" class="hover:text-primary block">
+                        <h3
+                            class="text-base font-semibold text-text-primary-light mb-2 truncate">
+                            Odyssey UltraWide</h3>
+                    </a>
+                    <div class="flex flex-wrap gap-2 mb-3"><span
+                            class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">QHD
+                            240Hz</span><span
+                            class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">Curved</span>
+                    </div>
+                    <div class="flex items-center gap-1 mb-3 mt-auto"><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-half-filled">star_half</span><span
+                            class="text-xs text-text-secondary-light ml-1">(2.1k)</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-3"><span
+                            class="text-lg font-bold text-text-primary-light ">?1,04,999</span><button
+                            onclick="addToCart({id:'odyssey-ultrawide', title:'Odyssey UltraWide', price:104999, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuAYugVACfRanIulRggXALKX2RvjDqsGzgS4u5zoW6jlw--VXFgMggb5TZPegxIpVx9suOdfu1diIZS_zeJr6Jce9eEnzLQJhttR5ThNBKUeecFFbLJ990XQYQHLO3IKfBtEbw0cU-GBIlF7PFHzGIUVMXQn4YqcsAX2b2Gu4z0WSi5LWKUHNg7hmD4UquEO94HDte6wLTR4YiYjmv8ILoC6MP01D6SmoUdiv3gPkeD-ON-Tl3wKcvIViCG896ijlFZj5iJwKfnY1CdN'})"
+                            class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span
+                                class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
+                    <button
+                        onclick="buyNow({id:'odyssey-ultrawide', title:'Odyssey UltraWide', price:104999, image:'https://lh3.googleusercontent.com/aida-public/AB6AXuAYugVACfRanIulRggXALKX2RvjDqsGzgS4u5zoW6jlw--VXFgMggb5TZPegxIpVx9suOdfu1diIZS_zeJr6Jce9eEnzLQJhttR5ThNBKUeecFFbLJ990XQYQHLO3IKfBtEbw0cU-GBIlF7PFHzGIUVMXQn4YqcsAX2b2Gu4z0WSi5LWKUHNg7hmD4UquEO94HDte6wLTR4YiYjmv8ILoC6MP01D6SmoUdiv3gPkeD-ON-Tl3wKcvIViCG896ijlFZj5iJwKfnY1CdN'})"
+                        class="w-full py-2 rounded-lg border-2 border-primary text-primary font-semibold text-sm hover:bg-primary hover:text-white transition-colors cursor-pointer">Buy
+                        Now</button>
+                </div>
+            </div>
+
+            <div data-price="8499" data-order="12"
+                class="group bg-surface-light rounded-xl border border-border-light overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 flex flex-col">
+                <div
+                    class="relative aspect-[4/3] bg-white overflow-hidden p-8 flex items-center justify-center">
+                    <img alt="Stealth Gaming Mouse"
+                        class="w-auto h-full max-h-[90%] object-contain group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+                        src="https://lh3.googleusercontent.com/aida-public/AEdXbcoTpHs82-J0yW0U7Lw0e_t9i6-xL3WdYvC_q0P3gZ-W0Tz3Z1P5V0_k6L7NnQw5Jq_r_1Cj6oMw3G_tX6F1-2B8T2P_qT3N5g8Hw2jZwO9rQw2M8J6s7t6T8R9L1N9Kj1G0W9b8-z7V0L7wY2J3Q6N0E3_p6YpQw6eE2K3-h5P4K0-u0B4-mJ8"
+                         />
+                    <button data-wishlist-id="stealth-mouse"
+                        onclick="addToWishlist({id:'stealth-mouse', title:'Stealth Gaming Mouse', price:8499, image:'https://lh3.googleusercontent.com/aida-public/AEdXbcoTpHs82-J0yW0U7Lw0e_t9i6-xL3WdYvC_q0P3gZ-W0Tz3Z1P5V0_k6L7NnQw5Jq_r_1Cj6oMw3G_tX6F1-2B8T2P_qT3N5g8Hw2jZwO9rQw2M8J6s7t6T8R9L1N9Kj1G0W9b8-z7V0L7wY2J3Q6N0E3_p6YpQw6eE2K3-h5P4K0-u0B4-mJ8'})"
+                        class="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full text-text-secondary-light hover:text-red-500 transition-colors"><span
+                            class="material-symbols-outlined text-[20px]">favorite</span></button>
+                </div>
+                <div class="p-4 flex-1 flex flex-col">
+                    <div
+                        class="text-xs font-medium text-text-secondary-light uppercase tracking-wide mb-1">
+                        Accessories</div>
+                    <a href="#" class="hover:text-primary block">
+                        <h3
+                            class="text-base font-semibold text-text-primary-light mb-2 truncate">
+                            Stealth Gaming Mouse</h3>
+                    </a>
+                    <div class="flex flex-wrap gap-2 mb-3"><span
+                            class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">26K
+                            DPI</span><span
+                            class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">Wireless</span>
+                    </div>
+                    <div class="flex items-center gap-1 mb-3 mt-auto"><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span><span
+                            class="material-symbols-outlined text-yellow-400 text-[14px] star-half-filled">star_half</span><span
+                            class="text-xs text-text-secondary-light ml-1">(4.2k)</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-3"><span
+                            class="text-lg font-bold text-text-primary-light ">?8,499</span><button
+                            onclick="addToCart({id:'stealth-mouse', title:'Stealth Gaming Mouse', price:8499, image:'https://lh3.googleusercontent.com/aida-public/AEdXbcoTpHs82-J0yW0U7Lw0e_t9i6-xL3WdYvC_q0P3gZ-W0Tz3Z1P5V0_k6L7NnQw5Jq_r_1Cj6oMw3G_tX6F1-2B8T2P_qT3N5g8Hw2jZwO9rQw2M8J6s7t6T8R9L1N9Kj1G0W9b8-z7V0L7wY2J3Q6N0E3_p6YpQw6eE2K3-h5P4K0-u0B4-mJ8'})"
+                            class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span
+                                class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
+                    <button
+                        onclick="buyNow({id:'stealth-mouse', title:'Stealth Gaming Mouse', price:8499, image:'https://lh3.googleusercontent.com/aida-public/AEdXbcoTpHs82-J0yW0U7Lw0e_t9i6-xL3WdYvC_q0P3gZ-W0Tz3Z1P5V0_k6L7NnQw5Jq_r_1Cj6oMw3G_tX6F1-2B8T2P_qT3N5g8Hw2jZwO9rQw2M8J6s7t6T8R9L1N9Kj1G0W9b8-z7V0L7wY2J3Q6N0E3_p6YpQw6eE2K3-h5P4K0-u0B4-mJ8'})"
+                        class="w-full py-2 rounded-lg border-2 border-primary text-primary font-semibold text-sm hover:bg-primary hover:text-white transition-colors cursor-pointer">Buy
+                        Now</button>
+                </div>
+            </div>
+        </div>
+        <div class="mt-12 flex justify-center">
+            <button id="load-more-btn" onclick="loadMoreProducts()"
+                class="flex items-center gap-2 px-8 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 active:scale-95 transition-all duration-200 shadow-md hover:shadow-lg">
+                <span class="material-symbols-outlined text-[20px]">expand_more</span>
+                Load More Products
+            </button>
+        </div>
+    </main>
+    <footer class="bg-white border-t border-slate-200 pt-16 pb-12 mt-20">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-12 mb-16">
+                <div class="col-span-2 lg:col-span-2">
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="flex items-center justify-center text-white">
+                            <img src="buyit-logo-tansperant.png" alt="Buy it Logo" class="h-24 w-auto object-contain">
+                        </div>
+                    </div>
+                    <p class="text-slate-500 text-sm leading-relaxed max-w-sm mb-8">
+                        Experience the next generation of tech shopping. Buy it brings you the latest electronics, handpicked for quality and value, with a focus on customer satisfaction at every step.
+                    </p>
+                    <div class="flex gap-5">
+                                                <a class="text-slate-400 hover:text-green-500 transition-colors" href="https://wa.me/916363770057?text=Hello%2C%20I%20would%20like%20to%20know%20more%20about%20Buy%20it%20products%20and%20offers." target="_blank" rel="noopener" title="WhatsApp">
+                                                    <span class="sr-only">WhatsApp</span>
+                                                    <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.472-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.5-.669-.51-.173-.007-.372-.009-.571-.009-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.099 3.2 5.077 4.363.709.244 1.262.389 1.694.497.712.181 1.36.156 1.872.095.571-.067 1.758-.719 2.006-1.413.248-.694.248-1.288.173-1.413-.074-.124-.272-.198-.57-.347zm-5.421 7.617h-.001a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.999-3.648-.235-.374A9.86 9.86 0 012.1 12.045C2.111 6.479 6.58 2.01 12.153 2c2.652.004 5.146 1.037 7.022 2.915A9.822 9.822 0 0122.3 12.04c-.003 5.572-4.472 10.041-9.949 10.041zm8.413-17.453A11.815 11.815 0 0012.153.001C5.495.013.111 6.006.1 12.045c0 2.13.557 4.21 1.613 6.033L.057 23.925a1 1 0 001.225 1.225l5.874-1.641a11.822 11.822 0 005.001 1.106h.005c6.658 0 12.042-5.994 12.053-12.033a11.82 11.82 0 00-3.33-8.233z"/>
+                                                    </svg>
+                                                </a>
+                        <a class="text-slate-400 hover:text-primary transition-colors" href="index.html">
+                            <span class="sr-only">Facebook</span>
+                            <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path clip-rule="evenodd"
+                                    d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
+                                    fill-rule="evenodd"></path>
+                            </svg>
+                        </a>
+                        <a class="text-slate-400 hover:text-primary transition-colors" href="index.html">
+                            <span class="sr-only">Instagram</span>
+                            <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path clip-rule="evenodd"
+                                    d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.468 2.373c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.505-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"
+                                    fill-rule="evenodd"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider mb-6">Company
+                    </h3>
+                    <ul class="space-y-4 text-sm font-medium text-slate-500 ">
+                        <li><a class="hover:text-primary transition-colors" href="about.html">About Us</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="contact.html">Contact Us</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="products.html">Shop Products</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider mb-6">
+                        Policies</h3>
+                    <ul class="space-y-4 text-sm font-medium text-slate-500 ">
+                        <!-- Concierge Support removed -->
+                        <li><a class="hover:text-primary transition-colors" href="account.html">Track My order</a></li>
+                        <!-- Global Warranty removed -->
+                        <!-- Return Policy removed -->
+                        <li><a class="hover:text-primary transition-colors" href="terms-and-conditions.html">Terms & Conditions</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="shipping-policy.html">Shipping Policy</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="return-and-refund-policy.html">Return and Refund policy</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="payment-and-security.html">Payment & Security</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="privacy-policy.html">Privacy Policy</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="order-cancellation-policy.html">Order Cancellation Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div
+                class="border-t border-slate-100 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
+                <p class="text-xs font-medium text-slate-400 w-full text-center">Â© 2026 Buy it Inc. All rights reserved.</p>
+                <!-- Privacy and Terms links removed -->
+            </div>
+        </div>
+    </footer>
+    <script src="shop.js"></script>
+    <script>
+        function sortProducts() {
+            const select = document.getElementById('sort-select');
+            const grid = document.getElementById('products-grid');
+            const cards = Array.from(grid.querySelectorAll('[data-price]'));
+            const order = select.value;
+            cards.sort((a, b) => {
+                if (order === 'price-asc') {
+                    return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+                } else if (order === 'price-desc') {
+                    return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
+                } else {
+                    return parseFloat(a.dataset.order) - parseFloat(b.dataset.order);
+                }
+            });
+            cards.forEach(card => grid.appendChild(card));
+        }
+
+        function applyProductRouting(scopeElement = document) {
+            const cards = scopeElement.querySelectorAll('#products-grid > div');
+            cards.forEach((card) => {
+                const wishlistButton = card.querySelector('[data-wishlist-id]');
+                const productId = wishlistButton ? wishlistButton.getAttribute('data-wishlist-id') : null;
+                if (!productId) {
+                    return;
+                }
+
+                const link = typeof getProductLink === 'function'
+                    ? getProductLink(productId)
+                    : `product.html?id=${encodeURIComponent(productId)}`;
+                const image = card.querySelector('img.cursor-pointer, img');
+                if (image) {
+                    image.setAttribute('onclick', `window.location.href='${link}'`);
+                }
+
+                card.querySelectorAll('a[href]').forEach((anchor) => {
+                    const href = anchor.getAttribute('href') || '';
+                    if (href === 'product.html' || href.startsWith('product.html?') || href === '#') {
+                        anchor.setAttribute('href', link);
+                    }
+                });
+            });
+        }
+
+        const extraProducts = [
+            { id: 'hologram-display', title: 'HoloView 3D Monitor', price: 84999, order: 13, category: 'Monitors', tags: ['Holographic', '4K'], stars: 5, reviews: '812', badge: '', img: 'https://lh3.googleusercontent.com/aida-public/AEdXbcoTpHs82-J0yW0U7Lw0e_t9i6-xL3WdYvC_q0P3gZ-W0Tz3Z1P5V0_k6L7NnQw5Jq_r_1Cj6oMw3G_tX6F1-2B8T2P_qT3N5g8Hw2jZwO9rQw2M8J6s7t6T8R9L1N9Kj1G0W9b8-z7V0L7wY2J3Q6N0E3_p6YpQw6eE2K3-h5P4K0-u0B4-mJ8' },
+            { id: 'smart-ring-g2', title: 'Aura Smart Ring Gen 2', price: 18499, order: 14, category: 'Wearables', tags: ['HRV', 'Sleep tracking'], stars: 4, reviews: '2.4k', badge: '', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAYugVACfRanIulRggXALKX2RvjDqsGzgS4u5zoW6jlw--VXFgMggb5TZPegxIpVx9suOdfu1diIZS_zeJr6Jce9eEnzLQJhttR5ThNBKUeecFFbLJ990XQYQHLO3IKfBtEbw0cU-GBIlF7PFHzGIUVMXQn4YqcsAX2b2Gu4z0WSi5LWKUHNg7hmD4UquEO94HDte6wLTR4YiYjmv8ILoC6MP01D6SmoUdiv3gPkeD-ON-Tl3wKcvIViCG896ijlFZj5iJwKfnY1CdN' },
+            { id: 'mech-keyboard', title: 'Pro Keys Wireless Mech', price: 15999, order: 15, category: 'Accessories', tags: ['Hot-swappable', 'RGB'], stars: 5, reviews: '4.8k', badge: '', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBwRMO7z2je82ZTm3hpu2eG6T1HmQgVQYrspH9xxeZpE-usWlmZQIka4hWuRh3VnZSS64UH8uyIYcmLUna5VsVWfGKyHbf8H2DMFDcT01_8BG5MfEnUNdXXj7gNaEyZmhwTGIAvi2z5hQLLc7M8C1DqmeVFGiWchCEClYpgHrkZDfvjsS9cXKwsHiZx4i6tQd3q2oSn8xHhJHkRd5dFOU7TTbXP2X09hs55cWz5ccMNGk7K4yx0mRsL9th9xZtJiJYNT0-5zpxf9r4t' },
+            { id: 'streaming-mic', title: 'StudioCast Condenser', price: 11499, order: 16, category: 'Audio', tags: ['USB-C', 'Podcast'], stars: 4, reviews: '956', badge: '', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC72_IR4svNMhKtT5sm8RaaDmpEGOpauk1kXFPvop4eVxZv73hFLRewhGgPXryPM_dLLa-HT5HBt63f8sP8o5IZA_s1iwEoel5BoVzziGzkM9ukhzIyp2DvLneMqxqAEdDdle3CoM_rNEwmSg5KKDqokrTt49Fbf1wqARuvFNim7Z45TA3qSqubIb15Y4hi5pKQlsjLqPXObsL2OdUso0LR18BkVj6Ryn_6PfiEQdJWrzW8mjRT77sipTGyaT7wTwNVaiVZDAfYYR1v' },
+        ];
+        let loaded = false;
+
+        function loadMoreProducts() {
+            if (loaded) return;
+            const btn = document.getElementById('load-more-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span> Loading...';
+
+            setTimeout(() => {
+                const grid = document.getElementById('products-grid');
+                extraProducts.forEach(p => {
+                    const stars = Array.from({ length: 5 }, (_, i) =>
+                        `<span class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span>`
+                    ).join('');
+                    const badge = p.badge ? `<span class="absolute top-3 left-3 bg-primary text-white text-[10px] font-bold px-2 py-1 rounded uppercase">${p.badge}</span>` : '';
+                    const card = document.createElement('div');
+                    card.setAttribute('data-price', p.price);
+                    card.setAttribute('data-order', p.order);
+                    card.className = 'group bg-surface-light rounded-xl border border-border-light overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 flex flex-col';
+                    card.innerHTML = `
+                        <div class="relative aspect-[4/3] bg-white overflow-hidden p-8 flex items-center justify-center">
+                            <img alt="${p.title}" class="w-auto h-full max-h-[90%] object-contain group-hover:scale-105 transition-transform duration-500 cursor-pointer" src="${p.img}" onclick="window.location.href='${getProductLink(p.id)}'" />
+                            <button data-wishlist-id="${p.id}" onclick="addToWishlist({id:'${p.id}',title:'${p.title}',price:${p.price},image:'${p.img}'})" class="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full text-text-secondary-light hover:text-red-500 transition-colors"><span class="material-symbols-outlined text-[20px]">favorite</span></button>
+                            ${badge}
+                        </div>
+                        <div class="p-4 flex-1 flex flex-col">
+                            <div class="text-xs font-medium text-text-secondary-light uppercase tracking-wide mb-1">${p.category}</div>
+                            <a href="${getProductLink(p.id)}" class="hover:text-primary block"><h3 class="text-base font-semibold text-text-primary-light mb-2 truncate">${p.title}</h3></a>
+                            <div class="flex flex-wrap gap-2 mb-3">${p.tags.map(t => `<span class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">${t}</span>`).join('')}</div>
+                            <div class="flex items-center gap-1 mb-3 mt-auto">${stars}<span class="text-xs text-text-secondary-light ml-1">(${p.reviews})</span></div>
+                            <div class="flex items-center justify-between mb-3"><span class="text-lg font-bold text-text-primary-light ">?${p.price.toLocaleString('en-IN')}</span><button onclick="addToCart({id:'${p.id}',title:'${p.title}',price:${p.price},image:'${p.img}'})" class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
+                            <button onclick="buyNow({id:'${p.id}',title:'${p.title}',price:${p.price},image:'${p.img}'})" class="w-full py-2 rounded-lg border-2 border-primary text-primary font-semibold text-sm hover:bg-primary hover:text-white transition-colors cursor-pointer">Buy Now</button>
+                        </div>`;
+                    grid.appendChild(card);
+                });
+                loaded = true;
+                btn.innerHTML = '<span class="material-symbols-outlined text-[20px]">check_circle</span> All Products Loaded';
+                btn.className = btn.className.replace('bg-primary hover:bg-primary/90', 'bg-slate-400 cursor-default');
+                applyProductRouting();
+            }, 800);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            applyProductRouting();
+        });
+    </script>
+</body>
+
+</html>
+
+
+

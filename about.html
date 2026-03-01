@@ -1,0 +1,227 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Buy it - About</title>
+    <link rel="icon" href="buyit-logo-tansperant.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3b82f6",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <link rel="stylesheet" href="main.css">
+</head>
+
+<body
+    class="bg-background-light text-slate-900 font-display min-h-screen flex flex-col">
+    <header
+        class="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-200 ">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex h-16 items-center justify-between gap-4 sm:gap-8">
+                                <a href="index.html" class="flex items-center gap-2 flex-shrink-0 group">
+                    <div class="justify-center">
+                        <img src="buyit-logo-tansperant.png" alt="Buy it Logo" class="h-24 w-auto object-contain">
+                    </div>
+ <!--                   <h1 class="text-xl font-bold tracking-tight text-slate-900 hidden sm:block transition-colors group-hover:text-primary">Buy it</h1>  -->
+                </a>
+                <div class="hidden lg:flex flex-1 max-w-lg">
+                    <div class="relative w-full group">
+                        <div
+                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                            <span class="material-symbols-outlined text-[20px]">search</span>
+                        </div>
+                        <input
+                            class="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-lg leading-5 bg-slate-50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-all"
+                            placeholder="Search premium smartphones, laptops..." type="text" />
+                    </div>
+                </div>
+                <nav class="hidden md:flex items-center gap-6">
+                    <a class="text-sm font-medium text-slate-700 hover:text-primary :text-primary transition-colors"
+                        href="products.html">Products</a>
+                    <a class="text-sm font-medium text-slate-700 hover:text-primary :text-primary transition-colors"
+                        href="about.html">About Us</a>
+                    <a class="text-sm font-medium text-slate-700 hover:text-primary :text-primary transition-colors"
+                        href="contact.html">Contact</a>
+                </nav>
+                <div class="flex items-center gap-2 sm:gap-4">
+                    <button
+                        class="p-2 text-slate-500 hover:text-primary  :text-primary transition-colors lg:hidden">
+                        <span class="material-symbols-outlined">search</span>
+                    </button>
+                    <a href="wishlist.html" class="relative p-2 text-slate-500 hover:text-primary transition-colors" title="Wishlist">
+    <span class="material-symbols-outlined">favorite</span>
+    <span id="wishlist-count" class="absolute top-1 right-0 hidden h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white ring-2 ring-white">0</span>
+</a>
+                    <a href="cart.html" class="relative p-2 text-slate-500 hover:text-primary transition-colors" title="Cart">
+    <span class="material-symbols-outlined">shopping_cart</span>
+    <span id="cart-count" class="absolute top-1 right-0 hidden h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white ring-2 ring-white">0</span>
+</a>
+                    <a href="account.html" class="flex items-center gap-2 p-1 pl-2 pr-1 rounded-full border border-slate-200 hover:bg-slate-50 transition-colors ml-2" title="Account / Login"><div class="size-6 rounded-full bg-slate-200 overflow-hidden"><img alt="User Avatar" class="h-full w-full object-cover" src="https://ui-avatars.com/api/?name=User&background=random" /></div></a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <main class="flex-grow w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-24">
+        <!-- Hero Section -->
+        <section class="text-center max-w-3xl mx-auto space-y-6">
+            <h1 class="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight">
+                Empowering Your Digital Lifestyle
+            </h1>
+            <p class="text-lg text-slate-600 leading-relaxed">
+                At <span class="buyit-red-bold">Buy it</span>, our mission is to make cutting-edge technology accessible, reliable, and enjoyable for everyone. We are dedicated to sourcing the finest gadgets and providing a seamless shopping experience that inspires confidence and excitement in every customer.
+            </p>
+        </section>
+
+        <!-- Values Section -->
+        <section class="grid md:grid-cols-3 gap-8">
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 text-center space-y-4 hover:shadow-lg transition-shadow">
+                <div class="size-16 mx-auto bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined text-3xl">verified</span>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 ">Certified Quality</h3>
+                <p class="text-sm text-slate-500 leading-relaxed">All our products undergo strict quality checks and are certified for performance and reliability, ensuring you always get the best.</p>
+            </div>
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 text-center space-y-4 hover:shadow-lg transition-shadow">
+                <div class="size-16 mx-auto bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined text-3xl">local_shipping</span>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 ">Fast & Secure Delivery</h3>
+                <p class="text-sm text-slate-500 leading-relaxed">We partner with trusted logistics providers to deliver your orders quickly and safely, no matter where you are in the country.</p>
+            </div>
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 text-center space-y-4 hover:shadow-lg transition-shadow">
+                <div class="size-16 mx-auto bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined text-3xl">support_agent</span>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 ">Expert Assistance</h3>
+                <p class="text-sm text-slate-500 leading-relaxed">Our support team is available around the clock to help you with product selection, order tracking, and any post-purchase queries.</p>
+            </div>
+        </section>
+
+        <!-- Our Story -->
+        <section class="flex flex-col lg:flex-row gap-16 items-center">
+            <div class="flex-1 space-y-6">
+                <h2 class="text-3xl font-bold text-slate-900 ">The Buy it Story</h2>
+                <div class="space-y-4 text-slate-600 leading-relaxed">
+                    <p>Founded in 2026,<span class="buyit-red-bold">Buy it</span> began as a vision to simplify the way people discover and purchase technology. Our founders, passionate about innovation, set out to create a platform that makes premium gadgets accessible and enjoyable for everyone.</p>
+                    <p>We believe in more than just selling productsâ€”we strive to foster a vibrant community where tech lovers can connect, learn, and grow together. Our commitment to quality, transparency, and customer delight drives everything we do.</p>
+                    <p>Today,<span class="buyit-red-bold">Buy it</span> is trusted by customers nationwide, recognized for redefining the online electronics shopping experience with integrity and care.</p>
+                </div>
+            </div>
+            <div class="flex-1">
+                <div
+                    class="aspect-video rounded-2xl overflow-hidden shadow-2xl relative flex items-center justify-center">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-[#3b82f6] to-[#60a5fa] opacity-20"></div>
+                    <img src="buyit-logo-tansperant.png" alt="Buy it Logo" class="relative z-10 h-800 w-auto object-contain story-logo-max" />
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 pt-16 pb-12 mt-20">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-12 mb-16">
+                <div class="col-span-2 lg:col-span-2">
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="flex items-center justify-center text-white">
+                            <img src="buyit-logo-tansperant.png" alt="Buy it Logo" class="h-24 w-auto object-contain">
+                        </div>
+                    </div>
+                    <p class="text-slate-500 text-sm leading-relaxed max-w-sm mb-8">
+                        Experience the next generation of tech shopping. Buy it brings you the latest electronics, handpicked for quality and value, with a focus on customer satisfaction at every step.
+                    </p>
+                    <div class="flex gap-5">
+                                                <a class="text-slate-400 hover:text-green-500 transition-colors" href="https://wa.me/916363770057?text=Hello%2C%20I%20would%20like%20to%20know%20more%20about%20Buy%20it%20products%20and%20offers." target="_blank" rel="noopener" title="WhatsApp">
+                                                    <span class="sr-only">WhatsApp</span>
+                                                    <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.472-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.5-.669-.51-.173-.007-.372-.009-.571-.009-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.099 3.2 5.077 4.363.709.244 1.262.389 1.694.497.712.181 1.36.156 1.872.095.571-.067 1.758-.719 2.006-1.413.248-.694.248-1.288.173-1.413-.074-.124-.272-.198-.57-.347zm-5.421 7.617h-.001a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.999-3.648-.235-.374A9.86 9.86 0 012.1 12.045C2.111 6.479 6.58 2.01 12.153 2c2.652.004 5.146 1.037 7.022 2.915A9.822 9.822 0 0122.3 12.04c-.003 5.572-4.472 10.041-9.949 10.041zm8.413-17.453A11.815 11.815 0 0012.153.001C5.495.013.111 6.006.1 12.045c0 2.13.557 4.21 1.613 6.033L.057 23.925a1 1 0 001.225 1.225l5.874-1.641a11.822 11.822 0 005.001 1.106h.005c6.658 0 12.042-5.994 12.053-12.033a11.82 11.82 0 00-3.33-8.233z"/>
+                                                    </svg>
+                                                </a>
+                        <a class="text-slate-400 hover:text-primary transition-colors" href="index.html">
+                            <span class="sr-only">Facebook</span>
+                            <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path clip-rule="evenodd"
+                                    d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
+                                    fill-rule="evenodd"></path>
+                            </svg>
+                        </a>
+                        <a class="text-slate-400 hover:text-primary transition-colors" href="index.html">
+                            <span class="sr-only">Instagram</span>
+                            <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path clip-rule="evenodd"
+                                    d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.468 2.373c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.505-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"
+                                    fill-rule="evenodd"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider mb-6">Company
+                    </h3>
+                    <ul class="space-y-4 text-sm font-medium text-slate-500 ">
+                        <li><a class="hover:text-primary transition-colors" href="about.html">About Us</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="contact.html">Contact Us</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="products.html">Shop Products</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider mb-6">
+                        Policies</h3>
+                    <ul class="space-y-4 text-sm font-medium text-slate-500 ">
+                        <!-- Concierge Support removed -->
+                        <li><a class="hover:text-primary transition-colors" href="account.html">Track My order</a></li>
+                        <!-- Global Warranty removed -->
+                        <!-- Return Policy removed -->
+                        <li><a class="hover:text-primary transition-colors" href="terms-and-conditions.html">Terms & Conditions</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="shipping-policy.html">Shipping Policy</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="return-and-refund-policy.html">Return and Refund policy</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="payment-and-security.html">Payment & Security</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="privacy-policy.html">Privacy Policy</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="order-cancellation-policy.html">Order Cancellation Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div
+                class="border-t border-slate-100 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <p class="text-xs font-medium text-slate-400 w-full text-center">Â© 2026 Buy it Inc. All rights reserved.</p>
+                <div class="flex gap-8 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                </div>
+            </div>
+        </div>
+    </footer>
+<script src="shop.js"></script>
+</body>
+
+</html>
+
+
+
+
+

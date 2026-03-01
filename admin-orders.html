@@ -1,0 +1,202 @@
+﻿<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<title>Buy it</title>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<!-- meta tags moved to top -->
+<link rel="icon" href="hub-logo.png" type="image/png">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "primary-content": "#ffffff",
+                        "primary-dark": "#0e45b5",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1a2233",
+                        "border-light": "#e2e8f0",
+                        "border-dark": "#2d3748",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light text-slate-900 font-display min-h-screen flex flex-col overflow-x-hidden">
+<header
+        class="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-200 ">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex h-16 items-center justify-between gap-4 sm:gap-8">
+                                <a href="index.html" class="flex items-center gap-2 flex-shrink-0 group">
+                    <div class="size-8 rounded-lg bg-primary flex items-center justify-center text-white transition-opacity group-hover:opacity-90">
+                        <img src="hub-logo.png" alt="Hub Logo" class="h-6 w-auto object-contain">
+                    </div>
+                    <h1 class="text-xl font-bold tracking-tight text-slate-900 hidden sm:block transition-colors group-hover:text-primary">Hub</h1>
+                </a>
+                <div class="hidden lg:flex flex-1 max-w-lg">
+                    <div class="relative w-full group">
+                        <div
+                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                            <span class="material-symbols-outlined text-[20px]">search</span>
+                        </div>
+                        <input
+                            class="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-lg leading-5 bg-slate-50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-all"
+                            placeholder="Search premium smartphones, laptops..." type="text" />
+                    </div>
+                </div>
+                <nav class="hidden md:flex items-center gap-6">
+                    <a class="text-sm font-medium text-slate-700 hover:text-primary :text-primary transition-colors"
+                        href="products.html">Products</a>
+                    <a class="text-sm font-medium text-slate-700 hover:text-primary :text-primary transition-colors"
+                        href="about.html">About Us</a>
+                    <a class="text-sm font-medium text-slate-700 hover:text-primary :text-primary transition-colors"
+                        href="contact.html">Contact</a>
+                </nav>
+                <div class="flex items-center gap-2 sm:gap-4">
+                    <button
+                        class="p-2 text-slate-500 hover:text-primary  :text-primary transition-colors lg:hidden">
+                        <span class="material-symbols-outlined">search</span>
+                    </button>
+                    <button class="relative p-2 text-slate-500 hover:text-primary  :text-primary transition-colors">
+                        <span class="material-symbols-outlined">favorite</span>
+                    </button>
+                    <button
+                        class="relative p-2 text-slate-500 hover:text-primary  :text-primary transition-colors">
+                        <span class="material-symbols-outlined">shopping_cart</span>
+                        <span
+                            class="absolute top-1 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white ring-2 ring-white ">2</span>
+                    </button>
+                    <button
+                        class="flex items-center gap-2 p-1 pl-2 pr-1 rounded-full border border-slate-200 hover:bg-slate-50 :bg-slate-800 transition-colors ml-2">
+                        <div class="size-6 rounded-full bg-slate-200 overflow-hidden">
+                            <img alt="User Avatar" class="h-full w-full object-cover" src="https://ui-avatars.com/api/?name=User&background=random" />
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+<nav class="mb-6 flex items-center text-sm font-medium text-slate-500 ">
+<a class="hover:text-primary transition-colors" href="index.html">Dashboard</a>
+<span class="mx-2 material-symbols-outlined text-[16px]">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="index.html">Orders</a>
+<span class="mx-2 material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-slate-900 ">Order #12345</span>
+</nav>
+<div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+<div>
+<h1 class="text-3xl font-black tracking-tight text-slate-900 ">Order #12345</h1>
+<div class="mt-2 flex items-center gap-3 text-sm text-slate-500 ">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+                        Oct 24, 2023 at 10:30 AM
+                    </span>
+<span class="h-1 w-1 rounded-full bg-slate-300 "></span>
+<span>3 items</span>
+<span class="h-1 w-1 rounded-full bg-slate-300 "></span>
+<span>Total: â‚¹1,20,516</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-3">
+<div class="relative">
+<select class="appearance-none rounded-lg border border-border-light bg-surface-light py-2.5 pl-4 pr-10 text-sm font-bold text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary   " title="Order Status">
+<option>Processing</option>
+<option>Shipped</option>
+<option>Delivered</option>
+<option>Cancelled</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+<span class="material-symbols-outlined">expand_more</span>
+</div>
+</div>
+<button class="inline-flex items-center justify-center gap-2 rounded-lg bg-surface-light px-4 py-2.5 text-sm font-bold text-slate-700 shadow-sm ring-1 ring-inset ring-border-light hover:bg-slate-50    :bg-slate-800 transition-all">
+<span class="material-symbols-outlined text-[20px]">print</span>
+                    Print
+                </button>
+<button class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-primary-content shadow-sm hover:bg-primary-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all">
+<span class="material-symbols-outlined text-[20px]">download</span>
+                    Download Invoice
+                </button>
+</div>
+</div>
+<div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+<div class="lg:col-span-2 flex flex-col gap-6">
+<div class="overflow-hidden rounded-xl border border-border-light bg-surface-light shadow-sm  ">
+<div class="grid grid-cols-1 md:grid-cols-2">
+<div class="relative group aspect-square md:aspect-auto overflow-hidden bg-slate-100 ">
+<img alt="Professional Mirrorless Camera Preview" class="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAelUZPVoQrWax9dcsgxyv6E3vLdNoiwmCAoCFCn4msZKcImC1OJpgysEzpEegbc9u7qAiiUtVgaStuPG9MWZXXhchWZYuQSRj7m0ebfJrAGgLO97BYkUc1-un33Xl3ORPZ4XZqpAvHSDIJmtMZLODvv3HpHzl0_OScYQrAauH56MkeH5C0WjWIOk96x36Y8WrekcItQ5KzIo2zimxIqx13ISaDmCJlwy0a1hsjC6oO-vHcSePg7NmujrMt3RhGKvpcUGwLBlomNGPH"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
+<main class="max-w-4xl mx-auto py-10 px-4">
+    <h1 class="text-3xl font-black mb-8">Admin: Manage Orders</h1>
+    <div id="admin-orders-list"></div>
+</main>
+<script>
+function renderAdminOrders() {
+    const orders = JSON.parse(localStorage.getItem('buyit_orders') || '[]');
+    const container = document.getElementById('admin-orders-list');
+    if (!orders.length) {
+        container.innerHTML = '<div class="text-center text-lg text-slate-500 py-12">No orders found.</div>';
+        return;
+    }
+    const stages = ['Processing', 'Shipped', 'Out for Delivery', 'Delivered'];
+    container.innerHTML = orders.map((order, idx) => `
+        <div class="mb-8 border border-slate-200 rounded-xl bg-white p-6 shadow-sm">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-3 gap-2">
+                <div>
+                    <span class="font-bold text-primary">Order #${order.id}</span>
+                    <span class="ml-3 text-slate-500 text-sm">${new Date(order.placedAt).toLocaleString()}</span>
+                </div>
+                <div>
+                    <select data-idx="${idx}" class="order-status-select rounded border px-3 py-1 text-sm font-bold text-slate-900 bg-slate-100 focus:ring-primary focus:border-primary">
+                        ${stages.map(s => `<option value="${s}"${order.status===s?' selected':''}>${s}</option>`).join('')}
+                    </select>
+                </div>
+            </div>
+            <div class="mb-2">
+                ${order.items.map(item => `
+                    <div class="flex items-center gap-3 mb-2">
+                        <img src="${item.image || 'buyit-logo.png'}" alt="${item.title}" class="w-12 h-12 object-cover rounded border" />
+                        <div class="flex-1">
+                            <div class="font-semibold">${item.title}</div>
+                            <div class="text-xs text-slate-500">Qty: ${item.quantity || 1}</div>
+                        </div>
+                        <div class="font-bold text-slate-900">â‚¹${item.price}</div>
+                    </div>
+                `).join('')}
+            </div>
+            <div class="text-sm text-slate-600">Current Status: <span class="font-bold text-primary">${order.status}</span></div>
+        </div>
+    `).join('');
+
+    // Add event listeners for status change
+    document.querySelectorAll('.order-status-select').forEach(sel => {
+        sel.addEventListener('change', function() {
+            const idx = this.getAttribute('data-idx');
+            orders[idx].status = this.value;
+            localStorage.setItem('buyit_orders', JSON.stringify(orders));
+            renderAdminOrders(); // re-render to update UI
+        });
+    });
+}
+document.addEventListener('DOMContentLoaded', renderAdminOrders);
+</script>
+
+
+
+
+
+
+
+

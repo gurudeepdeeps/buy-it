@@ -1,0 +1,623 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Buy it</title>
+    <link rel="icon" href="buyit-logo-tansperant.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "primary-content": "#ffffff",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1c2433",
+                        "text-main": "#0d121b",
+                        "text-secondary": "#4c669a",
+                        "border-light": "#e7ebf3",
+                        "border-dark": "#2a3447",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+
+<body
+    class="bg-background-light font-display text-text-main antialiased min-h-screen flex flex-col">
+    <header
+        class="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-200 ">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex h-16 items-center justify-between gap-4 sm:gap-8">
+                                <a href="index.html" class="flex items-center gap-2 flex-shrink-0 group">
+                    <div class="justify-center">
+                        <img src="buyit-logo-tansperant.png" alt="Buy it Logo" class="h-24 w-auto object-contain">
+                    </div>
+ <!--                   <h1 class="text-xl font-bold tracking-tight text-slate-900 hidden sm:block transition-colors group-hover:text-primary">Buy it</h1>  -->
+                </a>
+                <div class="hidden lg:flex flex-1 max-w-lg">
+                    <div class="relative w-full group">
+                        <div
+                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                            <span class="material-symbols-outlined text-[20px]">search</span>
+                        </div>
+                        <input
+                            class="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-lg leading-5 bg-slate-50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-all"
+                            placeholder="Search premium smartphones, laptops..." type="text" />
+                    </div>
+                </div>
+                <nav class="hidden md:flex items-center gap-6">
+                    <a class="text-sm font-medium text-slate-700 hover:text-primary :text-primary transition-colors"
+                        href="products.html">Products</a>
+                    <a class="text-sm font-medium text-slate-700 hover:text-primary :text-primary transition-colors"
+                        href="about.html">About Us</a>
+                    <a class="text-sm font-medium text-slate-700 hover:text-primary :text-primary transition-colors"
+                        href="contact.html">Contact</a>
+                </nav>
+                <div class="flex items-center gap-2 sm:gap-4">
+                    <button
+                        class="p-2 text-slate-500 hover:text-primary  :text-primary transition-colors lg:hidden">
+                        <span class="material-symbols-outlined">search</span>
+                    </button>
+                    <a href="wishlist.html" class="relative p-2 text-slate-500 hover:text-primary transition-colors"
+                        title="Wishlist">
+                        <span class="material-symbols-outlined">favorite</span>
+                        <span id="wishlist-count"
+                            class="absolute top-1 right-0 hidden h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white ring-2 ring-white">0</span>
+                    </a>
+                    <a href="cart.html" class="relative p-2 text-slate-500 hover:text-primary transition-colors"
+                        title="Cart">
+                        <span class="material-symbols-outlined">shopping_cart</span>
+                        <span id="cart-count"
+                            class="absolute top-1 right-0 hidden h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white ring-2 ring-white">0</span>
+                    </a>
+                    <a href="account.html"
+                        class="flex items-center gap-2 p-1 pl-2 pr-1 rounded-full border border-slate-200 hover:bg-slate-50 transition-colors ml-2"
+                        title="Account / Login">
+                        <div class="size-6 rounded-full bg-slate-200 overflow-hidden"><img alt="User Avatar"
+                                class="h-full w-full object-cover"
+                                src="https://ui-avatars.com/api/?name=User&background=random" />
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto px-6 py-8">
+        <nav class="flex items-center gap-2 text-sm text-text-secondary mb-8">
+            <a class="hover:text-primary transition-colors" href="index.html">Home</a>
+            <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+            <a class="hover:text-primary transition-colors" href="index.html">Computers</a>
+            <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+            <span class="text-text-main font-medium">Zenith X1 Carbon</span>
+        </nav>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+            <div class="flex flex-col gap-6 sticky top-24 self-start">
+                <div
+                    class="w-full aspect-square bg-white rounded-3xl overflow-hidden border border-border-light relative group shadow-sm">
+                    <img id="main-product-image" alt="Flagship laptop open view with screen showing abstract art"
+                        class="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-700"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSefGoXqjnp9ZQQZN46YTq9kGHAL19TSVn8VIUkiHoioqCN6FbVDhh3T7wQ8sIFMpb1XSI1B4TU2Eme3qbIvI2NjfK9ht7LlzD5v3YGJqs6JL5NgtD4MvJgdGJglO1v7PRRQsw9lPCC0VcLHyaj58NXpQnt2MKWtg5ZcyosrKMQtttBBzG3LjyIZ-tdByk1Io0Cew_LQ7LdxLLW51UjkOG21iCIwvZVdegwPl8T3dx3soRXgZsDfuc_Xo0iCzH4zuRX5rIDTW_YCzw" />
+                    <div class="absolute top-4 left-4 flex gap-2">
+                        <span
+                            class="bg-primary text-white text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-widest shadow-lg">New
+                            Release</span>
+                        <span
+                            class="bg-surface-dark text-white text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-widest shadow-lg border border-white/10">Ultra
+                            Series</span>
+                    </div>
+                    <div
+                        id="gallery-dots"
+                        class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 bg-white/40 backdrop-blur-md p-1 rounded-full border border-white/20">
+                    </div>
+                    <button id="gallery-prev"
+                        class="absolute top-1/2 -translate-y-1/2 left-4 bg-white/90 p-2 rounded-full shadow-lg border border-border-light text-text-main hover:text-primary transition-all">
+                        <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+                    </button>
+                    <button id="gallery-next"
+                        class="absolute top-1/2 -translate-y-1/2 right-4 bg-white/90 p-2 rounded-full shadow-lg border border-border-light text-text-main hover:text-primary transition-all">
+                        <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+                    </button>
+                    <button id="open-gallery-fullscreen"
+                        class="absolute bottom-6 right-6 bg-white p-3 rounded-full shadow-2xl border border-border-light text-text-main hover:text-primary transition-all scale-90 hover:scale-100">
+                        <span class="material-symbols-outlined text-[24px]">zoom_in</span>
+                    </button>
+                </div>
+                <div id="gallery-thumbnails" class="grid grid-cols-5 gap-3">
+                </div>
+            </div>
+            <div class="flex flex-col">
+                <div class="mb-6">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-primary font-bold text-xs tracking-widest uppercase">Zenith Computing</span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-text-secondary opacity-30"></span>
+                        <div class="flex items-center gap-1 text-yellow-400">
+                            <span class="material-symbols-outlined text-[16px] fill-current">star</span>
+                            <span class="text-text-main text-sm font-bold ml-1">4.9</span>
+                            <span class="text-text-secondary text-xs font-medium">(842 reviews)</span>
+                        </div>
+                    </div>
+                    <h1
+                        class="text-4xl md:text-5xl font-black text-text-main mb-6 tracking-tight leading-none">
+                        Zenith X1 Carbon <span class="text-primary">Ultra</span></h1>
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="flex flex-col">
+                            <span class="text-sm text-text-secondary font-medium">Starting at</span>
+                            <p class="text-4xl font-black text-primary">â‚¹2,07,417</p>
+                        </div>
+                        <div class="h-10 w-px bg-border-light mx-2"></div>
+                        <div class="flex flex-col">
+                            <span
+                                class="text-xs font-bold px-2.5 py-1 bg-green-100 text-green-700 rounded-lg inline-block w-fit">In
+                                Stock</span>
+                            <span class="text-[10px] text-text-secondary mt-1 font-medium">Ships in 24 hours</span>
+                        </div>
+                    </div>
+                    <p class="text-text-secondary leading-relaxed mb-8 text-lg font-medium">
+                        The ultimate creator's machine. Unibody aluminum chassis housing the powerful M4 Ultra chip,
+                        featuring a stunning 16-inch Mini-LED display and all-day battery life for uncompromising
+                        performance.
+                    </p>
+                </div>
+                <div class="space-y-8">
+                    <div class="flex flex-col gap-4 pt-4 sticky bottom-6 z-10 lg:static">
+                        <div
+                            class="flex flex-col sm:flex-row gap-4 p-4 lg:p-0 bg-white/80 lg:bg-transparent backdrop-blur-md rounded-2xl lg:backdrop-blur-none border border-border-light lg:border-none shadow-xl lg:shadow-none">
+                            <div
+                                class="flex items-center border border-border-light rounded-2xl bg-white h-14 w-full sm:w-36 px-2 shadow-sm">
+                                <button onclick="document.getElementById('product-qty').stepDown()"
+                                    class="w-10 h-10 flex items-center justify-center text-text-secondary hover:bg-background-light :bg-background-dark rounded-xl transition-colors">
+                                    <span class="material-symbols-outlined text-[20px]">remove</span>
+                                </button>
+                                <input id="product-qty"
+                                    class="flex-1 w-full text-center bg-transparent border-none focus:ring-0 text-text-main font-black p-0 text-lg"
+                                    min="1" type="number" value="1" title="Quantity" placeholder="Quantity" />
+                                <button onclick="document.getElementById('product-qty').stepUp()"
+                                    class="w-10 h-10 flex items-center justify-center text-text-secondary hover:bg-background-light :bg-background-dark rounded-xl transition-colors">
+                                    <span class="material-symbols-outlined text-[20px]">add</span>
+                                </button>
+                            </div>
+                            <button
+                                onclick="addToCart({ id: 'zenith-x1-ultra', title: 'Zenith X1 Carbon Ultra', price: 207417, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDvcZLPrU-hLvrkRaN840CcHQZef_ijXdIDgCsmgDd6jI3DgGbcW6yIZp2pTw0Aw14vC4kLRaZHSWLMXG3wXrelh5thka19QRl4irHSwAGOC34vnlzUG0FobitA8DUUhCHSP07LYxCu96feqcW05uOtSlio_fH9rYk7InFlDIvKnr6Cey7uaURMKLGFYLUVuKtVj3Y8ohLLJYIrXJqQ5MHiA7DEQEK1LgS3gI3geUy_SVdu_hl9uKQWJiV1EnMbDYxkHkIUMlXdrknW', quantity: parseInt(document.getElementById('product-qty').value) })"
+                                class="flex-[2] h-14 bg-primary hover:bg-blue-700 text-white font-bold rounded-2xl transition-all shadow-xl shadow-primary/30 flex items-center justify-center gap-2 transform active:scale-95">
+                                <span class="material-symbols-outlined text-[24px]">shopping_cart</span>
+                                Add to Cart
+                            </button>
+                            <button onclick="window.location.href='checkout.html'"
+                                class="flex-1 h-14 bg-white border-2 border-primary text-primary font-bold rounded-2xl hover:bg-primary/5 transition-all flex items-center justify-center gap-2 shadow-sm">
+                                Buy Now
+                            </button>
+                        </div>
+                        <div class="flex gap-3">
+                            <button
+                                onclick="addToWishlist({ id: 'zenith-x1-ultra', title: 'Zenith X1 Carbon Ultra', price: 207417, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDvcZLPrU-hLvrkRaN840CcHQZef_ijXdIDgCsmgDd6jI3DgGbcW6yIZp2pTw0Aw14vC4kLRaZHSWLMXG3wXrelh5thka19QRl4irHSwAGOC34vnlzUG0FobitA8DUUhCHSP07LYxCu96feqcW05uOtSlio_fH9rYk7InFlDIvKnr6Cey7uaURMKLGFYLUVuKtVj3Y8ohLLJYIrXJqQ5MHiA7DEQEK1LgS3gI3geUy_SVdu_hl9uKQWJiV1EnMbDYxkHkIUMlXdrknW' })"
+                                class="flex-1 h-12 text-sm font-bold text-text-main hover:bg-white :bg-surface-dark flex items-center justify-center gap-2 border border-border-light rounded-xl transition-all shadow-sm">
+                                <span class="material-symbols-outlined text-[20px]">favorite</span>
+                                Add to Wishlist
+                            </button>
+                            <button
+                                class="w-12 h-12 flex items-center justify-center border border-border-light rounded-xl hover:bg-white :bg-surface-dark transition-all shadow-sm">
+                                <span class="material-symbols-outlined text-[20px]">share</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="pt-6">
+                        <h3 class="text-sm font-black text-text-main uppercase tracking-wider mb-3">Why Buy it?</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="p-3 rounded-xl bg-white border border-border-light text-center text-xs font-bold text-text-main shadow-sm">Trusted</div>
+                            <div class="p-3 rounded-xl bg-white border border-border-light text-center text-xs font-bold text-text-main shadow-sm">Budget-Friendly</div>
+                            <div class="p-3 rounded-xl bg-white border border-border-light text-center text-xs font-bold text-text-main shadow-sm">Wide Selection</div>
+                            <div class="p-3 rounded-xl bg-white border border-border-light text-center text-xs font-bold text-text-main shadow-sm">Secure Checkout</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mb-16">
+            <div class="border-b border-border-light mb-10">
+                <div class="flex gap-10 overflow-x-auto pb-px no-scrollbar">
+                    <button
+                        class="pb-5 text-primary font-black border-b-2 border-primary px-2 whitespace-nowrap">Product Details</button>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 gap-12">
+                <div class="space-y-10">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <h3 class="text-2xl font-black text-text-main ">Product Specifications</h3>
+                    </div>
+                    <div class="bg-white rounded-3xl border border-border-light overflow-hidden shadow-sm p-8">
+                        <ul class="space-y-4 text-sm text-text-main font-medium list-disc pl-5">
+                            <li>Powerful multi-core processor tuned for fast performance and smooth multitasking.</li>
+                            <li>High-resolution display with rich colors and clear details for work and entertainment.</li>
+                            <li>Long battery backup designed for all-day productivity and media usage.</li>
+                            <li>Fast SSD storage for quick boot times and responsive app loading.</li>
+                            <li>Modern connectivity options with high-speed wireless and versatile I/O ports.</li>
+                            <li>Premium build quality with lightweight design and durable finish.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div id="gallery-modal" class="fixed inset-0 z-[100] hidden bg-black/90 p-4 sm:p-8">
+        <button id="gallery-modal-close" class="absolute top-4 right-4 text-white/90 hover:text-white">
+            <span class="material-symbols-outlined text-[32px]">close</span>
+        </button>
+        <button id="gallery-modal-prev" class="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 text-white/90 hover:text-white">
+            <span class="material-symbols-outlined text-[40px]">chevron_left</span>
+        </button>
+        <button id="gallery-modal-next" class="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 text-white/90 hover:text-white">
+            <span class="material-symbols-outlined text-[40px]">chevron_right</span>
+        </button>
+        <div class="h-full w-full flex flex-col items-center justify-center gap-4">
+            <img id="gallery-modal-image" alt="Product full screen image" class="max-h-[85vh] max-w-[95vw] object-contain rounded-xl" src="" />
+            <div id="gallery-modal-counter" class="text-white text-sm font-medium"></div>
+        </div>
+    </div>
+    <footer class="bg-white border-t border-slate-200 pt-16 pb-12 mt-20">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-12 mb-16">
+                <div class="col-span-2 lg:col-span-2">
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="flex items-center justify-center text-white">
+                            <img src="buyit-logo-tansperant.png" alt="Buy it Logo" class="h-24 w-auto object-contain">
+                        </div>
+                    </div>
+                    <p class="text-slate-500 text-sm leading-relaxed max-w-sm mb-8">
+                        Experience the next generation of tech shopping. Buy it brings you the latest electronics, handpicked for quality and value, with a focus on customer satisfaction at every step.
+                    </p>
+                    <div class="flex gap-5">
+                                                <a class="text-slate-400 hover:text-green-500 transition-colors" href="https://wa.me/916363770057?text=Hello%2C%20I%20would%20like%20to%20know%20more%20about%20Buy%20it%20products%20and%20offers." target="_blank" rel="noopener" title="WhatsApp">
+                                                    <span class="sr-only">WhatsApp</span>
+                                                    <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.472-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.5-.669-.51-.173-.007-.372-.009-.571-.009-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.099 3.2 5.077 4.363.709.244 1.262.389 1.694.497.712.181 1.36.156 1.872.095.571-.067 1.758-.719 2.006-1.413.248-.694.248-1.288.173-1.413-.074-.124-.272-.198-.57-.347zm-5.421 7.617h-.001a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.999-3.648-.235-.374A9.86 9.86 0 012.1 12.045C2.111 6.479 6.58 2.01 12.153 2c2.652.004 5.146 1.037 7.022 2.915A9.822 9.822 0 0122.3 12.04c-.003 5.572-4.472 10.041-9.949 10.041zm8.413-17.453A11.815 11.815 0 0012.153.001C5.495.013.111 6.006.1 12.045c0 2.13.557 4.21 1.613 6.033L.057 23.925a1 1 0 001.225 1.225l5.874-1.641a11.822 11.822 0 005.001 1.106h.005c6.658 0 12.042-5.994 12.053-12.033a11.82 11.82 0 00-3.33-8.233z"/>
+                                                    </svg>
+                                                </a>
+                        <a class="text-slate-400 hover:text-primary transition-colors" href="index.html">
+                            <span class="sr-only">Facebook</span>
+                            <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path clip-rule="evenodd"
+                                    d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
+                                    fill-rule="evenodd"></path>
+                            </svg>
+                        </a>
+                        <a class="text-slate-400 hover:text-primary transition-colors" href="index.html">
+                            <span class="sr-only">Instagram</span>
+                            <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path clip-rule="evenodd"
+                                    d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.468 2.373c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.505-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"
+                                    fill-rule="evenodd"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider mb-6">Company
+                    </h3>
+                    <ul class="space-y-4 text-sm font-medium text-slate-500 ">
+                        <li><a class="hover:text-primary transition-colors" href="about.html">About Us</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="contact.html">Contact Us</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="products.html">Shop Products</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider mb-6">
+                        Policies</h3>
+                    <ul class="space-y-4 text-sm font-medium text-slate-500 ">
+                        <!-- Concierge Support removed -->
+                        <li><a class="hover:text-primary transition-colors" href="account.html">Track My order</a></li>
+                        <!-- Global Warranty removed -->
+                        <!-- Return Policy removed -->
+                        <li><a class="hover:text-primary transition-colors" href="terms-and-conditions.html">Terms & Conditions</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="shipping-policy.html">Shipping Policy</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="return-and-refund-policy.html">Return and Refund policy</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="payment-and-security.html">Payment & Security</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="privacy-policy.html">Privacy Policy</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="order-cancellation-policy.html">Order Cancellation Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div
+                class="border-t border-slate-100 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <p class="text-xs font-medium text-slate-400 w-full text-center">Â© 2026 Buy it Inc. All rights reserved.</p>
+                <div class="flex gap-8 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="shop.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const query = new URLSearchParams(window.location.search);
+            const requestedId = query.get('id') || 'zenith-x1-ultra';
+            const fallbackProduct = getProductById('zenith-x1-ultra');
+            const product = getProductById(requestedId) || fallbackProduct;
+
+            if (!product) {
+                return;
+            }
+
+            document.title = `Buy it - ${product.title}`;
+
+            const breadcrumb = document.querySelector('main nav');
+            if (breadcrumb) {
+                const breadcrumbLinks = breadcrumb.querySelectorAll('a');
+                if (breadcrumbLinks[1]) {
+                    breadcrumbLinks[1].textContent = product.category || 'Products';
+                    breadcrumbLinks[1].setAttribute('href', 'products.html');
+                }
+                const current = breadcrumb.querySelector('span.text-text-main.font-medium');
+                if (current) {
+                    current.textContent = product.title;
+                }
+            }
+
+            const brandElement = document.querySelector('span.text-primary.font-bold.text-xs.tracking-widest.uppercase');
+            if (brandElement) {
+                brandElement.textContent = product.brand || 'Buy it';
+            }
+
+            const titleElement = document.querySelector('h1.text-4xl.md\\:text-5xl.font-black.text-text-main');
+            if (titleElement) {
+                titleElement.textContent = product.title;
+            }
+
+            const priceElement = document.querySelector('p.text-4xl.font-black.text-primary');
+            if (priceElement) {
+                priceElement.textContent = `â‚¹${Number(product.price || 0).toLocaleString('en-IN')}`;
+            }
+
+            const descriptionElement = document.querySelector('p.text-text-secondary.leading-relaxed.mb-8.text-lg.font-medium');
+            if (descriptionElement) {
+                descriptionElement.textContent = product.description || 'Premium product with top-tier quality and performance.';
+            }
+
+            const defaultGalleryImages = [
+                product.image,
+                'https://lh3.googleusercontent.com/aida-public/AB6AXuAancRlcLqGoZpuklaxThNMEzRJxtCW6_9edtEHYF9iIHUVbMiwIE7L9gwkujYyCuW5VJxIlJt3GDBuG7kLjuzFRiPOkd01Qvyhfw04Ivt9RDN_XoZ03S63PM9XBMRFJ8X2eYSQfBa9rHyVIwhQKTY8H-muWE5chBu40oJJhFDEpLk5IL5b-NWXf6JLCTmk38AzL3N9SzGk3zrwC665HJCpP6RL_f816OPRYJjmGpzTI-AuI5uzrza2JF4C9bLByJa0ict1vpaD9Sg_',
+                'https://lh3.googleusercontent.com/aida-public/AB6AXuBZXa-4D61ZG6eAiBP35cyRQE5e4R79i0MDXEjJTyejEB-4kvba-S0hGY_38HoJLoDrG_0H2bEwDW17j403GmBKyFt8FFh5es8_36OtdoqhpJiObtNCrG45Ema9Oveinu15RhMcq2_Ziv9KODW3M5FkMUseEe6zVELULoj-N0mbOlzZRH6SfaZnWepsSIs67xYpIsbo7q7nBbyAlMK2IASTif7PhNBQbUrlBCytgZ0qislmZPgxjz9Dv_7s83RcrbSx3yxLoddIJf3G',
+                'https://lh3.googleusercontent.com/aida-public/AB6AXuD63qnOeWUlt_TWaQCE70RYIUjjMN_fnL1XLG7QSSV5Q7cwMqt_g5TbtQhFive2KZq3UuMgKWBpYdRpztAXKqc8BJ52aD4b3h9pH3MsNYACGH3hSWbLVjYXvGQK16p_lBMuBHajyGctvJ0a0NO6dVupI-582DxYPuSbEd7IkHjI-FBz7cmFqVG8oREmi3W3OYibOE55no5-m4IgaeCK1mPjAD10s1J_wK_2-QxEwV6bkHnfVJeaCzThfSxeU1XcZ_Dqzm_pyFk6ZmQZ'
+            ];
+            const galleryImages = Array.from(new Set((product.galleryImages && product.galleryImages.length > 0 ? product.galleryImages : defaultGalleryImages).filter(Boolean)));
+            let activeImageIndex = 0;
+
+            const mainImage = document.getElementById('main-product-image');
+            const galleryDots = document.getElementById('gallery-dots');
+            const thumbnailsContainer = document.getElementById('gallery-thumbnails');
+            const prevButton = document.getElementById('gallery-prev');
+            const nextButton = document.getElementById('gallery-next');
+            const zoomButton = document.getElementById('open-gallery-fullscreen');
+
+            const modal = document.getElementById('gallery-modal');
+            const modalImage = document.getElementById('gallery-modal-image');
+            const modalCounter = document.getElementById('gallery-modal-counter');
+            const modalClose = document.getElementById('gallery-modal-close');
+            const modalPrev = document.getElementById('gallery-modal-prev');
+            const modalNext = document.getElementById('gallery-modal-next');
+
+            const renderGallery = () => {
+                if (!mainImage || galleryImages.length === 0) {
+                    return;
+                }
+                const currentImage = galleryImages[activeImageIndex];
+                mainImage.src = currentImage;
+                mainImage.alt = `${product.title} image ${activeImageIndex + 1}`;
+
+                if (galleryDots) {
+                    galleryDots.innerHTML = galleryImages.map((_, index) => `<button class="w-2 h-2 rounded-full ${index === activeImageIndex ? 'bg-primary' : 'bg-primary/20'}" aria-label="Go to image ${index + 1}"></button>`).join('');
+                    Array.from(galleryDots.querySelectorAll('button')).forEach((dot, index) => {
+                        dot.onclick = () => {
+                            activeImageIndex = index;
+                            renderGallery();
+                        };
+                    });
+                }
+
+                if (thumbnailsContainer) {
+                    thumbnailsContainer.innerHTML = galleryImages.map((imageUrl, index) => `
+                        <button class="aspect-square rounded-2xl overflow-hidden ${index === activeImageIndex ? 'border-2 border-primary shadow-md' : 'border border-border-light hover:border-primary/50 shadow-sm'} bg-white p-1 group transition-all" aria-label="Preview image ${index + 1}">
+                            <img alt="${product.title} thumbnail ${index + 1}" class="w-full h-full object-cover rounded-xl group-hover:scale-110 transition-transform" src="${imageUrl}" />
+                        </button>
+                    `).join('');
+                    Array.from(thumbnailsContainer.querySelectorAll('button')).forEach((thumb, index) => {
+                        thumb.onclick = () => {
+                            activeImageIndex = index;
+                            renderGallery();
+                        };
+                    });
+                }
+            };
+
+            const stepGallery = (direction) => {
+                if (galleryImages.length === 0) {
+                    return;
+                }
+                activeImageIndex = (activeImageIndex + direction + galleryImages.length) % galleryImages.length;
+                renderGallery();
+                if (modal && !modal.classList.contains('hidden')) {
+                    renderModal();
+                }
+            };
+
+            const renderModal = () => {
+                if (!modalImage || !modalCounter || galleryImages.length === 0) {
+                    return;
+                }
+                modalImage.src = galleryImages[activeImageIndex];
+                modalImage.alt = `${product.title} full screen image ${activeImageIndex + 1}`;
+                modalCounter.textContent = `${activeImageIndex + 1} / ${galleryImages.length}`;
+            };
+
+            const openModal = () => {
+                if (!modal) {
+                    return;
+                }
+                modal.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+                renderModal();
+            };
+
+            const closeModal = () => {
+                if (!modal) {
+                    return;
+                }
+                modal.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            };
+
+            if (mainImage) {
+                mainImage.classList.add('cursor-zoom-in');
+                mainImage.onclick = openModal;
+            }
+            if (prevButton) {
+                prevButton.onclick = () => stepGallery(-1);
+            }
+            if (nextButton) {
+                nextButton.onclick = () => stepGallery(1);
+            }
+            if (zoomButton) {
+                zoomButton.onclick = openModal;
+            }
+            if (modalClose) {
+                modalClose.onclick = closeModal;
+            }
+            if (modalPrev) {
+                modalPrev.onclick = () => stepGallery(-1);
+            }
+            if (modalNext) {
+                modalNext.onclick = () => stepGallery(1);
+            }
+            if (modal) {
+                modal.onclick = (event) => {
+                    if (event.target === modal) {
+                        closeModal();
+                    }
+                };
+            }
+
+            document.addEventListener('keydown', (event) => {
+                if (!modal || modal.classList.contains('hidden')) {
+                    return;
+                }
+                if (event.key === 'Escape') {
+                    closeModal();
+                } else if (event.key === 'ArrowLeft') {
+                    stepGallery(-1);
+                } else if (event.key === 'ArrowRight') {
+                    stepGallery(1);
+                }
+            });
+
+            renderGallery();
+
+            const normalizedButtons = Array.from(document.querySelectorAll('button')).map((button) => ({
+                button,
+                label: button.textContent.replace(/\s+/g, ' ').trim()
+            }));
+
+            const addToCartButton = normalizedButtons.find((entry) => entry.label === 'Add to Cart');
+            if (addToCartButton) {
+                addToCartButton.button.onclick = () => {
+                    const quantityInput = document.getElementById('product-qty');
+                    const quantity = quantityInput ? parseInt(quantityInput.value, 10) || 1 : 1;
+                    addToCart({
+                        id: product.id,
+                        title: product.title,
+                        price: product.price,
+                        image: product.image,
+                        quantity
+                    });
+                };
+            }
+
+            const buyNowButton = normalizedButtons.find((entry) => entry.label === 'Buy Now');
+            if (buyNowButton) {
+                buyNowButton.button.onclick = () => {
+                    buyNow({
+                        id: product.id,
+                        title: product.title,
+                        price: product.price,
+                        image: product.image
+                    });
+                };
+            }
+
+            const addToWishlistButton = normalizedButtons.find((entry) => entry.label === 'Add to Wishlist');
+            if (addToWishlistButton) {
+                addToWishlistButton.button.onclick = () => {
+                    addToWishlist({
+                        id: product.id,
+                        title: product.title,
+                        price: product.price,
+                        image: product.image
+                    });
+                };
+            }
+
+            const shareButton = Array.from(document.querySelectorAll('button')).find((button) => {
+                const icon = button.querySelector('span.material-symbols-outlined');
+                return icon && icon.textContent.trim() === 'share';
+            });
+            if (shareButton) {
+                shareButton.onclick = async () => {
+                    const shareUrl = new URL(window.location.href);
+                    shareUrl.searchParams.set('id', product.id);
+                    const shareData = {
+                        title: `Buy it - ${product.title}`,
+                        text: `Check out ${product.title} on Buy it`,
+                        url: shareUrl.toString()
+                    };
+
+                    if (navigator.share) {
+                        try {
+                            await navigator.share(shareData);
+                            return;
+                        } catch (error) {
+                            if (error && error.name === 'AbortError') {
+                                return;
+                            }
+                        }
+                    }
+
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        try {
+                            await navigator.clipboard.writeText(shareData.url);
+                            alert('Product link copied to clipboard');
+                            return;
+                        } catch (error) {
+                        }
+                    }
+
+                    window.prompt('Copy this product link:', shareData.url);
+                };
+            }
+        });
+    </script>
+</body>
+
+</html>
+
+

@@ -1,0 +1,638 @@
+﻿<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Buy it</title>
+<link rel="icon" href="buyit-logo-tansperant.png" type="image/png">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "primary-content": "#ffffff",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1e293b",
+                        "border-light": "#e2e8f0",
+                        "border-dark": "#334155",
+                        "text-main-light": "#0f172a",
+                        "text-main-dark": "#f8fafc",
+                        "text-sub-light": "#64748b",
+                        "text-sub-dark": "#94a3b8",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem", 
+                        "lg": "0.5rem", 
+                        "xl": "0.75rem", 
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<link rel="stylesheet" href="main.css">
+</head>
+<body class="bg-background-light text-text-main-light antialiased transition-colors duration-200">
+<div class="flex min-h-screen w-full flex-row overflow-hidden">
+<aside class="hidden w-64 flex-col border-r border-border-light bg-surface-light  lg:flex">
+<div class="flex h-16 items-center gap-3 px-6 border-b border-border-light ">
+<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-content">
+<span class="material-symbols-outlined text-xl">memory</span>
+</div>
+<h1 class="text-lg font-bold tracking-tight text-text-main-light ">Buy it Admin</h1>
+</div>
+<div class="flex flex-1 flex-col justify-between p-4">
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-text-sub-light transition-colors hover:bg-background-light hover:text-primary  :bg-background-dark :text-primary" href="index.html">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 rounded-lg bg-primary/10 px-3 py-2 text-primary transition-colors " href="index.html">
+<span class="material-symbols-outlined font-fill">devices_other</span>
+<span class="text-sm font-medium">Inventory</span>
+</a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-text-sub-light transition-colors hover:bg-background-light hover:text-primary  :bg-background-dark :text-primary" href="index.html">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="text-sm font-medium">Orders</span>
+</a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-text-sub-light transition-colors hover:bg-background-light hover:text-primary  :bg-background-dark :text-primary" href="index.html">
+<span class="material-symbols-outlined">verified_user</span>
+<span class="text-sm font-medium">Warranties</span>
+</a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-text-sub-light transition-colors hover:bg-background-light hover:text-primary  :bg-background-dark :text-primary" href="index.html">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="text-sm font-medium">Analytics</span>
+</a>
+<div class="my-2 h-px bg-border-light "></div>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-text-sub-light transition-colors hover:bg-background-light hover:text-primary  :bg-background-dark :text-primary" href="index.html">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</nav>
+<div class="flex items-center gap-3 rounded-lg border border-border-light bg-background-light p-3  ">
+<div class="h-10 w-10 overflow-hidden rounded-full bg-slate-200 ">
+<img alt="Admin user avatar" class="h-full w-full object-cover" src="https://ui-avatars.com/api/?name=Admin&background=random"/>
+</div>
+<div class="flex flex-col overflow-hidden">
+<p class="truncate text-sm font-medium text-text-main-light ">Alex Morgan</p>
+<p class="truncate text-xs text-text-sub-light ">Tech Lead</p>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex h-screen flex-1 flex-col overflow-y-auto bg-background-light ">
+<header
+        class="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-200 ">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex h-16 items-center justify-between gap-4 sm:gap-8">
+                                <a href="index.html" class="flex items-center gap-2 flex-shrink-0 group">
+                    <div class="size-8 rounded-lg bg-primary flex items-center justify-center text-white transition-opacity group-hover:opacity-90">
+                        <img src="buyit-logo.png" alt="Buy it Logo" class="h-6 w-auto object-contain">
+                    </div>
+                    <h1 class="text-xl font-bold tracking-tight text-slate-900 hidden sm:block transition-colors group-hover:text-primary">Buy it</h1>
+                </a>
+                <div class="hidden lg:flex flex-1 max-w-lg">
+                    <div class="relative w-full group">
+                        <div
+                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                            <span class="material-symbols-outlined text-[20px]">search</span>
+                        </div>
+                        <input
+                            class="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-lg leading-5 bg-slate-50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-all"
+                            placeholder="Search premium smartphones, laptops..." type="text" />
+                    </div>
+                </div>
+                <nav class="hidden md:flex items-center gap-6">
+                    <a class="text-sm font-medium text-slate-700 hover:text-primary :text-primary transition-colors"
+                        href="products.html">Products</a>
+                    <a class="text-sm font-medium text-slate-700 hover:text-primary :text-primary transition-colors"
+                        href="about.html">About Us</a>
+                    <a class="text-sm font-medium text-slate-700 hover:text-primary :text-primary transition-colors"
+                        href="contact.html">Contact</a>
+                </nav>
+                <div class="flex items-center gap-2 sm:gap-4">
+                    <button
+                        class="p-2 text-slate-500 hover:text-primary  :text-primary transition-colors lg:hidden">
+                        <span class="material-symbols-outlined">search</span>
+                    </button>
+                    <button class="relative p-2 text-slate-500 hover:text-primary  :text-primary transition-colors">
+                        <span class="material-symbols-outlined">favorite</span>
+                    </button>
+                    <button
+                        class="relative p-2 text-slate-500 hover:text-primary  :text-primary transition-colors">
+                        <span class="material-symbols-outlined">shopping_cart</span>
+                        <span
+                            class="absolute top-1 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white ring-2 ring-white ">2</span>
+                    </button>
+                    <button
+                        class="flex items-center gap-2 p-1 pl-2 pr-1 rounded-full border border-slate-200 hover:bg-slate-50 :bg-slate-800 transition-colors ml-2">
+                        <div class="size-6 rounded-full bg-slate-200 overflow-hidden">
+                            <img alt="User Avatar" class="h-full w-full object-cover" src="https://ui-avatars.com/api/?name=User&background=random" />
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+<div class="flex flex-1 flex-col gap-6 p-6">
+<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+<div class="rounded-xl border border-border-light bg-surface-light p-5 shadow-sm  ">
+<div class="flex items-start justify-between">
+<div>
+<p class="text-sm font-medium text-text-sub-light ">Total SKUs</p>
+<h3 class="mt-2 text-3xl font-bold text-text-main-light ">2,543</h3>
+</div>
+<div class="rounded-lg bg-blue-50 p-2 text-primary ">
+<span class="material-symbols-outlined">qr_code</span>
+</div>
+</div>
+<div class="mt-4 flex items-center text-sm">
+<span class="flex items-center font-medium text-emerald-600 ">
+<span class="material-symbols-outlined mr-1 text-base">trending_up</span>
+                            8%
+                        </span>
+<span class="ml-2 text-text-sub-light ">new models</span>
+</div>
+</div>
+<div class="rounded-xl border border-border-light bg-surface-light p-5 shadow-sm  ">
+<div class="flex items-start justify-between">
+<div>
+<p class="text-sm font-medium text-text-sub-light ">Warranty Claims</p>
+<h3 class="mt-2 text-3xl font-bold text-text-main-light ">12</h3>
+</div>
+<div class="rounded-lg bg-rose-50 p-2 text-rose-600  ">
+<span class="material-symbols-outlined">build_circle</span>
+</div>
+</div>
+<div class="mt-4 flex items-center text-sm">
+<span class="text-rose-600 font-medium">Needs review</span>
+</div>
+</div>
+<div class="rounded-xl border border-border-light bg-surface-light p-5 shadow-sm  ">
+<div class="flex items-start justify-between">
+<div>
+<p class="text-sm font-medium text-text-sub-light ">Low Stock Alerts</p>
+<h3 class="mt-2 text-3xl font-bold text-text-main-light ">24</h3>
+</div>
+<div class="rounded-lg bg-amber-50 p-2 text-amber-600  ">
+<span class="material-symbols-outlined">warning</span>
+</div>
+</div>
+<div class="mt-4 flex items-center text-sm">
+<span class="flex items-center font-medium text-emerald-600 ">
+<span class="material-symbols-outlined mr-1 text-base">check_circle</span>
+                            Restock ordered
+                        </span>
+</div>
+</div>
+<div class="rounded-xl border border-border-light bg-surface-light p-5 shadow-sm  ">
+<div class="flex items-start justify-between">
+<div>
+<p class="text-sm font-medium text-text-sub-light ">Tech Revenue</p>
+<h3 class="mt-2 text-3xl font-bold text-text-main-light ">â‚¹69,886k</h3>
+</div>
+<div class="rounded-lg bg-emerald-50 p-2 text-emerald-600  ">
+<span class="material-symbols-outlined">payments</span>
+</div>
+</div>
+<div class="mt-4 flex items-center text-sm">
+<span class="flex items-center font-medium text-emerald-600 ">
+<span class="material-symbols-outlined mr-1 text-base">trending_up</span>
+                            22%
+                        </span>
+<span class="ml-2 text-text-sub-light ">Q3 Growth</span>
+</div>
+</div>
+</div>
+<div class="flex flex-1 flex-col overflow-hidden rounded-xl border border-border-light bg-surface-light shadow-sm  ">
+<div class="flex flex-col justify-between gap-4 border-b border-border-light p-4 lg:flex-row lg:items-center">
+<div class="flex flex-1 items-center gap-2">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-sub-light ">search</span>
+<input class="w-full rounded-lg border-none bg-background-light py-2.5 pl-10 pr-4 text-sm text-text-main-light focus:ring-2 focus:ring-primary  placeholder:text-text-sub-light :text-text-sub-dark" placeholder="Search by SKU, Serial, or Name..." type="text"/>
+</div>
+<button class="flex items-center justify-center rounded-lg bg-background-light p-2.5 text-text-sub-light hover:bg-slate-200   :bg-slate-800 lg:hidden">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+<div class="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0 scrollbar-hide">
+<button class="flex shrink-0 items-center gap-2 rounded-lg bg-background-light px-3 py-1.5 text-sm font-medium text-primary ">
+<span class="material-symbols-outlined text-base">view_list</span>
+                            All Devices
+                        </button>
+<button class="flex shrink-0 items-center gap-2 rounded-lg border border-transparent px-3 py-1.5 text-sm font-medium text-text-sub-light hover:bg-background-light  :bg-background-dark">
+<span class="material-symbols-outlined text-base text-emerald-500">verified</span>
+                            In Warranty
+                        </button>
+<button class="flex shrink-0 items-center gap-2 rounded-lg border border-transparent px-3 py-1.5 text-sm font-medium text-text-sub-light hover:bg-background-light  :bg-background-dark">
+<span class="material-symbols-outlined text-base text-amber-500">gpp_maybe</span>
+                            Expiring
+                        </button>
+<button class="flex shrink-0 items-center gap-2 rounded-lg border border-transparent px-3 py-1.5 text-sm font-medium text-text-sub-light hover:bg-background-light  :bg-background-dark">
+<span class="material-symbols-outlined text-base text-gray-500">policy</span>
+                            Compliance
+                        </button>
+<div class="mx-2 h-6 w-px bg-border-light "></div>
+<button class="flex shrink-0 items-center gap-2 rounded-lg border border-border-light px-3 py-1.5 text-sm font-medium text-text-sub-light hover:bg-background-light   :bg-background-dark">
+<span class="material-symbols-outlined text-base">tune</span>
+                            Filters
+                        </button>
+</div>
+</div>
+<div class="flex-1 overflow-x-auto">
+<table class="w-full min-w-[1000px] border-collapse text-left">
+<thead class="bg-background-light text-xs uppercase text-text-sub-light  ">
+<tr>
+<th class="w-12 px-6 py-3 font-medium">
+  <label for="select-all-checkbox" class="sr-only">Select all products</label>
+  <input id="select-all-checkbox" class="h-4 w-4 rounded border-border-dark bg-surface-light text-primary focus:ring-primary" type="checkbox" title="Select all products" />
+</th>
+<th class="px-6 py-3 font-medium">Product Name</th>
+<th class="px-6 py-3 font-medium">SKU</th>
+<th class="px-6 py-3 font-medium">Serial Number</th>
+<th class="px-6 py-3 font-medium">Warranty Status</th>
+<th class="px-6 py-3 font-medium">Price</th>
+<th class="px-6 py-3 font-medium">Stock</th>
+<th class="px-6 py-3 text-right font-medium">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-light ">
+<tr class="group hover:bg-background-light :bg-background-dark/50">
+<td class="px-6 py-4">
+  <label for="row-checkbox-1" class="sr-only">Select product</label>
+  <input id="row-checkbox-1" class="h-4 w-4 rounded border-border-dark bg-surface-light text-primary focus:ring-primary" type="checkbox" title="Select product" />
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-4">
+<div class="h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-border-light bg-white p-1  flex items-center justify-center">
+<img alt="Graphics Card" class="h-full w-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgOCE89VKDTDXW81KE4Vuyw9Bjq8fwvd1zSYXeysmHBgUVQNeS4K4kYo6strHiLJIX9ZJO3kRU0JYf2SdggP8nfM30EHL8Ltyy2A1T4zRQ-DTsRqKhNONhPgTiiYyT5tjZkX6VKW4UAnrf33mGgtRSL3ExvCDq4cg8ABLwhm-iM8nl132bHH_TbcnkGFmOG0D5mUaX6WzTZRDq0rnnh-hBaRi3SaePYh6COop0lQKxFZN0_HO6SAHh_TZ7T5I34dyqJefFJ04dfNxD"/>
+</div>
+<div>
+<p class="font-medium text-text-main-light ">NVIDIA RTX 4090 FE</p>
+<div class="flex gap-1 mt-0.5">
+<span class="inline-flex items-center rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-800  ">CE</span>
+<span class="inline-flex items-center rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-800  ">WEEE</span>
+</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-text-sub-light ">GPU-NV-4090FE</td>
+<td class="px-6 py-4 text-sm font-mono text-text-sub-light ">SN-982-X092-B</td>
+<td class="px-6 py-4">
+<div class="flex flex-col gap-0.5">
+<span class="inline-flex w-fit items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800  ">
+                                        Active
+                                    </span>
+<span class="text-[10px] text-text-sub-light ">Exp: Oct 2026</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm font-medium text-text-main-light ">â‚¹1,32,717</td>
+<td class="px-6 py-4 text-sm text-text-sub-light ">
+<div class="flex w-24 flex-col gap-1">
+<span class="text-xs">42 in stock</span>
+<div class="h-1.5 w-full overflow-hidden rounded-full bg-slate-200 ">
+<div class="h-full w-2/5 rounded-full bg-primary"></div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="rounded p-1 text-text-sub-light hover:bg-slate-200 hover:text-primary  :bg-slate-700">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="group hover:bg-background-light :bg-background-dark/50">
+<td class="px-6 py-4">
+  <label for="row-checkbox-2" class="sr-only">Select product</label>
+  <input id="row-checkbox-2" class="h-4 w-4 rounded border-border-dark bg-surface-light text-primary focus:ring-primary" type="checkbox" title="Select product" />
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-4">
+<div class="h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-border-light bg-white p-1  flex items-center justify-center">
+<img alt="CPU Box" class="h-full w-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4OtDZLzGIbiJhBQ39-Sr2J0WoSAsOrVSOhTQkmyEq0zeZGI5jwS0J1bIJC9mTznxvBip6QfMc_7e6YU7pdyIBaFZrBimzBvxDGz14MbIhMXcgZDBHUZCNnxR20IAgo6hMGTPL5AHrnqjvQcZfN5PF1z0NMq8kcJcDHXOJcbzCqul9tkVhGF-osgetWBuCbILrB8is7tBhLwVTABcl0V84mPzC7egwQScSltTmexZb4oONd9JRw1ifn6xlSdnEKFOa1cewlatdyfcu"/>
+</div>
+<div>
+<p class="font-medium text-text-main-light ">Core i9-14900K</p>
+<div class="flex gap-1 mt-0.5">
+<span class="inline-flex items-center rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-800  ">RoHS</span>
+</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-text-sub-light ">CPU-INT-14900K</td>
+<td class="px-6 py-4 text-sm font-mono text-text-sub-light ">SN-CPU-8271-K</td>
+<td class="px-6 py-4">
+<div class="flex flex-col gap-0.5">
+<span class="inline-flex w-fit items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800  ">
+                                        Active
+                                    </span>
+<span class="text-[10px] text-text-sub-light ">Exp: Jan 2027</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm font-medium text-text-main-light ">â‚¹48,887</td>
+<td class="px-6 py-4 text-sm text-text-sub-light ">
+<div class="flex w-24 flex-col gap-1">
+<span class="text-xs">15 in stock</span>
+<div class="h-1.5 w-full overflow-hidden rounded-full bg-slate-200 ">
+<div class="h-full w-[15%] rounded-full bg-amber-500"></div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="rounded p-1 text-text-sub-light hover:bg-slate-200 hover:text-primary  :bg-slate-700">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="group hover:bg-background-light :bg-background-dark/50">
+<td class="px-6 py-4">
+  <label for="row-checkbox-3" class="sr-only">Select product</label>
+  <input id="row-checkbox-3" class="h-4 w-4 rounded border-border-dark bg-surface-light text-primary focus:ring-primary" type="checkbox" title="Select product" />
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-4">
+<div class="h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-border-light bg-white p-1  flex items-center justify-center">
+<img alt="Gaming Mouse" class="h-full w-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCd1Zbhxop3evs-VzoGRf4H57uX1kALsvivdHFKu9SHvloW5AyzfkQPBygkHPARagZiTtGWXVZ2fiRC8aV3YzP9EhGL3xOZbWkIa7GU00L1Rk_50_xO3V5e_thIog1ZBv3I2ubzbl5sSHsKDkI7WX2uinLwhdWMU8RWa7xtuATDVx4K1d0IPo5MjsmM3R-3K0zS-_LeiIdBmL03RtVZHgnbVA2wc2gGuyu7Kb5nx9str0vc_9pwutvj0mrT0zHqVZ6ge5umOkzbMNj6"/>
+</div>
+<div>
+<p class="font-medium text-text-main-light ">Swift-X Wireless Mouse</p>
+<div class="flex gap-1 mt-0.5">
+<span class="inline-flex items-center rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-800  ">FCC</span>
+<span class="inline-flex items-center rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-800  ">BT5.3</span>
+</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-text-sub-light ">MS-WL-SWIFTX</td>
+<td class="px-6 py-4 text-sm font-mono text-text-sub-light ">SN-M88-7721-A</td>
+<td class="px-6 py-4">
+<div class="flex flex-col gap-0.5">
+<span class="inline-flex w-fit items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800  ">
+                                        Expiring Soon
+                                    </span>
+<span class="text-[10px] text-text-sub-light ">Exp: 14 Days</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm font-medium text-text-main-light ">â‚¹10,790</td>
+<td class="px-6 py-4 text-sm text-text-sub-light ">
+<div class="flex w-24 flex-col gap-1">
+<span class="text-xs text-rose-600 ">Out of Stock</span>
+<div class="h-1.5 w-full overflow-hidden rounded-full bg-slate-200 ">
+<div class="h-full w-0 rounded-full bg-rose-500"></div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="rounded p-1 text-text-sub-light hover:bg-slate-200 hover:text-primary  :bg-slate-700">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="group hover:bg-background-light :bg-background-dark/50">
+<td class="px-6 py-4">
+  <label for="row-checkbox-4" class="sr-only">Select product</label>
+  <input id="row-checkbox-4" class="h-4 w-4 rounded border-border-dark bg-surface-light text-primary focus:ring-primary" type="checkbox" title="Select product" />
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-4">
+<div class="h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-border-light bg-white p-1  flex items-center justify-center">
+<img alt="Microphone" class="h-full w-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMcVL--oNJMOwkb-lYfQWQMuVEEx7CGimi3TSmS4IEGBw82-HxjHkD1qJyCEO2hxJFL-eg_ycyE09kM1NLqD2lMJSeA95OTonKmYgZD8mHWjqooMKK3t9n1DLwR1oAumJRuu7Hyf9Is8ZVuXUhK6cHTGtMk5if_2MP3DLLJeMMVIaK956p5-pH5FXElMEkcaQV7t3MrvcjCw55honwYXpGqEwElItW5MhvNJ-Lrzhd7wgk0FgTpmYTihJraJG-3OsKs83LTvX_JoaD"/>
+</div>
+<div>
+<p class="font-medium text-text-main-light ">XLR Studio Mic v3</p>
+<div class="flex gap-1 mt-0.5">
+<span class="inline-flex items-center rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-800  ">UKCA</span>
+</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-text-sub-light ">MIC-XLR-V3PRO</td>
+<td class="px-6 py-4 text-sm font-mono text-text-sub-light ">SN-V3P-00192-S</td>
+<td class="px-6 py-4">
+<div class="flex flex-col gap-0.5">
+<span class="inline-flex w-fit items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-800  ">
+                                        No Warranty
+                                    </span>
+<span class="text-[10px] text-text-sub-light ">Refurbished</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm font-medium text-text-main-light ">â‚¹28,967</td>
+<td class="px-6 py-4 text-sm text-text-sub-light ">
+<div class="flex w-24 flex-col gap-1">
+<span class="text-xs">8 in stock</span>
+<div class="h-1.5 w-full overflow-hidden rounded-full bg-slate-200 ">
+<div class="h-full w-[15%] rounded-full bg-primary"></div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="rounded p-1 text-text-sub-light hover:bg-slate-200 hover:text-primary  :bg-slate-700">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="flex items-center justify-between border-t border-border-light px-6 py-4 ">
+<div class="text-sm text-text-sub-light ">
+                        Showing <span class="font-medium text-text-main-light ">1-4</span> of <span class="font-medium text-text-main-light ">2,543</span> SKUs
+                    </div>
+<div class="flex gap-2">
+<button class="flex h-8 items-center justify-center rounded border border-border-light px-3 text-sm text-text-sub-light hover:bg-background-light disabled:opacity-50   :bg-background-dark" disabled="">
+                            Previous
+                        </button>
+<button class="flex h-8 items-center justify-center rounded border border-border-light px-3 text-sm text-text-sub-light hover:bg-background-light   :bg-background-dark">
+                            Next
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm hidden" id="add-product-modal">
+<div class="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl bg-surface-light p-6 shadow-2xl ">
+<div class="flex items-center justify-between border-b border-border-light pb-4 ">
+<h3 class="text-xl font-bold text-text-main-light ">Add New Gadget</h3>
+<button class="text-text-sub-light hover:text-text-main-light :text-text-main-dark" onclick="document.getElementById('add-product-modal').classList.add('hidden')">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<form class="mt-6 space-y-6">
+<div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+    <div class="space-y-2">
+        <label class="flex items-center gap-2 cursor-pointer">
+            <input class="h-4 w-4 rounded border-border-light bg-background-light text-primary focus:ring-primary" type="checkbox" id="best-selling-checkbox" name="bestSelling" />
+            <span class="text-sm font-semibold text-primary">Mark as Best Selling</span>
+        </label>
+    </div>
+    <div class="space-y-2">
+        <label class="text-sm font-semibold text-text-main-light ">Product Name</label>
+        <input class="w-full rounded-lg border-border-light bg-background-light text-sm focus:ring-primary   " placeholder="e.g. UltraWide Gaming Monitor" type="text" title="Product Name" />
+    </div>
+    <div class="space-y-2">
+        <label class="text-sm font-semibold text-text-main-light ">SKU Code</label>
+        <input class="w-full rounded-lg border-border-light bg-background-light text-sm focus:ring-primary   " placeholder="MON-UW-34-G" type="text" title="SKU Code" />
+    </div>
+    <div class="space-y-2">
+        <label class="text-sm font-semibold text-text-main-light ">Base Price ($)</label>
+        <input class="w-full rounded-lg border-border-light bg-background-light text-sm focus:ring-primary   " step="0.01" type="number" title="Base Price" />
+    </div>
+    <div class="space-y-2">
+        <label class="text-sm font-semibold text-text-main-light ">Initial Stock</label>
+        <input class="w-full rounded-lg border-border-light bg-background-light text-sm focus:ring-primary   " type="number" title="Initial Stock" />
+    </div>
+    <div class="space-y-2">
+        <label class="text-sm font-semibold text-text-main-light ">Category</label>
+        <select class="w-full rounded-lg border-border-light bg-background-light text-sm focus:ring-primary" title="Category" name="category" id="product-category-select" required>
+            <option value="">Select Category</option>
+            <option value="smartphones">Smartphones</option>
+            <option value="laptops">Laptops</option>
+            <option value="tablets">Tablets</option>
+            <option value="audio">Audio</option>
+            <option value="wearables">Wearables</option>
+            <option value="accessories">Accessories</option>
+        </select>
+    </div>
+</div>
+<div class="space-y-4">
+<h4 class="text-sm font-bold uppercase tracking-wider text-text-sub-light ">Technical Specifications</h4>
+<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+<div class="space-y-2">
+<label class="text-xs font-medium text-text-sub-light ">Connectivity</label>
+<select class="w-full rounded-lg border-border-light bg-background-light text-sm focus:ring-primary   " title="Connectivity">
+  <option>Wired (USB-C/XLR)</option>
+  <option>Wireless (Bluetooth/2.4Ghz)</option>
+  <option>PCIe Expansion</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-medium text-text-sub-light ">Power Requirements</label>
+<input class="w-full rounded-lg border-border-light bg-background-light text-sm focus:ring-primary   " placeholder="e.g. 750W PSU recommended" type="text" title="Power Requirements" />
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<h4 class="text-sm font-bold uppercase tracking-wider text-text-sub-light ">Regulatory &amp; Compliance</h4>
+<div class="flex flex-wrap gap-4">
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="h-4 w-4 rounded border-border-light bg-background-light text-primary focus:ring-primary  " type="checkbox"/>
+<span class="text-xs font-medium px-2 py-1 rounded bg-slate-100 text-slate-700 ">CE Certified</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="h-4 w-4 rounded border-border-light bg-background-light text-primary focus:ring-primary  " type="checkbox"/>
+<span class="text-xs font-medium px-2 py-1 rounded bg-slate-100 text-slate-700 ">FCC Compliant</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="h-4 w-4 rounded border-border-light bg-background-light text-primary focus:ring-primary  " type="checkbox"/>
+<span class="text-xs font-medium px-2 py-1 rounded bg-slate-100 text-slate-700 ">RoHS</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="h-4 w-4 rounded border-border-light bg-background-light text-primary focus:ring-primary  " type="checkbox"/>
+<span class="text-xs font-medium px-2 py-1 rounded bg-slate-100 text-slate-700 ">WEEE</span>
+</label>
+</div>
+</div>
+<div class="flex items-center justify-end gap-3 pt-4 border-t border-border-light ">
+<button class="px-4 py-2 text-sm font-medium text-text-sub-light hover:text-text-main-light :text-text-main-dark" onclick="document.getElementById('add-product-modal').classList.add('hidden')" type="button">
+                    Cancel
+                </button>
+<button class="rounded-lg bg-primary px-6 py-2 text-sm font-medium text-primary-content shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all" type="submit">
+                    Register Product
+                </button>
+</div>
+</form>
+</div>
+</div>
+    <footer class="bg-white border-t border-slate-200 pt-16 pb-12 mt-20">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-12 mb-16">
+                <div class="col-span-2 lg:col-span-2">
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="size-9 rounded-xl bg-primary flex items-center justify-center text-white">
+                            <img src="buyit-logo.png" alt="Buy it Logo" class="h-6 w-auto object-contain">
+                        </div>
+                        <span class="text-2xl font-black tracking-tight text-slate-900 uppercase">Hub</span>
+                    </div>
+                    <p class="text-slate-500 text-sm leading-relaxed max-w-sm mb-8">
+                        Defining the future of premium retail. We curate the world's most innovative electronics,
+                        ensuring every gadget meets our strict standards for design and performance.
+                    </p>
+                    <div class="flex gap-5">
+                        <a class="text-slate-400 hover:text-primary transition-colors" href="index.html">
+                            <span class="sr-only">Facebook</span>
+                            <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path clip-rule="evenodd"
+                                    d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
+                                    fill-rule="evenodd"></path>
+                            </svg>
+                        </a>
+                        <a class="text-slate-400 hover:text-primary transition-colors" href="index.html">
+                            <span class="sr-only">Instagram</span>
+                            <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path clip-rule="evenodd"
+                                    d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.468 2.373c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.505-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"
+                                    fill-rule="evenodd"></path>
+                            </svg>
+                        </a>
+                        <a class="text-slate-400 hover:text-green-500 transition-colors" href="https://wa.me/919999999999" target="_blank" rel="noopener" title="WhatsApp">
+                            <span class="sr-only">WhatsApp</span>
+                            <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.472-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.5-.669-.51-.173-.007-.372-.009-.571-.009-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.099 3.2 5.077 4.363.709.244 1.262.389 1.694.497.712.181 1.36.156 1.872.095.571-.067 1.758-.719 2.006-1.413.248-.694.248-1.288.173-1.413-.074-.124-.272-.198-.57-.347zm-5.421 7.617h-.001a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.999-3.648-.235-.374A9.86 9.86 0 012.1 12.045C2.111 6.479 6.58 2.01 12.153 2c2.652.004 5.146 1.037 7.022 2.915A9.822 9.822 0 0122.3 12.04c-.003 5.572-4.472 10.041-9.949 10.041zm8.413-17.453A11.815 11.815 0 0012.153.001C5.495.013.111 6.006.1 12.045c0 2.13.557 4.21 1.613 6.033L.057 23.925a1 1 0 001.225 1.225l5.874-1.641a11.822 11.822 0 005.001 1.106h.005c6.658 0 12.042-5.994 12.053-12.033a11.82 11.82 0 00-3.33-8.233z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider mb-6">Company
+                    </h3>
+                    <ul class="space-y-4 text-sm font-medium text-slate-500 ">
+                        <li><a class="hover:text-primary transition-colors" href="about.html">About Us</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="contact.html">Contact Us</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="products.html">Shop Products</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider mb-6">
+                        Policies</h3>
+                    <ul class="space-y-4 text-sm font-medium text-slate-500 ">
+                        <!-- Concierge Support removed -->
+                        <li><a class="hover:text-primary transition-colors" href="account.html">Track My order</a></li>
+                        <!-- Global Warranty removed -->
+                        <!-- Return Policy removed -->
+                        <li><a class="hover:text-primary transition-colors" href="terms-and-conditions.html">Terms & Conditions</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="shipping-policy.html">Shipping Policy</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="return-and-refund-policy.html">Return and Refund policy</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="payment-and-security.html">Payment & Security</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="privacy-policy.html">Privacy Policy</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="order-cancellation-policy.html">Order Cancellation Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div
+                class="border-t border-slate-100 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
+                <p class="text-xs font-medium text-slate-400 w-full text-center">Â© 2026 Hub Inc. All rights reserved.</p>
+                <!-- Privacy and Terms links removed -->
+            </div>
+        </div>
+    </footer>
+</body></html>
+
+
+
+
+
+
+
+

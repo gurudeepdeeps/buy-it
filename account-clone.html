@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account - DeoDap Clone</title>
+  <link rel="stylesheet" href="main.css">
+  <style>
+    body { background: #f6f6f8; font-family: Inter, sans-serif; }
+    .account-container { max-width: 420px; margin: 48px auto; background: #fff; border-radius: 1.5rem; box-shadow: 0 2px 16px 0 rgba(16,24,40,0.10); padding: 2.5rem 2rem; }
+    .account-logo { display: flex; justify-content: center; margin-bottom: 2rem; }
+    .account-logo img { height: 48px; }
+    .account-title { font-size: 1.5rem; font-weight: 700; text-align: center; margin-bottom: 1.5rem; color: #135bec; }
+    .account-form label { display: block; font-weight: 500; margin-bottom: 0.5rem; color: #0d121b; }
+    .account-form input { width: 100%; padding: 0.75rem 1rem; border: 1px solid #d1d5db; border-radius: 0.75rem; margin-bottom: 1.25rem; font-size: 1rem; }
+    .account-form button { width: 100%; background: #135bec; color: #fff; font-weight: 600; padding: 0.75rem 0; border: none; border-radius: 0.75rem; font-size: 1.1rem; transition: background 0.2s; }
+    .account-form button:hover { background: #0f4bc4; }
+    .account-links { text-align: center; margin-top: 1.5rem; }
+    .account-links a { color: #135bec; text-decoration: none; font-weight: 500; margin: 0 0.5rem; }
+    .account-links a:hover { text-decoration: underline; }
+    .account-divider { border-top: 1px solid #e5e7eb; margin: 2rem 0; }
+    @media (max-width: 600px) { .account-container { padding: 1.5rem 0.5rem; } }
+  </style>
+</head>
+<body>
+  <div class="account-container">
+    <div class="account-logo">
+      <img src="buyit-logo.png" alt="Logo">
+    </div>
+    <div class="account-title">Sign in to your account</div>
+    <form class="account-form">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="Enter your email" required>
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Enter your password" required>
+      <button type="submit">Sign In</button>
+    </form>
+    <div class="account-links">
+      <a href="#">Forgot your password?</a>|
+      <a href="#">Create account</a>
+    </div>
+    <div class="account-divider"></div>
+    <div class="account-links">
+      <a href="orders.html">Your Orders</a>|
+      <a href="wishlist.html">Wishlist</a>|
+      <a href="addresses.html">Addresses</a>
+    </div>
+  </div>
+</body>
+</html>
