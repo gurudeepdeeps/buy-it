@@ -183,6 +183,24 @@
     .otp-status {
       text-align: left;
       margin-top: 8px;
+      border-radius: 8px;
+      padding: 8px 10px;
+      min-height: 20px;
+    }
+    .otp-status-info {
+      color: #334155;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+    .otp-status-success {
+      color: #166534;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+    }
+    .otp-status-error {
+      color: #b91c1c;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
     }
   </style>
 </head>
@@ -219,7 +237,7 @@
   <script src="firebase-runtime-config.js"></script>
   <script type="module">
     import { auth } from "./firebase-config.js";
-    import { GoogleAuthProvider, RecaptchaVerifier, signInWithPhoneNumber, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import { GoogleAuthProvider, RecaptchaVerifier, getRedirectResult, signInWithPhoneNumber, signInWithPopup, signInWithRedirect } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
     const googleLoginButton = document.getElementById('google-login-btn');
     const phoneInput = document.getElementById('login-phone');
@@ -232,14 +250,79 @@
     let confirmationResult = null;
     let recaptchaVerifier = null;
     const googleProvider = new GoogleAuthProvider();
+    googleProvider.setCustomParameters({ prompt: 'select_account' });
+
+    function getFriendlyAuthErrorMessage(error, fallbackMessage) {
+      const code = error?.code || '';
+
+      const messages = {
+        'auth/invalid-phone-number': 'Please enter a valid phone number.',
+        'auth/missing-phone-number': 'Phone number is required.',
+        'auth/too-many-requests': 'Too many attempts. Please try again later.',
+        'auth/quota-exceeded': 'OTP quota exceeded. Please try again later.',
+        'auth/captcha-check-failed': 'reCAPTCHA verification failed. Please try again.',
+        'auth/invalid-verification-code': 'Invalid OTP. Please check and try again.',
+        'auth/code-expired': 'OTP expired. Please request a new OTP.',
+        'auth/session-expired': 'Session expired. Please request OTP again.',
+        'auth/popup-blocked': 'Popup was blocked. Continuing with redirect sign-in...',
+        'auth/popup-closed-by-user': 'Sign-in popup was closed before completing login.',
+        'auth/cancelled-popup-request': 'Sign-in was interrupted. Please try again.',
+        'auth/network-request-failed': 'Network issue detected. Check your internet and retry.',
+        'auth/operation-not-allowed': 'This sign-in method is not enabled in Firebase console.',
+        'auth/unauthorized-domain': 'This domain is not authorized for Firebase authentication.'
+      };
+
+      return messages[code] || fallbackMessage || 'Login failed. Please try again.';
+    }
+
+    function setOtpStatus(message, type = 'info') {
+      otpStatus.textContent = message || '';
+      otpStatus.classList.remove('otp-status-info', 'otp-status-success', 'otp-status-error');
+
+      if (!message) {
+        return;
+      }
+
+      if (type === 'success') {
+        otpStatus.classList.add('otp-status-success');
+        return;
+      }
+
+      if (type === 'error') {
+        otpStatus.classList.add('otp-status-error');
+        return;
+      }
+
+      otpStatus.classList.add('otp-status-info');
+    }
+
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result?.user) {
+          window.location.href = 'account.html';
+        }
+      })
+      .catch((error) => {
+        setOtpStatus(getFriendlyAuthErrorMessage(error, 'Google sign-in failed. Please try again.'), 'error');
+      });
 
     googleLoginButton.addEventListener('click', async () => {
-      otpStatus.textContent = 'Signing in with Google...';
+      setOtpStatus('Signing in with Google...', 'info');
       try {
         await signInWithPopup(auth, googleProvider);
         window.location.href = 'account.html';
       } catch (error) {
-        otpStatus.textContent = error.message || 'Google sign-in failed. Please try again.';
+        if (error?.code === 'auth/popup-blocked' || error?.code === 'auth/cancelled-popup-request') {
+          setOtpStatus(getFriendlyAuthErrorMessage(error, 'Switching to redirect sign-in...'), 'info');
+          try {
+            await signInWithRedirect(auth, googleProvider);
+            return;
+          } catch (redirectError) {
+            setOtpStatus(getFriendlyAuthErrorMessage(redirectError, 'Google sign-in failed. Please try again.'), 'error');
+            return;
+          }
+        }
+        setOtpStatus(getFriendlyAuthErrorMessage(error, 'Google sign-in failed. Please try again.'), 'error');
       }
     });
 
@@ -266,39 +349,40 @@
     sendOtpButton.addEventListener('click', async () => {
       const phoneNumber = normalizePhone(phoneInput.value);
       if (!phoneNumber) {
-        otpStatus.textContent = 'Enter a valid phone number with country code (example: +91XXXXXXXXXX).';
+        setOtpStatus('Enter a valid phone number with country code (example: +91XXXXXXXXXX).', 'error');
         return;
       }
 
-      otpStatus.textContent = 'Sending OTP...';
+      setOtpStatus('Sending OTP...', 'info');
       try {
         confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, getRecaptchaVerifier());
         otpSection.classList.remove('otp-hidden');
         verifyOtpButton.classList.remove('otp-hidden');
         sendOtpButton.classList.add('otp-hidden');
-        otpStatus.textContent = `OTP sent to ${phoneNumber}.`;
+        setOtpStatus(`OTP sent to ${phoneNumber}.`, 'success');
       } catch (error) {
-        otpStatus.textContent = error.message || 'Failed to send OTP. Please try again.';
+        setOtpStatus(getFriendlyAuthErrorMessage(error, 'Failed to send OTP. Please try again.'), 'error');
       }
     });
 
     verifyOtpButton.addEventListener('click', async () => {
       const otp = String(otpInput.value || '').trim();
       if (!confirmationResult) {
-        otpStatus.textContent = 'Please request OTP first.';
+        setOtpStatus('Please request OTP first.', 'error');
         return;
       }
       if (!/^\d{6}$/.test(otp)) {
-        otpStatus.textContent = 'Enter a valid 6-digit OTP.';
+        setOtpStatus('Enter a valid 6-digit OTP.', 'error');
         return;
       }
 
-      otpStatus.textContent = 'Verifying OTP...';
+      setOtpStatus('Verifying OTP...', 'info');
       try {
         await confirmationResult.confirm(otp);
+        setOtpStatus('Login successful. Redirecting...', 'success');
         window.location.href = 'account.html';
       } catch (error) {
-        otpStatus.textContent = error.message || 'Invalid OTP. Please try again.';
+        setOtpStatus(getFriendlyAuthErrorMessage(error, 'Invalid OTP. Please try again.'), 'error');
       }
     });
   </script>
