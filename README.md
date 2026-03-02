@@ -164,5 +164,3 @@ demo@buyit.com
 demo1234
 
 at last give prompt that make this project for production ready and add some features like payment gateway, order tracking, and customer support features 
-
-product not opening in wishlist.html
