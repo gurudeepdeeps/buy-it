@@ -227,13 +227,10 @@
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;');
 
-        function buildProductDetailsLink(productId, title) {
+        function buildProductDetailsLink(productId) {
             const params = new URLSearchParams();
             if (productId) {
                 params.set('id', productId);
-            }
-            if (title) {
-                params.set('title', title);
             }
             const query = params.toString();
             return query ? `product-details.html?${query}` : 'product-details.html';
@@ -244,50 +241,15 @@
                 return null;
             }
 
-            const byId = typeof getProductById === 'function' ? getProductById(item.id) : null;
-            if (byId) {
-                return byId;
-            }
-
             const hasCatalog = !!window.BUYIT_PRODUCT_CATALOG;
             if (!hasCatalog) {
                 return null;
-            }
-
-            const title = String(item.title || '').trim().toLowerCase();
-            if (title) {
-                const exactMatch = Object.values(window.BUYIT_PRODUCT_CATALOG).find((product) =>
-                    String(product?.title || '').trim().toLowerCase() === title
-                );
-                if (exactMatch) {
-                    return exactMatch;
-                }
             }
 
             const normalizeSlug = (value) => String(value || '')
                 .toLowerCase()
                 .replace(/[^a-z0-9]+/g, '-')
                 .replace(/^-+|-+$/g, '');
-
-            const titleSlug = normalizeSlug(item.title);
-            const idSlug = normalizeSlug(item.id);
-
-            const slugMatch = Object.values(window.BUYIT_PRODUCT_CATALOG).find((product) => {
-                const productTitleSlug = normalizeSlug(product?.title);
-                const productIdSlug = normalizeSlug(product?.id);
-
-                if (idSlug && (productIdSlug === idSlug || productTitleSlug === idSlug)) {
-                    return true;
-                }
-                if (titleSlug && (productTitleSlug === titleSlug || productIdSlug === titleSlug)) {
-                    return true;
-                }
-                return false;
-            }) || null;
-
-            if (slugMatch) {
-                return slugMatch;
-            }
 
             const normalizeImageKey = (value) => {
                 const raw = String(value || '').trim().toLowerCase();
@@ -301,7 +263,35 @@
                 return file;
             };
 
+            const itemTitle = String(item.title || '').trim().toLowerCase();
+            const itemTitleSlug = normalizeSlug(item.title);
             const itemImageKey = normalizeImageKey(item.image);
+
+            const title = itemTitle;
+            if (title) {
+                const exactMatch = Object.values(window.BUYIT_PRODUCT_CATALOG).find((product) =>
+                    String(product?.title || '').trim().toLowerCase() === title
+                );
+                if (exactMatch) {
+                    return exactMatch;
+                }
+            }
+
+            const titleSlug = normalizeSlug(item.title);
+
+            const slugMatch = Object.values(window.BUYIT_PRODUCT_CATALOG).find((product) => {
+                const productTitleSlug = normalizeSlug(product?.title);
+                const productIdSlug = normalizeSlug(product?.id);
+                if (titleSlug && (productTitleSlug === titleSlug || productIdSlug === titleSlug)) {
+                    return true;
+                }
+                return false;
+            }) || null;
+
+            if (slugMatch) {
+                return slugMatch;
+            }
+
             if (!itemImageKey) {
                 return null;
             }
@@ -311,11 +301,20 @@
                 return productImageKey && productImageKey === itemImageKey;
             });
 
-            return byImage || null;
+            if (byImage) {
+                return byImage;
+            }
+
+            const byId = typeof getProductById === 'function' ? getProductById(item.id) : null;
+            if (byId) {
+                return byId;
+            }
+
+            return null;
         }
 
         function migrateWishlistStorage() {
-            const migrationVersion = 'wishlist_migration_v3';
+            const migrationVersion = 'wishlist_migration_v11';
             if (localStorage.getItem(migrationVersion) === 'done') {
                 return;
             }
@@ -328,17 +327,23 @@
 
             const migratedMap = new Map();
             let hasChanges = false;
-            wishlist.forEach((item) => {
+            const hasValidCatalogId = (value) => {
+                if (!value || typeof getProductById !== 'function') {
+                    return false;
+                }
+                return Boolean(getProductById(value));
+            };
+            wishlist.forEach((item, index) => {
                 const catalogProduct = resolveCatalogProduct(item);
-                const resolvedId = catalogProduct?.id || item.id;
+                const resolvedId = catalogProduct?.id || (hasValidCatalogId(item.id) ? item.id : '') || `wishlist-item-${index + 1}`;
                 if (!resolvedId) {
                     return;
                 }
 
-                const resolvedTitle = catalogProduct?.title || item.title || 'Product';
-                const resolvedImage = catalogProduct?.image || item.image || 'buyit-logo.png';
-                const resolvedPrice = Number(catalogProduct?.price ?? item.price ?? 0);
-                const resolvedRegularPrice = Number(catalogProduct?.regularPrice ?? item.regularPrice ?? calculateRegularPrice(catalogProduct?.price ?? item.price ?? 0));
+                const resolvedTitle = item.title || catalogProduct?.title || 'Product';
+                const resolvedImage = item.image || catalogProduct?.image || 'buyit-logo.png';
+                const resolvedPrice = Number(item.price ?? catalogProduct?.price ?? 0);
+                const resolvedRegularPrice = Number(item.regularPrice ?? catalogProduct?.regularPrice ?? calculateRegularPrice(item.price ?? catalogProduct?.price ?? 0));
 
                 if (
                     resolvedId !== item.id ||
@@ -350,7 +355,8 @@
                     hasChanges = true;
                 }
 
-                migratedMap.set(resolvedId, {
+                const dedupeKey = `${String(resolvedId)}::${String(resolvedTitle).trim().toLowerCase()}`;
+                migratedMap.set(dedupeKey, {
                     ...item,
                     id: resolvedId,
                     title: resolvedTitle,
@@ -381,28 +387,25 @@
             wishlist.forEach(item => {
                 const catalogProduct = resolveCatalogProduct(item);
                 const sourceId = item.id;
-                const resolvedId = catalogProduct?.id || sourceId;
-                const safeResolvedId = (resolvedId && typeof getProductById === 'function' && getProductById(resolvedId))
-                    ? resolvedId
-                    : (catalogProduct?.id || '');
+                const sourceIdIsValid = Boolean(sourceId && typeof getProductById === 'function' && getProductById(sourceId));
+                const linkId = catalogProduct?.id || (sourceIdIsValid ? sourceId : '');
                 const itemPrice = Number(catalogProduct?.price ?? item.price ?? 0);
                 const regularPrice = Number(catalogProduct?.regularPrice ?? item.regularPrice ?? calculateRegularPrice(itemPrice));
                 const title = catalogProduct?.title || item.title || 'Product';
                 const image = catalogProduct?.image || item.image || 'buyit-logo.png';
                 const category = catalogProduct?.category || 'General';
                 const inStock = catalogProduct?.inStock !== false;
-                const productLinkRelative = safeResolvedId
-                    ? (typeof getProductLink === 'function'
-                        ? `${getProductLink(safeResolvedId)}&title=${encodeURIComponent(title)}`
-                        : buildProductDetailsLink(safeResolvedId, title))
-                    : buildProductDetailsLink('', title);
+                const productLinkRelative = linkId
+                    ? buildProductDetailsLink(linkId)
+                    : buildProductDetailsLink('');
                 const productLink = productLinkRelative;
 
                 const div = document.createElement('div');
                 div.className = 'wishlist-card group bg-surface-light rounded-2xl border border-border-light overflow-hidden shadow-sm flex flex-col transition-all duration-300 hover:shadow-xl hover:border-primary/30';
-                div.setAttribute('data-product-id', safeResolvedId || resolvedId || '');
+                div.setAttribute('data-product-id', linkId || '');
                 div.setAttribute('data-source-id', sourceId);
-                div.setAttribute('data-view-link', productLink);
+                div.setAttribute('data-item-title', title);
+                div.setAttribute('data-item-image', image);
                 div.innerHTML = `
                     <div class="relative overflow-hidden bg-slate-50 border-b border-border-light h-52 flex items-center justify-center p-5">
                         <a href="${productLink}" data-action="view-product" class="inline-flex items-center justify-center w-full h-full">
@@ -473,13 +476,7 @@
             }
 
             if (action === 'view-product') {
-                event.preventDefault();
-                const fallbackLink = card ? card.getAttribute('data-view-link') : '';
-                const targetLink = actionElement.getAttribute('href') || fallbackLink;
-                if (!targetLink) {
-                    return;
-                }
-                window.location.assign(targetLink);
+                // Let the anchor navigate using its own href (visible on hover).
                 return;
             }
         });

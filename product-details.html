@@ -362,11 +362,22 @@
                 }
 
                 const slug = normalizeSlug(normalizedTitle);
-                return Object.values(window.BUYIT_PRODUCT_CATALOG).find((catalogItem) => {
+                const slugMatch = Object.values(window.BUYIT_PRODUCT_CATALOG).find((catalogItem) => {
                     const itemTitleSlug = normalizeSlug(catalogItem?.title);
                     const itemIdSlug = normalizeSlug(catalogItem?.id);
                     return itemTitleSlug === slug || itemIdSlug === slug;
                 }) || null;
+
+                if (slugMatch) {
+                    return slugMatch;
+                }
+
+                const titleIncludesMatch = Object.values(window.BUYIT_PRODUCT_CATALOG).find((catalogItem) => {
+                    const catalogTitle = String(catalogItem?.title || '').trim().toLowerCase();
+                    return catalogTitle && (catalogTitle.includes(normalizedTitle) || normalizedTitle.includes(catalogTitle));
+                });
+
+                return titleIncludesMatch || null;
             };
 
             let product = null;
