@@ -267,7 +267,11 @@
     </div>
   </div>
   <script src="shop.js"></script>
-  <script>
+  <script type="module">
+    import { auth, db } from "./firebase-config.js";
+    import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
     // Show/hide password toggle for signup
     const signupPasswordInput = document.getElementById('signup-password');
     const signupConfirmPasswordInput = document.getElementById('signup-confirm-password');
@@ -342,10 +346,12 @@
     signupConfirmPasswordInput.addEventListener('input', updateSignupPasswordFeedback);
     updateSignupPasswordFeedback();
 
-    document.getElementById('signup-form').addEventListener('submit', function(e) {
+    document.getElementById('signup-form').addEventListener('submit', async function(e) {
       e.preventDefault();
+      const email = document.getElementById('signup-email').value.trim().toLowerCase();
       const password = signupPasswordInput.value;
       const confirmPassword = signupConfirmPasswordInput.value;
+
       if (password !== confirmPassword) {
         alert('Passwords do not match.');
         return;
@@ -357,10 +363,21 @@
         return;
       }
 
-      // Simulate signup success
-      localStorage.setItem('loggedIn', '1');
-      localStorage.setItem('role', 'user');
-      window.location.href = 'index.html';
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        const fullName = email.split('@')[0];
+
+        await setDoc(doc(db, 'users', cred.user.uid), {
+          uid: cred.user.uid,
+          fullName,
+          email,
+          createdAt: serverTimestamp()
+        });
+
+        window.location.href = 'login.html';
+      } catch (error) {
+        alert(error.message);
+      }
     });
   </script>
 </body>

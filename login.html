@@ -256,7 +256,10 @@
     </div>
   </div>
   <script src="shop.js"></script>
-  <script>
+  <script type="module">
+    import { auth } from "./firebase-config.js";
+    import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
     // Show/hide password toggle
     const passwordInput = document.getElementById('login-password');
     const togglePassword = document.getElementById('toggle-password');
@@ -270,37 +273,17 @@
         togglePassword.setAttribute('aria-label', showPassword ? 'Hide password' : 'Show password');
       });
     }
-    document.getElementById('login-form').addEventListener('submit', function(e) {
+    document.getElementById('login-form').addEventListener('submit', async function(e) {
       e.preventDefault();
       const email = document.getElementById('login-email').value.trim().toLowerCase();
       const password = document.getElementById('login-password').value;
-      let adminSettings = {};
+
       try {
-        adminSettings = JSON.parse(localStorage.getItem('buyit_admin_settings') || '{}');
-      } catch (_error) {
-        adminSettings = {};
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = 'account.html';
+      } catch (error) {
+        alert(error.message);
       }
-
-      const adminEmail = (adminSettings.adminEmail || 'admin@buyit.com').toLowerCase();
-      const adminPassword = adminSettings.adminPassword || 'admin1234';
-      const demoEmail = 'demo@hub.com';
-      const demoPassword = 'demo1234';
-
-      if (email === adminEmail && password === adminPassword) {
-        localStorage.setItem('loggedIn', '1');
-        localStorage.setItem('role', 'admin');
-        window.location.href = 'admin.html';
-        return;
-      }
-
-      if (email === demoEmail && password === demoPassword) {
-        localStorage.setItem('loggedIn', '1');
-        localStorage.setItem('role', 'user');
-        window.location.href = 'index.html';
-        return;
-      }
-
-      alert('Invalid credentials. Use admin@buyit.com / admin1234 for Admin or demo@hub.com / demo1234 for User.');
     });
   </script>
 </body>
