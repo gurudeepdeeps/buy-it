@@ -299,7 +299,7 @@
     getRedirectResult(auth)
       .then((result) => {
         if (result?.user) {
-          window.location.href = 'account.html';
+          window.location.href = 'index.html';
         }
       })
       .catch((error) => {
@@ -310,7 +310,7 @@
       setOtpStatus('Signing in with Google...', 'info');
       try {
         await signInWithPopup(auth, googleProvider);
-        window.location.href = 'account.html';
+        window.location.href = 'index.html';
       } catch (error) {
         if (error?.code === 'auth/popup-blocked' || error?.code === 'auth/cancelled-popup-request') {
           setOtpStatus(getFriendlyAuthErrorMessage(error, 'Switching to redirect sign-in...'), 'info');
@@ -380,7 +380,7 @@
       try {
         await confirmationResult.confirm(otp);
         setOtpStatus('Login successful. Redirecting...', 'success');
-        window.location.href = 'account.html';
+        window.location.href = 'index.html';
       } catch (error) {
         setOtpStatus(getFriendlyAuthErrorMessage(error, 'Invalid OTP. Please try again.'), 'error');
       }
