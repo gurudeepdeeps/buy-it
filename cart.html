@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Buy it</title>
+    <title>Buy it - Cart</title>
     <link rel="icon" href="buyit-logo-tansperant.png" type="image/png">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
@@ -256,9 +256,6 @@
                 const safeTitle = item.title ? String(item.title).replace(/`/g, "'") : '';
                 const safeId = item.id ? String(item.id).replace(/`/g, "'") : '';
                 const resolvedProductId = resolveProductId(item);
-                const productLink = typeof getProductLink === 'function'
-                    ? getProductLink(resolvedProductId)
-                    : (resolvedProductId ? `product-details.html?id=${encodeURIComponent(resolvedProductId)}` : 'products.html');
                 const product = (typeof getProductById === 'function' && resolvedProductId)
                     ? getProductById(resolvedProductId)
                     : null;
@@ -269,14 +266,12 @@
                 const html = `<div class="group relative p-5 bg-surface-light rounded-xl border border-border-light hover:border-primary/30 hover:shadow-lg transition-all duration-300">
                     <div class="flex flex-col sm:flex-row gap-5">
                         <div class="shrink-0 w-full sm:w-36 aspect-[4/3] rounded-xl overflow-hidden bg-white border border-border-light p-2 flex items-center justify-center">
-                            <img alt="${safeTitle}" onclick="window.location.href='${productLink}'" class="h-full w-full object-contain group-hover:scale-105 transition-transform duration-500 cursor-pointer" src="${item.image}" />
+                            <img alt="${safeTitle}" class="h-full w-full object-contain group-hover:scale-105 transition-transform duration-500" src="${item.image}" />
                         </div>
                         <div class="flex flex-1 flex-col">
                             <div class="flex justify-between items-start gap-4">
                                 <div>
-                                    <a href="${productLink}" class="hover:text-primary transition-colors">
-                                        <h3 class="text-lg font-semibold text-text-main leading-tight">${safeTitle}</h3>
-                                    </a>
+                                    <h3 class="text-lg font-semibold text-text-main leading-tight">${safeTitle}</h3>
                                     <span class="inline-flex items-center rounded-md px-2 py-1 text-[11px] font-bold mt-2 ${inStock ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${inStock ? 'In Stock' : 'Out of Stock'}</span>
                                 </div>
                                 <button onclick="removeFromCart('${safeId}')" aria-label="Remove item" class="text-text-muted hover:text-red-500 transition-colors p-1 cursor-pointer">

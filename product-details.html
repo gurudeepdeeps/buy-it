@@ -369,6 +369,12 @@
             let requestedId = query.get('id');
             const requestedTitle = String(query.get('title') || '').trim();
 
+            if (!requestedId) {
+                const fromSession = String(sessionStorage.getItem('buyit_last_product_id') || '').trim();
+                const fromLocal = String(localStorage.getItem('buyit_last_product_id') || '').trim();
+                requestedId = fromSession || fromLocal || requestedId;
+            }
+
             const normalizeSlug = (value) => String(value || '')
                 .toLowerCase()
                 .replace(/[^a-z0-9]+/g, '-')
@@ -418,6 +424,13 @@
 
             if (!product && requestedId) {
                 product = getProductById(requestedId);
+            }
+
+            if (!product && !requestedTitle && requestedId) {
+                const byRecoveredId = getProductById(requestedId);
+                if (byRecoveredId) {
+                    product = byRecoveredId;
+                }
             }
 
             if (!product && requestedTitle) {
@@ -479,6 +492,7 @@
             };
 
             sessionStorage.setItem('buyit_last_product_id', product.id);
+            localStorage.setItem('buyit_last_product_id', product.id);
 
             document.title = `Buy it - ${product.title}`;
 

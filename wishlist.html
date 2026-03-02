@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Buy it</title>
+    <title>Buy it - Wishlist</title>
     <link rel="icon" href="buyit-logo-tansperant.png" type="image/png">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -237,15 +237,6 @@
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&#39;');
 
-            function buildProductDetailsLink(productId) {
-                const params = new URLSearchParams();
-                if (productId) {
-                    params.set('id', productId);
-                }
-                const query = params.toString();
-                return query ? `product-details.html?${query}` : 'product-details.html';
-            }
-
             function resolveCatalogProduct(item) {
                 if (!item) {
                     return null;
@@ -405,17 +396,6 @@
                     const image = catalogProduct?.image || item.image || 'buyit-logo.png';
                     const category = catalogProduct?.category || 'General';
                     const inStock = catalogProduct?.inStock !== false;
-                    const params = new URLSearchParams();
-                    if (linkId) params.set('id', linkId);
-                    if (title) params.set('title', title);
-                    if (itemPrice) params.set('price', itemPrice);
-                    if (regularPrice) params.set('regularPrice', regularPrice);
-                    if (image) params.set('image', image);
-                    if (category) params.set('category', category);
-
-                    const productLinkRelative = `product-details?${params.toString()}`;
-                    const productLink = productLinkRelative;
-
                     const div = document.createElement('div');
                     div.className = 'wishlist-card group bg-surface-light rounded-2xl border border-border-light overflow-hidden shadow-sm flex flex-col transition-all duration-300 hover:shadow-xl hover:border-primary/30';
                     div.setAttribute('data-product-id', linkId || '');
@@ -424,28 +404,24 @@
                     div.setAttribute('data-item-image', image);
                     div.innerHTML = `
                     <div class="relative overflow-hidden bg-slate-50 border-b border-border-light h-52 flex items-center justify-center p-5">
-                        <a href="${productLink}" data-action="view-product" class="inline-flex items-center justify-center w-full h-full">
-                            <img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" class="w-auto h-full max-h-44 object-contain group-hover:scale-105 transition-transform duration-300 cursor-pointer" />
-                        </a>
+                        <div class="inline-flex items-center justify-center w-full h-full">
+                            <img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" class="w-auto h-full max-h-44 object-contain group-hover:scale-105 transition-transform duration-300" />
+                        </div>
                         <span class="absolute top-3 left-3 inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold ${inStock ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${inStock ? 'In Stock' : 'Out of Stock'}</span>
                         <button data-action="remove-wishlist" class="absolute top-3 right-3 h-9 w-9 inline-flex items-center justify-center rounded-full border border-red-200 bg-white text-red-600 hover:bg-red-50 transition-colors" title="Remove from wishlist"><span class='material-symbols-outlined text-[18px]'>delete</span></button>
                     </div>
                     <div class="flex flex-col flex-1 p-4 gap-2">
                         <p class="text-[11px] uppercase tracking-wide font-semibold text-text-secondary-light">${escapeHtml(category)}</p>
-                        <a href="${productLink}" data-action="view-product" class="text-base font-semibold text-text-primary-light leading-snug line-clamp-2 min-h-[3rem] cursor-pointer hover:text-primary">${escapeHtml(title)}</a>
+                        <p class="text-base font-semibold text-text-primary-light leading-snug line-clamp-2 min-h-[3rem]">${escapeHtml(title)}</p>
                         <div class="flex items-baseline gap-2">
                             <span class="text-lg font-bold text-red-600">${formatINRLocal(itemPrice)}</span>
                             <span class="text-sm text-text-secondary-light line-through">${formatINRLocal(regularPrice)}</span>
                         </div>
-                        <div class="mt-auto grid grid-cols-2 gap-2 pt-2">
+                        <div class="mt-auto pt-2">
                             <button data-action="add-to-cart" class="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors ${inStock ? '' : 'opacity-50 cursor-not-allowed'}" ${inStock ? '' : 'disabled'}>
                                 <span class='material-symbols-outlined text-[18px]'>add_shopping_cart</span>
                                 Add
                             </button>
-                            <a href="${productLink}" data-action="view-product" class="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-border-light text-text-primary-light text-sm font-semibold hover:bg-slate-50 transition-colors">
-                                <span class='material-symbols-outlined text-[18px]'>visibility</span>
-                                View
-                            </a>
                         </div>
                     </div>
                 `;
@@ -496,14 +472,6 @@
                     return;
                 }
 
-                if (action === 'view-product') {
-                    event.preventDefault();
-                    const href = actionElement.getAttribute('href');
-                    if (href) {
-                        window.location.href = href;
-                    }
-                    return;
-                }
             });
 
             window.addEventListener('wishlistUpdated', renderWishlist);

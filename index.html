@@ -140,7 +140,7 @@
                     <img alt="Buyit Hero Image"
                         class="absolute inset-0 h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110 cursor-pointer"
                         src="buyit-logo-tansperant.png"
-                        onclick="window.location.href='product-details.html'" />
+                        onclick="window.location.href='products.html'" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
                 </div>
             </div>
@@ -272,6 +272,165 @@
                 }
                 return (value || '').toString().trim().toLowerCase();
             };
+
+            const searchInput = document.getElementById('main-search-input');
+            const suggestions = document.getElementById('search-suggestions');
+            let activeSuggestionIndex = -1;
+
+            const escapeHtml = (value) => String(value || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+
+            const goToProductsSearch = (value) => {
+                const query = String(value || '').trim();
+                window.location.href = query
+                    ? `products.html?q=${encodeURIComponent(query)}`
+                    : 'products.html';
+            };
+
+            const getCatalogProducts = () => Object.values(window.BUYIT_PRODUCT_CATALOG || {})
+                .filter((product) => product && product.title && product.id);
+
+            const filterCatalogProducts = (queryValue) => {
+                const query = String(queryValue || '').trim().toLowerCase();
+                if (!query) {
+                    return [];
+                }
+
+                const includesQuery = (value) => String(value || '').toLowerCase().includes(query);
+                return getCatalogProducts().filter((product) => {
+                    const specs = Array.isArray(product.specifications) ? product.specifications : [];
+                    return includesQuery(product.title)
+                        || includesQuery(product.id)
+                        || includesQuery(product.category)
+                        || specs.some((spec) => includesQuery(spec));
+                });
+            };
+
+            const hideSuggestions = () => {
+                if (!suggestions) {
+                    return;
+                }
+                suggestions.classList.add('hidden');
+                suggestions.innerHTML = '';
+                activeSuggestionIndex = -1;
+            };
+
+            const getSuggestionButtons = () => {
+                if (!suggestions) {
+                    return [];
+                }
+                return Array.from(suggestions.querySelectorAll('[data-suggestion-title]'));
+            };
+
+            const updateSuggestionHighlight = () => {
+                const buttons = getSuggestionButtons();
+                buttons.forEach((button, index) => {
+                    button.classList.toggle('bg-slate-100', index === activeSuggestionIndex);
+                });
+            };
+
+            const renderSuggestions = (queryValue) => {
+                if (!searchInput || !suggestions) {
+                    return;
+                }
+
+                const query = String(queryValue || '').trim();
+                if (!query) {
+                    hideSuggestions();
+                    return;
+                }
+
+                const matched = filterCatalogProducts(query).slice(0, 6);
+                if (!matched.length) {
+                    suggestions.innerHTML = '<div class="px-3 py-2 text-sm text-slate-500">No matching products</div>';
+                    suggestions.classList.remove('hidden');
+                    activeSuggestionIndex = -1;
+                    return;
+                }
+
+                suggestions.innerHTML = matched.map((product) => `
+                    <button type="button" data-suggestion-title="${escapeHtml(product.title)}" class="w-full text-left px-3 py-2 hover:bg-slate-50 transition-colors border-b last:border-b-0 border-slate-100">
+                        <div class="text-sm font-medium text-slate-900">${escapeHtml(product.title)}</div>
+                        <div class="text-xs text-slate-500 uppercase tracking-wide mt-0.5">${escapeHtml(product.category || 'General')}</div>
+                    </button>
+                `).join('');
+                suggestions.classList.remove('hidden');
+                activeSuggestionIndex = 0;
+                updateSuggestionHighlight();
+            };
+
+            if (searchInput && suggestions) {
+                searchInput.addEventListener('input', () => {
+                    renderSuggestions(searchInput.value || '');
+                });
+
+                searchInput.addEventListener('focus', () => {
+                    renderSuggestions(searchInput.value || '');
+                });
+
+                searchInput.addEventListener('keydown', (event) => {
+                    if (event.key === 'Escape') {
+                        hideSuggestions();
+                        return;
+                    }
+
+                    const buttons = getSuggestionButtons();
+                    if (event.key === 'ArrowDown') {
+                        if (!buttons.length) {
+                            renderSuggestions(searchInput.value || '');
+                            return;
+                        }
+
+                        event.preventDefault();
+                        activeSuggestionIndex = (activeSuggestionIndex + 1 + buttons.length) % buttons.length;
+                        updateSuggestionHighlight();
+                        return;
+                    }
+
+                    if (event.key === 'ArrowUp') {
+                        if (!buttons.length) {
+                            renderSuggestions(searchInput.value || '');
+                            return;
+                        }
+
+                        event.preventDefault();
+                        activeSuggestionIndex = (activeSuggestionIndex - 1 + buttons.length) % buttons.length;
+                        updateSuggestionHighlight();
+                        return;
+                    }
+
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        if (activeSuggestionIndex >= 0 && buttons[activeSuggestionIndex]) {
+                            const title = buttons[activeSuggestionIndex].getAttribute('data-suggestion-title') || '';
+                            goToProductsSearch(title);
+                            return;
+                        }
+                        goToProductsSearch(searchInput.value || '');
+                    }
+                });
+
+                suggestions.addEventListener('click', (event) => {
+                    const suggestionButton = event.target.closest('[data-suggestion-title]');
+                    if (!suggestionButton) {
+                        return;
+                    }
+                    const title = suggestionButton.getAttribute('data-suggestion-title') || '';
+                    goToProductsSearch(title);
+                });
+
+                document.addEventListener('click', (event) => {
+                    const clickedInsideInput = event.target.closest('#main-search-input');
+                    const clickedInsideSuggestions = event.target.closest('#search-suggestions');
+                    if (!clickedInsideInput && !clickedInsideSuggestions) {
+                        hideSuggestions();
+                    }
+                });
+            }
 
             const renderCategoryCards = () => {
                 const grid = document.getElementById('category-grid-home');
