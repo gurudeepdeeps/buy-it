@@ -97,7 +97,7 @@
     function loadSettings() {
       const settings = window.AdminData.getSettings();
       document.getElementById('admin-name').value = settings.adminName || 'Admin User';
-      document.getElementById('admin-email').value = settings.adminEmail || 'admin@buyit.com';
+      document.getElementById('admin-email').value = settings.adminEmail || '';
     }
 
     function bindSettingsForms() {
@@ -186,9 +186,9 @@
         }
 
         const current = window.AdminData.getSettings();
-        const savedPassword = current.adminPassword || 'admin1234';
+        const savedPassword = String(current.adminPassword || '');
 
-        if ((newPassword || confirmPassword) && currentPassword !== savedPassword) {
+        if ((newPassword || confirmPassword) && savedPassword && currentPassword !== savedPassword) {
           alert('Current password is incorrect.');
           return;
         }

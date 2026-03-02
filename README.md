@@ -153,14 +153,3 @@ http://localhost:5500
 Built by **Gurudeep**.
 
 If you like this project, consider adding ⭐ on GitHub.
-
-
-admin
-admin@buyit.com
-admin1234
-
-demo user
-demo@buyit.com
-demo1234
-
-at last give prompt that make this project for production ready and add some features like payment gateway, order tracking, and customer support features 
