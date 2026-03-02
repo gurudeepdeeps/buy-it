@@ -7,6 +7,7 @@
   <link rel="icon" href="buyit-logo-tansperant.png" type="image/png">
   <script src="admin-auth.js"></script>
   <script src="admin-data.js"></script>
+  <script src="firebase-runtime-config.js"></script>
   <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>
@@ -84,11 +85,21 @@
             <p class="mt-1 text-xs text-slate-500">Enter plain number only in INR, without ₹ or commas.</p>
           </div>
           <div>
+            <label for="product-regular-price" class="block text-sm font-medium mb-1">Regular Price (INR)</label>
+            <input id="product-regular-price" type="number" min="0" class="w-full rounded-lg border-slate-200" placeholder="149999" />
+            <p class="mt-1 text-xs text-slate-500">Optional strikeout price. If empty, auto-calculated.</p>
+          </div>
+          <div>
             <label for="product-status" class="block text-sm font-medium mb-1">Stock Status</label>
             <select id="product-status" class="w-full rounded-lg border-slate-200" required>
               <option value="Active">Active</option>
               <option value="Out of Stock">Out of Stock</option>
             </select>
+          </div>
+          <div>
+            <label for="product-stock" class="block text-sm font-medium mb-1">Stock Quantity</label>
+            <input id="product-stock" type="number" min="0" step="1" class="w-full rounded-lg border-slate-200" placeholder="10" />
+            <p class="mt-1 text-xs text-slate-500">Set 0 for out of stock.</p>
           </div>
           <div class="md:col-span-2">
             <label for="product-image" class="block text-sm font-medium mb-1">Image Path / URL</label>
@@ -99,6 +110,21 @@
               <button id="clear-product-image-btn" type="button" class="px-3 py-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50">Clear Image</button>
             </div>
             <img id="product-image-preview" alt="Product image preview" class="mt-3 hidden h-20 w-20 rounded-lg border border-slate-200 object-cover" />
+          </div>
+          <div class="md:col-span-2">
+            <label for="product-specifications" class="block text-sm font-medium mb-1">Product Specifications</label>
+            <textarea id="product-specifications" rows="4" class="w-full rounded-lg border-slate-200" placeholder="One specification per line"></textarea>
+          </div>
+          <div class="md:col-span-2">
+            <label for="product-gallery-images" class="block text-sm font-medium mb-1">Gallery Images (Multiple)</label>
+            <textarea id="product-gallery-images" rows="4" class="w-full rounded-lg border-slate-200" placeholder="One image URL/path per line"></textarea>
+            <p class="mt-1 text-xs text-slate-500">Add multiple images for one product, one per line.</p>
+            <div class="mt-2 flex flex-col sm:flex-row sm:items-center gap-2">
+              <label for="product-gallery-files" class="sr-only">Upload Gallery Images</label>
+              <input id="product-gallery-files" title="Upload Gallery Images" type="file" accept="image/*" multiple class="block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:text-sm file:font-medium file:text-slate-700 hover:file:bg-slate-200" />
+              <button id="append-gallery-btn" type="button" class="px-3 py-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50">Add Files to Gallery</button>
+              <button id="clear-gallery-btn" type="button" class="px-3 py-2 rounded-lg border border-red-200 text-red-700 hover:bg-red-50">Clear Gallery</button>
+            </div>
           </div>
           <div class="md:col-span-2 flex items-center gap-2">
             <button id="product-save-btn" type="submit" class="px-4 py-2 rounded-lg bg-primary text-white hover:opacity-90">Save Product</button>
@@ -126,7 +152,61 @@
     </main>
   </div>
 
-  <script>
+  <script type="module">
+    import { db, storage } from "./firebase-config.js";
+    import { collection, deleteDoc, doc, getDocs, serverTimestamp, setDoc, updateDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    import { getDownloadURL, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
+
+    let liveProducts = [];
+    let isSavingProduct = false;
+
+    function setProductSaveInProgress(inProgress) {
+      isSavingProduct = Boolean(inProgress);
+      const saveButton = document.getElementById('product-save-btn');
+      const cancelButton = document.getElementById('product-cancel-btn');
+      const addFilesButton = document.getElementById('append-gallery-btn');
+      const clearGalleryButton = document.getElementById('clear-gallery-btn');
+      const clearImageButton = document.getElementById('clear-product-image-btn');
+      const productForm = document.getElementById('product-form');
+
+      if (saveButton) {
+        if (!saveButton.dataset.defaultText) {
+          saveButton.dataset.defaultText = saveButton.textContent || 'Save Product';
+        }
+        saveButton.disabled = isSavingProduct;
+        saveButton.classList.toggle('opacity-70', isSavingProduct);
+        saveButton.classList.toggle('cursor-not-allowed', isSavingProduct);
+        saveButton.textContent = isSavingProduct ? 'Saving...' : saveButton.dataset.defaultText;
+      }
+
+      if (cancelButton) {
+        cancelButton.disabled = isSavingProduct;
+      }
+      if (addFilesButton) {
+        addFilesButton.disabled = isSavingProduct;
+      }
+      if (clearGalleryButton) {
+        clearGalleryButton.disabled = isSavingProduct;
+      }
+      if (clearImageButton) {
+        clearImageButton.disabled = isSavingProduct;
+      }
+
+      if (productForm && productForm.elements) {
+        Array.from(productForm.elements).forEach((element) => {
+          if (!(element instanceof HTMLElement)) {
+            return;
+          }
+          if (element.id === 'product-save-btn') {
+            return;
+          }
+          if ('disabled' in element) {
+            element.disabled = isSavingProduct;
+          }
+        });
+      }
+    }
+
     function escapeHtml(value) {
       return String(value || '')
         .replace(/&/g, '&amp;')
@@ -150,6 +230,326 @@
         .trim()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '');
+    }
+
+    function normalizeProductStatus(value) {
+      const normalized = String(value || '').trim().toLowerCase();
+      if (normalized === 'active' || normalized === 'in stock' || normalized === 'instock') {
+        return 'Active';
+      }
+      return 'Out of Stock';
+    }
+
+    function statusToInStock(status) {
+      return normalizeProductStatus(status) === 'Active';
+    }
+
+    function inferImagePath(image, category, title) {
+      const raw = String(image || '').trim();
+      const safeCategory = normalizeCategorySlug(category) || 'general';
+      const safeTitle = normalizeCategorySlug(title) || 'product';
+
+      if (raw.startsWith('products/')) {
+        return raw;
+      }
+
+      if (/^https?:\/\//i.test(raw)) {
+        return `products/${safeCategory}/${safeTitle}.jpg`;
+      }
+
+      if (raw) {
+        const extension = raw.includes('.') ? String(raw.split('.').pop() || '').toLowerCase().replace(/[^a-z0-9]/g, '') : '';
+        const safeExtension = extension || 'jpg';
+        return `products/${safeCategory}/${safeTitle}.${safeExtension}`;
+      }
+
+      return `products/${safeCategory}/${safeTitle}.jpg`;
+    }
+
+    function extractStoragePathFromUrl(value) {
+      const raw = String(value || '').trim();
+      if (raw.startsWith('products/')) {
+        return raw;
+      }
+
+      try {
+        const parsedUrl = new URL(raw);
+        const marker = '/o/';
+        const index = parsedUrl.pathname.indexOf(marker);
+        if (index === -1) {
+          return '';
+        }
+        const encodedPath = parsedUrl.pathname.slice(index + marker.length);
+        return decodeURIComponent(encodedPath);
+      } catch (_error) {
+        return '';
+      }
+    }
+
+    function sanitizeFileToken(value) {
+      const normalized = String(value || '')
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+      return normalized || 'image';
+    }
+
+    function getExtensionFromFile(file) {
+      const fileName = String(file?.name || '').trim();
+      const extensionFromName = fileName.includes('.') ? fileName.split('.').pop() : '';
+      const normalizedNameExtension = String(extensionFromName || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (normalizedNameExtension) {
+        return normalizedNameExtension;
+      }
+
+      const mimeType = String(file?.type || '').toLowerCase();
+      if (mimeType === 'image/jpeg') return 'jpg';
+      if (mimeType === 'image/png') return 'png';
+      if (mimeType === 'image/webp') return 'webp';
+      if (mimeType === 'image/gif') return 'gif';
+      return 'jpg';
+    }
+
+    function validateImageFiles(files) {
+      const maxFileSizeBytes = 500 * 1024;
+      const validFiles = [];
+
+      for (const file of files) {
+        if (!file.type || !file.type.startsWith('image/')) {
+          alert(`Skipped non-image file: ${file.name}`);
+          continue;
+        }
+        if (file.size > maxFileSizeBytes) {
+          alert(`Skipped ${file.name} (must be below 500KB).`);
+          continue;
+        }
+        validFiles.push(file);
+      }
+
+      return validFiles;
+    }
+
+    function resolveUploadContext(productIdHint) {
+      const currentProductId = String(productIdHint || document.getElementById('product-id').value || '').trim();
+      const title = String(document.getElementById('product-name').value || '').trim();
+      const category = normalizeCategorySlug(document.getElementById('product-category').value) || 'general';
+
+      if (currentProductId) {
+        return { productId: currentProductId, title, category };
+      }
+
+      if (!title) {
+        throw new Error('Enter product title before uploading images.');
+      }
+
+      return {
+        productId: getUniqueProductId(title),
+        title,
+        category
+      };
+    }
+
+    function buildStoragePath(file, context, bucket) {
+      const safeCategory = normalizeCategorySlug(context.category) || 'general';
+      const safeProductId = sanitizeFileToken(context.productId);
+      const safeBucket = sanitizeFileToken(bucket || 'gallery');
+      const fileBaseName = sanitizeFileToken(String(file?.name || '').replace(/\.[^.]+$/, ''));
+      const extension = getExtensionFromFile(file);
+      return `products/${safeCategory}/${safeProductId}/${safeBucket}-${Date.now()}-${fileBaseName}.${extension}`;
+    }
+
+    async function uploadImageFileToStorage(file, context, bucket) {
+      const path = buildStoragePath(file, context, bucket);
+      const storageRef = ref(storage, path);
+      await uploadBytes(storageRef, file, {
+        contentType: file.type || 'application/octet-stream'
+      });
+      const downloadUrl = await getDownloadURL(storageRef);
+      return {
+        url: downloadUrl,
+        path
+      };
+    }
+
+    function getUniqueProductId(title) {
+      const base = normalizeCategorySlug(title) || ('product-' + Date.now());
+      let candidate = base;
+      let index = 2;
+      const existingIds = new Set(liveProducts.map((product) => String(product.id || '').trim()));
+      while (existingIds.has(candidate)) {
+        candidate = `${base}-${index}`;
+        index += 1;
+      }
+      return candidate;
+    }
+
+    function mapFirestoreProduct(documentSnapshot) {
+      const data = documentSnapshot.data() || {};
+      const title = String(data.title || data.name || 'Untitled Product').trim();
+      const status = normalizeProductStatus(
+        data.status || (typeof data.inStock === 'boolean' ? (data.inStock ? 'Active' : 'Out of Stock') : (data.isActive === false ? 'Out of Stock' : 'Active'))
+      );
+
+      return {
+        id: documentSnapshot.id,
+        title,
+        category: normalizeCategorySlug(data.category || 'general') || 'general',
+        price: Number(data.price || 0),
+        regularPrice: Number(data.regularPrice || 0),
+        stock: Math.max(0, Number(data.stock || 0)),
+        status,
+        inStock: statusToInStock(status),
+        image: String(data.imageUrl || data.image || 'buyit-logo.png').trim() || 'buyit-logo.png',
+        imagePath: String(data.imagePath || '').trim(),
+        specifications: Array.isArray(data.specifications) ? data.specifications : [],
+        galleryImages: Array.isArray(data.galleryImages) ? data.galleryImages : [],
+        galleryImagePaths: Array.isArray(data.galleryImagePaths) ? data.galleryImagePaths : []
+      };
+    }
+
+    async function loadProductsFromFirestore() {
+      const snapshot = await getDocs(collection(db, 'products'));
+      liveProducts = snapshot.docs.map((documentSnapshot) => mapFirestoreProduct(documentSnapshot));
+      liveProducts.sort((a, b) => String(a.title || '').localeCompare(String(b.title || '')));
+      return liveProducts;
+    }
+
+    async function saveProductToFirestore(productId, payload, isUpdate) {
+      const title = String(payload.title || '').trim();
+      const category = normalizeCategorySlug(payload.category || 'general') || 'general';
+      const price = Number(payload.price || 0);
+      const regularPrice = Number(payload.regularPrice || 0);
+      const stock = Math.max(0, Math.floor(Number(payload.stock || 0)));
+      const status = normalizeProductStatus(payload.status || 'Active');
+      const image = String(payload.image || 'buyit-logo.png').trim() || 'buyit-logo.png';
+      const imagePath = String(payload.imagePath || inferImagePath(image, category, title)).trim() || inferImagePath(image, category, title);
+      const specifications = Array.isArray(payload.specifications)
+        ? payload.specifications.map((entry) => String(entry || '').trim()).filter(Boolean)
+        : [];
+      const galleryImagesInput = Array.isArray(payload.galleryImages)
+        ? payload.galleryImages.map((entry) => String(entry || '').trim()).filter(Boolean)
+        : [];
+      const galleryImagePathsInput = Array.isArray(payload.galleryImagePaths)
+        ? payload.galleryImagePaths.map((entry) => String(entry || '').trim()).filter(Boolean)
+        : [];
+      const galleryImages = Array.from(new Set([
+        image,
+        ...galleryImagesInput
+      ].filter(Boolean)));
+      const galleryImagePaths = Array.from(new Set([
+        ...galleryImagePathsInput,
+        ...galleryImages.map((entry) => extractStoragePathFromUrl(entry)).filter(Boolean)
+      ]));
+      const inStock = statusToInStock(status) && stock > 0;
+
+      const documentPayload = {
+        id: productId,
+        name: title,
+        title,
+        category,
+        price,
+        regularPrice: regularPrice > 0 ? regularPrice : Math.round(price * 2.1451612903),
+        stock,
+        imageUrl: image,
+        imagePath,
+        galleryImages,
+        galleryImagePaths,
+        specifications,
+        inStock,
+        isActive: inStock,
+        status,
+        updatedAt: serverTimestamp()
+      };
+
+      if (!isUpdate) {
+        documentPayload.createdAt = serverTimestamp();
+      }
+
+      await setDoc(doc(db, 'products', productId), documentPayload, { merge: true });
+    }
+
+    async function updateProductStatusInFirestore(productId, status) {
+      const normalizedStatus = normalizeProductStatus(status);
+      await updateDoc(doc(db, 'products', productId), {
+        status: normalizedStatus,
+        inStock: statusToInStock(normalizedStatus),
+        isActive: statusToInStock(normalizedStatus),
+        updatedAt: serverTimestamp()
+      });
+    }
+
+    async function deleteProductFromFirestore(productId) {
+      await deleteDoc(doc(db, 'products', productId));
+    }
+
+    async function bulkUpdateProductCategory(fromSlug, toSlug) {
+      const updates = liveProducts.filter((product) => normalizeCategorySlug(product.category) === fromSlug);
+      if (!updates.length) {
+        return;
+      }
+
+      const batch = writeBatch(db);
+      updates.forEach((product) => {
+        const productRef = doc(db, 'products', product.id);
+        batch.update(productRef, {
+          category: toSlug,
+          updatedAt: serverTimestamp()
+        });
+      });
+      await batch.commit();
+    }
+
+    function getFirestoreErrorMessage(error, actionLabel) {
+      const code = String(error?.code || '').toLowerCase();
+      if (code.includes('permission-denied')) {
+        return `Access denied while trying to ${actionLabel}. Ensure your users/{uid} document has role = \"admin\".`;
+      }
+      return `Failed to ${actionLabel}. ${error?.message || 'Please try again.'}`;
+    }
+
+    function readLinesFromTextarea(textareaId) {
+      return String(document.getElementById(textareaId)?.value || '')
+        .split('\n')
+        .map((entry) => entry.trim())
+        .filter(Boolean);
+    }
+
+    function writeLinesToTextarea(textareaId, lines) {
+      const unique = Array.from(new Set((Array.isArray(lines) ? lines : []).map((entry) => String(entry || '').trim()).filter(Boolean)));
+      const element = document.getElementById(textareaId);
+      if (element) {
+        element.value = unique.join('\n');
+      }
+    }
+
+    async function appendSelectedGalleryFiles(productIdHint) {
+      const input = document.getElementById('product-gallery-files');
+      const selectedFiles = input?.files ? Array.from(input.files) : [];
+      if (!selectedFiles.length) {
+        alert('Please select one or more images first.');
+        return;
+      }
+
+      const validFiles = validateImageFiles(selectedFiles);
+
+      if (!validFiles.length) {
+        return;
+      }
+
+      const uploadContext = resolveUploadContext(productIdHint);
+
+      const existing = readLinesFromTextarea('product-gallery-images');
+      const uploadedUrls = [];
+      for (const file of validFiles) {
+        const uploaded = await uploadImageFileToStorage(file, uploadContext, 'gallery');
+        if (uploaded?.url) {
+          uploadedUrls.push(uploaded.url);
+        }
+      }
+
+      writeLinesToTextarea('product-gallery-images', [...existing, ...uploadedUrls]);
+      input.value = '';
     }
 
     function updateProductImagePreview(imageValue) {
@@ -203,9 +603,14 @@
       document.getElementById('product-name').value = '';
       renderCategoryOptions('smartphones');
       document.getElementById('product-price').value = '';
+      document.getElementById('product-regular-price').value = '';
       document.getElementById('product-status').value = 'Active';
+      document.getElementById('product-stock').value = '';
       document.getElementById('product-image').value = '';
       document.getElementById('product-image-file').value = '';
+      document.getElementById('product-specifications').value = '';
+      document.getElementById('product-gallery-images').value = '';
+      document.getElementById('product-gallery-files').value = '';
       updateProductImagePreview('');
       document.getElementById('product-form-title').textContent = 'Add Product';
       document.getElementById('product-save-btn').textContent = 'Save Product';
@@ -219,9 +624,18 @@
       document.getElementById('product-id').value = product.id || '';
       document.getElementById('product-name').value = product.title || '';
       document.getElementById('product-price').value = Number(product.price || 0);
+      document.getElementById('product-regular-price').value = Number(product.regularPrice || 0) || '';
       document.getElementById('product-status').value = product.status || 'Active';
+      document.getElementById('product-stock').value = Number(product.stock || 0);
       document.getElementById('product-image').value = product.image || '';
       document.getElementById('product-image-file').value = '';
+      document.getElementById('product-specifications').value = Array.isArray(product.specifications)
+        ? product.specifications.map((entry) => String(entry || '').trim()).filter(Boolean).join('\n')
+        : '';
+      document.getElementById('product-gallery-images').value = Array.isArray(product.galleryImages)
+        ? product.galleryImages.map((entry) => String(entry || '').trim()).filter(Boolean).join('\n')
+        : '';
+      document.getElementById('product-gallery-files').value = '';
       updateProductImagePreview(product.image || '');
       document.getElementById('product-form-title').textContent = 'Edit Product';
       document.getElementById('product-save-btn').textContent = 'Update Product';
@@ -233,8 +647,15 @@
       const title = document.getElementById('product-name').value.trim();
       const category = normalizeCategorySlug(document.getElementById('product-category').value);
       const price = Number(document.getElementById('product-price').value);
+      const regularPrice = Number(document.getElementById('product-regular-price').value || 0);
       const status = document.getElementById('product-status').value;
+      const stock = Math.max(0, Math.floor(Number(document.getElementById('product-stock').value || 0)));
       const image = document.getElementById('product-image').value.trim() || 'buyit-logo.png';
+      const specifications = String(document.getElementById('product-specifications').value || '')
+        .split('\n')
+        .map((entry) => entry.trim())
+        .filter(Boolean);
+      const galleryImages = readLinesFromTextarea('product-gallery-images');
 
       if (!title) {
         alert('Product title is required.');
@@ -255,14 +676,18 @@
           title,
           category,
           price,
+          regularPrice,
           status,
-          image
+          stock,
+          image,
+          specifications,
+          galleryImages
         }
       };
     }
 
     function renderProducts() {
-      const products = window.AdminData.getProducts();
+      const products = liveProducts.slice();
       const tbody = document.getElementById('products-body');
 
       if (products.length === 0) {
@@ -299,17 +724,24 @@
       }).join('');
 
       tbody.querySelectorAll('[data-action="status"]').forEach((select) => {
-        select.addEventListener('change', () => {
+        select.addEventListener('change', async () => {
           const productId = select.getAttribute('data-id');
-          window.AdminData.updateProduct(productId, { status: select.value });
-          renderProducts();
+          try {
+            await updateProductStatusInFirestore(productId, select.value);
+            await loadProductsFromFirestore();
+            renderProducts();
+          } catch (error) {
+            alert(getFirestoreErrorMessage(error, 'update product status'));
+            await loadProductsFromFirestore();
+            renderProducts();
+          }
         });
       });
 
       tbody.querySelectorAll('[data-action="edit"]').forEach((button) => {
         button.addEventListener('click', () => {
           const productId = button.getAttribute('data-id');
-          const product = window.AdminData.getProducts().find((item) => item.id === productId);
+          const product = liveProducts.find((item) => item.id === productId);
           if (!product) {
             return;
           }
@@ -319,9 +751,9 @@
       });
 
       tbody.querySelectorAll('[data-action="delete"]').forEach((button) => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', async () => {
           const productId = button.getAttribute('data-id');
-          const product = window.AdminData.getProducts().find((item) => item.id === productId);
+          const product = liveProducts.find((item) => item.id === productId);
           if (!product) {
             return;
           }
@@ -330,17 +762,27 @@
             return;
           }
 
-          window.AdminData.deleteProduct(productId);
-          renderProducts();
+          try {
+            await deleteProductFromFirestore(productId);
+            await loadProductsFromFirestore();
+            renderProducts();
+          } catch (error) {
+            alert(getFirestoreErrorMessage(error, 'delete product'));
+          }
         });
       });
     }
 
     function adminLogout() {
+      if (typeof window.__adminLogout === 'function') {
+        window.__adminLogout();
+        return;
+      }
       localStorage.removeItem('loggedIn');
       localStorage.removeItem('role');
-      window.location.href = 'login.html';
+      window.location.href = 'login.html?admin=1';
     }
+    window.adminLogout = adminLogout;
 
     document.getElementById('add-product-btn').addEventListener('click', function () {
       resetProductForm();
@@ -360,7 +802,7 @@
       input.value = '';
     });
 
-    document.getElementById('rename-category-btn').addEventListener('click', function () {
+    document.getElementById('rename-category-btn').addEventListener('click', async function () {
       const manageSelect = document.getElementById('manage-category-select');
       const renameInput = document.getElementById('rename-category-input');
       const fromSlug = normalizeCategorySlug(manageSelect.value);
@@ -381,12 +823,18 @@
         return;
       }
 
+      try {
+        await bulkUpdateProductCategory(fromSlug, toSlug);
+        await loadProductsFromFirestore();
+      } catch (error) {
+        alert(getFirestoreErrorMessage(error, 'rename category for products'));
+      }
       renameInput.value = '';
       renderCategoryOptions(toSlug);
       renderProducts();
     });
 
-    document.getElementById('delete-category-btn').addEventListener('click', function () {
+    document.getElementById('delete-category-btn').addEventListener('click', async function () {
       const manageSelect = document.getElementById('manage-category-select');
       const slug = normalizeCategorySlug(manageSelect.value);
       if (!slug) {
@@ -394,6 +842,7 @@
         return;
       }
 
+      const productsUsingCategory = liveProducts.filter((product) => normalizeCategorySlug(product.category) === slug);
       const result = window.AdminData.deleteCategory(slug);
       if (!result?.ok && result?.reason === 'in-use') {
         const categories = (window.AdminData.getCategories() || []).filter((category) => category.slug !== slug);
@@ -412,6 +861,16 @@
         if (!retry?.ok) {
           alert('Unable to delete category. Ensure replacement exists.');
           return;
+        }
+
+        if (productsUsingCategory.length > 0) {
+          try {
+            await bulkUpdateProductCategory(slug, replacementSlug);
+            await loadProductsFromFirestore();
+          } catch (error) {
+            alert(getFirestoreErrorMessage(error, 'reassign product category'));
+            return;
+          }
         }
 
         renderCategoryOptions(replacementSlug);
@@ -448,55 +907,87 @@
         return;
       }
 
-      const maxFileSizeBytes = 500 * 1024;
-      if (selectedFile.size > maxFileSizeBytes) {
-        alert('Image size must be below 500KB.');
+      const validFiles = validateImageFiles([selectedFile]);
+      if (!validFiles.length) {
+        alert('Please choose a valid image file below 500KB.');
         event.target.value = '';
         return;
       }
 
-      if (!selectedFile.type || !selectedFile.type.startsWith('image/')) {
-        alert('Please choose a valid image file.');
-        event.target.value = '';
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = function (loadEvent) {
-        const result = String(loadEvent.target?.result || '');
-        if (!result) {
-          alert('Unable to read selected image.');
-          return;
-        }
-        document.getElementById('product-image').value = result;
-        updateProductImagePreview(result);
-      };
-      reader.onerror = function () {
-        alert('Unable to read selected image.');
-      };
-      reader.readAsDataURL(selectedFile);
+      const localPreviewUrl = URL.createObjectURL(selectedFile);
+      updateProductImagePreview(localPreviewUrl);
     });
 
-    document.getElementById('product-form').addEventListener('submit', function (event) {
+    document.getElementById('append-gallery-btn').addEventListener('click', async function () {
+      try {
+        await appendSelectedGalleryFiles();
+      } catch (error) {
+        alert(error?.message || 'Could not add selected gallery files.');
+      }
+    });
+
+    document.getElementById('clear-gallery-btn').addEventListener('click', function () {
+      writeLinesToTextarea('product-gallery-images', []);
+      document.getElementById('product-gallery-files').value = '';
+    });
+
+    document.getElementById('product-form').addEventListener('submit', async function (event) {
       event.preventDefault();
+      if (isSavingProduct) {
+        return;
+      }
       const formValue = readProductForm();
       if (!formValue) {
         return;
       }
 
-      if (formValue.id) {
-        window.AdminData.updateProduct(formValue.id, formValue.payload);
-      } else {
-        window.AdminData.addProduct(formValue.payload);
-      }
+      const productId = formValue.id || getUniqueProductId(formValue.payload.title);
+      const uploadContext = {
+        productId,
+        title: formValue.payload.title,
+        category: formValue.payload.category
+      };
 
-      resetProductForm();
-      renderProducts();
+      try {
+        setProductSaveInProgress(true);
+        const mainImageInput = document.getElementById('product-image-file');
+        const selectedMainImage = mainImageInput?.files && mainImageInput.files[0] ? mainImageInput.files[0] : null;
+        if (selectedMainImage) {
+          const uploadedMainImage = await uploadImageFileToStorage(selectedMainImage, uploadContext, 'main');
+          formValue.payload.image = uploadedMainImage.url;
+          formValue.payload.imagePath = uploadedMainImage.path;
+        }
+
+        const galleryFileInput = document.getElementById('product-gallery-files');
+        if (galleryFileInput?.files && galleryFileInput.files.length) {
+          await appendSelectedGalleryFiles(productId);
+          formValue.payload.galleryImages = readLinesFromTextarea('product-gallery-images');
+        }
+
+        await saveProductToFirestore(productId, formValue.payload, Boolean(formValue.id));
+
+        await loadProductsFromFirestore();
+        resetProductForm();
+        renderProducts();
+      } catch (error) {
+        alert(getFirestoreErrorMessage(error, formValue.id ? 'update product' : 'create product'));
+      } finally {
+        setProductSaveInProgress(false);
+      }
     });
 
-    renderCategoryOptions('smartphones');
-    resetProductForm();
-    renderProducts();
+    async function initializeAdminProductsPage() {
+      renderCategoryOptions('smartphones');
+      resetProductForm();
+      try {
+        await loadProductsFromFirestore();
+      } catch (error) {
+        alert(getFirestoreErrorMessage(error, 'load products'));
+      }
+      renderProducts();
+    }
+
+    initializeAdminProductsPage();
   </script>
 </body>
 </html>

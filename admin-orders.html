@@ -72,6 +72,16 @@
 
   <script>
     const ORDER_STATUSES = ['Processing', 'Shipped', 'Delivered', 'Cancelled'];
+    let isUpdatingOrderStatus = false;
+
+    function setOrderStatusUpdateInProgress(inProgress) {
+      isUpdatingOrderStatus = Boolean(inProgress);
+      document.querySelectorAll('[data-action="status"]').forEach((select) => {
+        select.disabled = isUpdatingOrderStatus;
+        select.classList.toggle('opacity-70', isUpdatingOrderStatus);
+        select.classList.toggle('cursor-not-allowed', isUpdatingOrderStatus);
+      });
+    }
 
     function renderOrders() {
       const orders = window.AdminData.getOrders();
@@ -104,18 +114,30 @@
       }).join('');
 
       tbody.querySelectorAll('[data-action="status"]').forEach((select) => {
-        select.addEventListener('change', () => {
+        select.addEventListener('change', async () => {
+          if (isUpdatingOrderStatus) {
+            return;
+          }
           const orderId = select.getAttribute('data-id');
-          window.AdminData.updateOrderStatus(orderId, select.value);
-          renderOrders();
+          try {
+            setOrderStatusUpdateInProgress(true);
+            window.AdminData.updateOrderStatus(orderId, select.value);
+            renderOrders();
+          } finally {
+            setOrderStatusUpdateInProgress(false);
+          }
         });
       });
     }
 
     function adminLogout() {
+      if (typeof window.__adminLogout === 'function') {
+        window.__adminLogout();
+        return;
+      }
       localStorage.removeItem('loggedIn');
       localStorage.removeItem('role');
-      window.location.href = 'login.html';
+      window.location.href = 'login.html?admin=1';
     }
 
     renderOrders();

@@ -180,9 +180,8 @@
                                 <span class="material-symbols-outlined text-[22px]">bolt</span>
                                 Buy Now
                             </button>
-                            <button
-                                onclick="addToCart({ id: 'zenith-x1-ultra', title: 'Zenith X1 Carbon Ultra', price: 207417, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDvcZLPrU-hLvrkRaN840CcHQZef_ijXdIDgCsmgDd6jI3DgGbcW6yIZp2pTw0Aw14vC4kLRaZHSWLMXG3wXrelh5thka19QRl4irHSwAGOC34vnlzUG0FobitA8DUUhCHSP07LYxCu96feqcW05uOtSlio_fH9rYk7InFlDIvKnr6Cey7uaURMKLGFYLUVuKtVj3Y8ohLLJYIrXJqQ5MHiA7DEQEK1LgS3gI3geUy_SVdu_hl9uKQWJiV1EnMbDYxkHkIUMlXdrknW', quantity: parseInt(document.getElementById('product-qty').value) })"
-                                class="flex-1 h-14 bg-white border-2 border-primary text-primary font-bold rounded-2xl hover:bg-primary/5 transition-all flex items-center justify-center gap-2 shadow-sm">
+                            <button id="add-to-cart-btn" type="button" disabled
+                                class="flex-1 h-14 bg-white border-2 border-primary text-primary font-bold rounded-2xl hover:bg-primary/5 transition-all flex items-center justify-center gap-2 shadow-sm opacity-50 cursor-not-allowed">
                                 <span class="material-symbols-outlined text-[24px]">shopping_cart</span>
                                 Add to Cart
                             </button>
@@ -346,7 +345,10 @@
     </footer>
     <script src="shop.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (window.BUYIT_PRODUCTS_READY) {
+                await window.BUYIT_PRODUCTS_READY;
+            }
             const formatINR = (amount) => new Intl.NumberFormat('en-IN', {
                 style: 'currency',
                 currency: 'INR',
@@ -425,20 +427,6 @@
                 if (byRecoveredId) {
                     product = byRecoveredId;
                 }
-            }
-
-            if (!product && requestedTitle) {
-                // Construct a fallback product from URL parameters if available
-                product = {
-                    id: requestedId || 'custom-product',
-                    title: requestedTitle,
-                    price: Number(query.get('price')) || 0,
-                    regularPrice: Number(query.get('regularPrice')) || 0,
-                    image: query.get('image') || 'buyit-logo.png',
-                    category: query.get('category') || 'General',
-                    inStock: true,
-                    specifications: []
-                };
             }
 
             if (!product) {

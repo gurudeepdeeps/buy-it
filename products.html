@@ -29,7 +29,10 @@
 </head>
 <script>
 // Category filter logic
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+    if (window.BUYIT_PRODUCTS_READY) {
+        await window.BUYIT_PRODUCTS_READY;
+    }
     const sharedNormalizeCategory = typeof window.BUYIT_NORMALIZE_CATEGORY === 'function'
         ? window.BUYIT_NORMALIZE_CATEGORY
         : null;
@@ -787,26 +790,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 ? window.BUYIT_NORMALIZE_CATEGORY(window.BUYIT_ACTIVE_CATEGORY || '')
                 : String(window.BUYIT_ACTIVE_CATEGORY || '').toLowerCase().trim();
 
-            const preferredOrder = [
-                'elite-tab-pro',
-                'titan-sport-v2',
-                'nextgen-console-x',
-                'apex-rtx-4080',
-                'studio-pro-anc',
-                'alpha-vii-mirrorless',
-                'snapx-5g',
-                'aero-book-x1',
-                'desk-drone-v3',
-                'hyper-earbuds',
-                'odyssey-ultrawide',
-                'stealth-mouse',
-                'hologram-display',
-                'smart-ring-g2',
-                'mech-keyboard',
-                'streaming-mic'
-            ];
-
-            const orderMap = new Map(preferredOrder.map((id, index) => [id, index + 1]));
             const products = Object.values(window.BUYIT_PRODUCT_CATALOG)
                 .filter((product) => product && product.id && product.title)
                 .filter((product) => {
@@ -819,10 +802,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     return normalizedProductCategory === activeCategory;
                 })
                 .sort((a, b) => {
-                    const aOrder = orderMap.get(a.id) || Number.MAX_SAFE_INTEGER;
-                    const bOrder = orderMap.get(b.id) || Number.MAX_SAFE_INTEGER;
-                    if (aOrder !== bOrder) {
-                        return aOrder - bOrder;
+                    const bySortOrder = Number(a.sortOrder || Number.MAX_SAFE_INTEGER) - Number(b.sortOrder || Number.MAX_SAFE_INTEGER);
+                    if (bySortOrder !== 0) {
+                        return bySortOrder;
                     }
                     return String(a.title).localeCompare(String(b.title));
                 });
@@ -836,7 +818,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 sortOrder: Number(product.sortOrder || index + 1),
                 category: product.category || 'General',
                 tags: getCardSpecifications(product).slice(0, 2),
-                reviews: '1.2k',
                 img: product.image || 'buyit-logo.png',
                 order: index + 1
             }));
@@ -845,11 +826,8 @@ document.addEventListener('DOMContentLoaded', function() {
         function createProductCardElement(product) {
             const safeTitle = escapeHtml(product.title);
             const safeCategory = escapeHtml(product.category);
-            const safeReviews = escapeHtml(product.reviews);
             const tags = (Array.isArray(product.tags) ? product.tags : []).slice(0, 2);
             const tagsHtml = tags.map((tag) => `<span class="text-[10px] bg-background-light border border-border-light px-1.5 py-0.5 rounded text-text-secondary-light ">${escapeHtml(tag)}</span>`).join('');
-            const stars = Array.from({ length: 4 }, () => '<span class="material-symbols-outlined text-yellow-400 text-[14px] star-filled">star</span>').join('')
-                + '<span class="material-symbols-outlined text-yellow-400 text-[14px] star-half-filled">star_half</span>';
 
             const card = document.createElement('div');
             card.setAttribute('data-price', String(product.price));
@@ -867,7 +845,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="text-xs font-medium text-text-secondary-light uppercase tracking-wide mb-1">${safeCategory}</div>
                     <a href="#" class="hover:text-primary block"><h3 class="text-base font-semibold text-text-primary-light mb-2 truncate">${safeTitle}</h3></a>
                     <div class="flex flex-wrap gap-2 mb-3">${tagsHtml}</div>
-                    <div class="flex items-center gap-1 mb-3 mt-auto">${stars}<span class="text-xs text-text-secondary-light ml-1">(${safeReviews})</span></div>
+                    <div class="mb-3 mt-auto"></div>
                     <div class="flex items-center justify-between mb-3"><span class="text-lg font-bold text-text-primary-light ">${formatRs(product.price)}</span><button class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"><span class="material-symbols-outlined text-[20px]">add_shopping_cart</span></button></div>
                     <button class="w-full py-2 rounded-lg border-2 border-primary text-primary font-semibold text-sm hover:bg-primary hover:text-white transition-colors cursor-pointer">Buy Now</button>
                 </div>`;
@@ -1117,8 +1095,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 500);
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             bindProductsSearch();
+            if (window.BUYIT_PRODUCTS_READY) {
+                await window.BUYIT_PRODUCTS_READY;
+            }
             initializeCatalogDrivenGrid();
         });
     </script>

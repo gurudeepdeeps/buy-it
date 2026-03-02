@@ -236,8 +236,9 @@
   <script src="shop.js"></script>
   <script src="firebase-runtime-config.js"></script>
   <script type="module">
-    import { auth } from "./firebase-config.js";
-    import { GoogleAuthProvider, RecaptchaVerifier, getRedirectResult, signInWithPhoneNumber, signInWithPopup, signInWithRedirect } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import { auth, db } from "./firebase-config.js";
+    import { GoogleAuthProvider, RecaptchaVerifier, getRedirectResult, signInWithPhoneNumber, signInWithPopup, signInWithRedirect, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
     const googleLoginButton = document.getElementById('google-login-btn');
     const phoneInput = document.getElementById('login-phone');
@@ -249,8 +250,41 @@
 
     let confirmationResult = null;
     let recaptchaVerifier = null;
+    const urlParams = new URLSearchParams(window.location.search);
+    const wantsAdminLogin = urlParams.get('admin') === '1';
     const googleProvider = new GoogleAuthProvider();
     googleProvider.setCustomParameters({ prompt: 'select_account' });
+
+    async function isAdminUser(user) {
+      if (!user) {
+        return false;
+      }
+
+      const [idTokenResult, userDocSnapshot] = await Promise.all([
+        user.getIdTokenResult(),
+        getDoc(doc(db, 'users', user.uid))
+      ]);
+
+      const byClaim = idTokenResult?.claims?.admin === true;
+      const byDoc = userDocSnapshot.exists() && String(userDocSnapshot.data()?.role || '').toLowerCase() === 'admin';
+      return byClaim || byDoc;
+    }
+
+    async function redirectAfterLogin(user) {
+      const isAdmin = await isAdminUser(user);
+      if (isAdmin) {
+        window.location.href = 'admin.html';
+        return;
+      }
+
+      if (wantsAdminLogin) {
+        await signOut(auth);
+        setOtpStatus('This account is not an admin account. Use the admin account with role = admin.', 'error');
+        return;
+      }
+
+      window.location.href = 'index.html';
+    }
 
     function getFriendlyAuthErrorMessage(error, fallbackMessage) {
       const code = error?.code || '';
@@ -299,7 +333,7 @@
     getRedirectResult(auth)
       .then((result) => {
         if (result?.user) {
-          window.location.href = 'index.html';
+          return redirectAfterLogin(result.user);
         }
       })
       .catch((error) => {
@@ -309,8 +343,8 @@
     googleLoginButton.addEventListener('click', async () => {
       setOtpStatus('Signing in with Google...', 'info');
       try {
-        await signInWithPopup(auth, googleProvider);
-        window.location.href = 'index.html';
+        const result = await signInWithPopup(auth, googleProvider);
+        await redirectAfterLogin(result.user);
       } catch (error) {
         if (error?.code === 'auth/popup-blocked' || error?.code === 'auth/cancelled-popup-request') {
           setOtpStatus(getFriendlyAuthErrorMessage(error, 'Switching to redirect sign-in...'), 'info');
@@ -378,9 +412,9 @@
 
       setOtpStatus('Verifying OTP...', 'info');
       try {
-        await confirmationResult.confirm(otp);
+        const result = await confirmationResult.confirm(otp);
         setOtpStatus('Login successful. Redirecting...', 'success');
-        window.location.href = 'index.html';
+        await redirectAfterLogin(result.user);
       } catch (error) {
         setOtpStatus(getFriendlyAuthErrorMessage(error, 'Invalid OTP. Please try again.'), 'error');
       }

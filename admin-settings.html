@@ -225,9 +225,13 @@
     }
 
     function adminLogout() {
+      if (typeof window.__adminLogout === 'function') {
+        window.__adminLogout();
+        return;
+      }
       localStorage.removeItem('loggedIn');
       localStorage.removeItem('role');
-      window.location.href = 'login.html';
+      window.location.href = 'login.html?admin=1';
     }
 
     loadSettings();

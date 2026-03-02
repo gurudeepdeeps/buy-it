@@ -265,7 +265,10 @@
     </footer>
     <script src="shop.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (window.BUYIT_PRODUCTS_READY) {
+                await window.BUYIT_PRODUCTS_READY;
+            }
             const normalizeCategory = (value) => {
                 if (typeof window.BUYIT_NORMALIZE_CATEGORY === 'function') {
                     return window.BUYIT_NORMALIZE_CATEGORY(value);

@@ -65,17 +65,8 @@
       return existing;
     }
 
-    const seeded = [
-      { id: 'iphone-17-pro-max', title: 'iPhone 17 Pro Max', category: 'smartphones', price: 130000, status: 'Active', image: 'product-images/smartphones/iphone1.jpg' },
-      { id: 'apple-macbook-pro-m5', title: 'Apple MacBook Pro M5', category: 'laptops', price: 170000, status: 'Out of Stock', image: 'product-images/laptops/mac1.jpg' },
-      { id: 'apple-ipad-pro-m5', title: 'Apple iPad Pro M5', category: 'tablets', price: 115000, status: 'Active', image: 'product-images/tablets/ipad1.jpg' },
-      { id: 'apple-airpods-max-headset', title: 'Apple AirPods Max Headset', category: 'audio', price: 60000, status: 'Active', image: 'product-images/audio/apple-headphone1.jpg' },
-      { id: 'apple-watch-se-2', title: 'Apple Watch SE 2', category: 'wearables', price: 15000, status: 'Out of Stock', image: 'product-images/wearables/iwatch1.jpg' },
-      { id: 'blue-evil-eye-pendant-chain', title: 'Blue Evil Eye Pendant Chain', category: 'accessories', price: 19, status: 'Active', image: 'product-images/accessories/evileye1.jpg' }
-    ];
-
-    localStorage.setItem(PRODUCTS_KEY, JSON.stringify(seeded));
-    return seeded;
+    localStorage.setItem(PRODUCTS_KEY, JSON.stringify([]));
+    return [];
   }
 
   function normalizeProduct(product) {

@@ -11,168 +11,7 @@ let cart = JSON.parse(localStorage.getItem('buyit_cart')) || [];
 let wishlist = JSON.parse(localStorage.getItem('buyit_wishlist')) || [];
 const BUYIT_REGULAR_PRICE_MULTIPLIER = 2.1451612903;
 
-const BUYIT_PRODUCT_CATALOG = {
-    'iphone-17-pro-max': {
-        id: 'iphone-17-pro-max',
-        title: 'iPhone 17 Pro Max',
-        price: 130000,
-        regularPrice: 149999,
-        featured: true,
-        sortOrder: 1,
-        localImage: 'product-images/smartphones/iphone1.jpg',
-        galleryImages: [
-            'product-images/smartphones/iphone1.jpg',
-            'product-images/smartphones/iphone2.jpg',
-            'product-images/smartphones/iphone3.jpg',
-            'product-images/smartphones/iphone4.jpg',
-            'product-images/smartphones/iphone5.jpg',
-            'product-images/smartphones/iphone6.jpg',
-            'product-images/smartphones/iphone7.jpg'
-        ],
-        specifications: [
-            '6.9-inch Super Retina XDR display with ProMotion 120Hz refresh rate.',
-            'A19 Pro chipset engineered for flagship gaming and AI performance.',
-            'Triple-camera pro system with advanced low-light and cinematic video.',
-            'Fast charging with all-day battery optimization for heavy usage.',
-            '5G, Wi-Fi 7, and premium titanium build for long-term durability.'
-        ],
-        category: 'smartphones'
-    },
-    
-    'apple-macbook-pro-m5': {
-        id: 'apple-macbook-pro-m5',
-        title: 'Apple MacBook Pro M5',
-        price: 170000,
-        regularPrice: 199999,
-        featured: true,
-        sortOrder: 2,
-        localImage: 'product-images/laptops/mac1.jpg',
-        galleryImages: [
-            'product-images/laptops/mac1.jpg',
-            'product-images/laptops/mac2.jpg',
-            'product-images/laptops/mac3.jpg',
-            'product-images/laptops/mac4.jpg',
-            'product-images/laptops/mac5.jpg',
-            'product-images/laptops/mac6.jpg',
-            'product-images/laptops/mac7.jpg',
-            'product-images/laptops/mac8.jpg'
-        ],
-        specifications: [
-            'Apple M5 architecture tuned for pro-grade editing and development workloads.',
-            'Liquid Retina XDR display with high brightness and accurate color rendering.',
-            'Unified memory design for smooth multitasking across demanding applications.',
-            'High-speed SSD storage with rapid boot and file transfer performance.',
-            'Long battery life with premium thermal efficiency and silent operation.'
-        ],
-        category: 'laptops'
-    },
-
-    'apple-ipad-pro-m5': {
-        id: 'apple-ipad-pro-m5',
-        title: 'Apple iPad Pro M5',
-        price: 115000,
-        regularPrice: 149999,
-        featured: true,
-        sortOrder: 3,
-        localImage: 'product-images/tablets/ipad1.jpg',
-        galleryImages: [
-            'product-images/tablets/ipad1.jpg',
-            'product-images/tablets/ipad2.jpg',
-            'product-images/tablets/ipad3.jpg',
-            'product-images/tablets/ipad4.jpg',
-            'product-images/tablets/ipad5.jpg',
-            'product-images/tablets/ipad6.jpg',
-            'product-images/tablets/ipad7.jpg'
-        ],
-        specifications: [
-            'Ultra-smooth high-refresh display with pencil-ready precision touch response.',
-            'M5-class tablet performance for creators, students, and professionals.',
-            'Large battery designed for all-day productivity and entertainment.',
-            'Advanced camera and scanner support for content capture and calls.',
-            'Fast wireless connectivity and ecosystem integration with Apple accessories.'
-        ],
-        category: 'tablets'
-    },
-
-    'apple-airpods-max-headset': {
-        id: 'apple-airpods-max-headset',
-        title: 'Apple AirPods Max Headset',
-        price: 60000,
-        regularPrice: 85000,
-        featured: false,
-        sortOrder: 4,
-        localImage: 'product-images/audio/apple-headphone1.jpg',
-        galleryImages: [
-            'product-images/audio/apple-headphone1.jpg',
-            'product-images/audio/apple-headphone2.jpg',
-            'product-images/audio/apple-headphone3.jpg',
-            'product-images/audio/apple-headphone4.jpg',
-            'product-images/audio/apple-headphone5.jpg',
-            'product-images/audio/apple-headphone6.jpg'
-        ],
-        specifications: [
-            'High-fidelity drivers with spatial audio and dynamic head tracking.',
-            'Adaptive active noise cancellation with transparency listening mode.',
-            'Premium over-ear comfort with breathable cushions for long sessions.',
-            'Low-latency wireless performance for music, calls, and media.',
-            'Extended playback time with smart power management and fast charging.'
-        ],
-        category: 'audio'
-    },
-
-    'apple-watch-se-2': {
-        id: 'apple-watch-se-2',
-        title: 'Apple Watch SE 2',
-        price: 15000,
-        regularPrice: 20000,
-        featured: false,
-        sortOrder: 5,
-        localImage: 'product-images/wearables/iwatch1.jpg',
-        galleryImages: [
-            'product-images/wearables/iwatch1.jpg',
-            'product-images/wearables/iwatch2.jpg',
-            'product-images/wearables/iwatch3.jpg',
-            'product-images/wearables/iwatch4.jpg',
-            'product-images/wearables/iwatch5.jpg',
-            'product-images/wearables/iwatch6.jpg',
-            'product-images/wearables/iwatch7.jpg'
-        ],
-        specifications: [
-            'Retina display with bright outdoor readability and smooth interactions.',
-            'Heart rate, activity, and sleep tracking for daily fitness insights.',
-            'Water-resistant design suitable for workouts and light swimming.',
-            'Smart notifications, call handling, and app sync with iPhone.',
-            'Efficient battery profile for full-day smart wearable use.'
-        ],
-        category: 'wearables'
-    },
-
-    'blue-evil-eye-pendant-chain': {
-        id: 'blue-evil-eye-pendant-chain',
-        title: 'Blue Evil Eye Pendant Chain',
-        price: 19,
-        regularPrice: 99,
-        featured: false,
-        sortOrder: 6,
-        localImage: 'product-images/accessories/evileye1.jpg',
-        galleryImages: [
-            'product-images/accessories/evileye1.jpg',
-            'product-images/accessories/evileye2.jpg',
-            'product-images/accessories/evileye3.jpg',
-            'product-images/accessories/evileye4.jpg',
-            'product-images/accessories/evileye5.jpg',
-            'product-images/accessories/evileye6.jpg'
-        ],
-        specifications: [
-            'Minimal pendant design with blue evil-eye centerpiece styling.',
-            'Lightweight chain for comfortable all-day wear.',
-            'Polished finish with durable everyday accessory build quality.',
-            'Suitable for casual outfits and layered fashion combinations.',
-            'Compact form factor with easy clasp handling and fit adjustment.'
-        ],
-        category: 'accessories'
-    },
-};
+const BUYIT_PRODUCT_CATALOG = {};
 
 const BUYIT_SORT_OPTIONS = {
     featured: 'Featured',
@@ -254,79 +93,6 @@ function toCategoryLabel(slug) {
         .join(' ');
 }
 
-try {
-    const adminCategories = JSON.parse(localStorage.getItem('buyit_admin_categories') || '[]');
-    if (Array.isArray(adminCategories)) {
-        adminCategories.forEach((entry) => {
-            const slug = slugifyCategory(entry?.slug || entry?.id || entry?.label || entry);
-            if (!slug) {
-                return;
-            }
-
-            BUYIT_CATEGORY_MAP[slug] = slug;
-            BUYIT_CATEGORY_DISPLAY_MAP[slug] = String(entry?.label || toCategoryLabel(slug));
-            if (!BUYIT_CATEGORY_ICON_MAP[slug]) {
-                BUYIT_CATEGORY_ICON_MAP[slug] = String(entry?.icon || 'category');
-            }
-        });
-    }
-} catch (_error) {
-    // Ignore malformed category payloads and keep defaults.
-}
-
-try {
-    const adminProductsRaw = localStorage.getItem('buyit_admin_products') || '[]';
-    const adminProducts = JSON.parse(adminProductsRaw);
-    if (Array.isArray(adminProducts)) {
-        adminProducts.forEach((entry) => {
-            const id = String(entry?.id || '').trim();
-            if (!id) {
-                return;
-            }
-
-            const title = String(entry?.title || entry?.name || '').trim() || 'Product';
-            const category = slugifyCategory(entry?.category || 'general') || 'general';
-            const image = String(entry?.image || 'buyit-logo.png').trim() || 'buyit-logo.png';
-            const price = parsePrice(entry?.price);
-            const regularPrice = parsePrice(entry?.regularPrice);
-            const status = String(entry?.status || '').trim().toLowerCase();
-            const inStock = typeof entry?.inStock === 'boolean'
-                ? entry.inStock
-                : status
-                    ? status === 'active'
-                    : true;
-
-            BUYIT_PRODUCT_CATALOG[id] = {
-                ...(BUYIT_PRODUCT_CATALOG[id] || {}),
-                id,
-                title,
-                category,
-                price,
-                regularPrice: regularPrice > 0 ? regularPrice : Math.round(price * BUYIT_REGULAR_PRICE_MULTIPLIER),
-                image,
-                localImage: image,
-                galleryImages: Array.isArray(entry?.galleryImages) && entry.galleryImages.length
-                    ? entry.galleryImages
-                    : [image],
-                specifications: Array.isArray(entry?.specifications) ? entry.specifications : [],
-                featured: Boolean(entry?.featured),
-                sortOrder: Number.isFinite(Number(entry?.sortOrder)) ? Number(entry.sortOrder) : Number.MAX_SAFE_INTEGER,
-                inStock
-            };
-
-            BUYIT_CATEGORY_MAP[category] = category;
-            if (!BUYIT_CATEGORY_DISPLAY_MAP[category]) {
-                BUYIT_CATEGORY_DISPLAY_MAP[category] = toCategoryLabel(category);
-            }
-            if (!BUYIT_CATEGORY_ICON_MAP[category]) {
-                BUYIT_CATEGORY_ICON_MAP[category] = 'category';
-            }
-        });
-    }
-} catch (_error) {
-    // Ignore malformed admin products and keep static catalog.
-}
-
 function normalizeCategory(value) {
     const cleaned = (value || '').toString().trim().toLowerCase();
     const compact = cleaned.replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim();
@@ -346,56 +112,155 @@ function getCategoryCardItems() {
     }));
 }
 
-const BUYIT_OUT_OF_STOCK_IDS = new Set([
-    'apple-macbook-pro-m5',
-    'apple-watch-se-2'
-]);
-
-Object.values(BUYIT_PRODUCT_CATALOG).forEach((product) => {
-    const normalizedPrice = parsePrice(product.price);
-    const normalizedRegularPrice = parsePrice(product.regularPrice);
-    product.price = normalizedPrice;
-    product.regularPrice = normalizedRegularPrice > 0
-        ? normalizedRegularPrice
-        : Math.round(normalizedPrice * BUYIT_REGULAR_PRICE_MULTIPLIER);
-    product.image = String(product.localImage || product.image || 'buyit-logo.png');
-
-    if (!Array.isArray(product.specifications)) {
-        product.specifications = [];
+function parseFirestoreValue(value) {
+    if (!value || typeof value !== 'object') {
+        return null;
     }
-    product.featured = Boolean(product.featured);
-    const normalizedSortOrder = Number(product.sortOrder);
-    product.sortOrder = Number.isFinite(normalizedSortOrder) ? normalizedSortOrder : Number.MAX_SAFE_INTEGER;
-    if (typeof product.inStock !== 'boolean') {
-        product.inStock = !BUYIT_OUT_OF_STOCK_IDS.has(product.id);
+
+    if ('nullValue' in value) return null;
+    if ('stringValue' in value) return value.stringValue;
+    if ('integerValue' in value) return Number(value.integerValue);
+    if ('doubleValue' in value) return Number(value.doubleValue);
+    if ('booleanValue' in value) return Boolean(value.booleanValue);
+    if ('timestampValue' in value) return value.timestampValue;
+    if ('arrayValue' in value) {
+        const values = Array.isArray(value.arrayValue?.values) ? value.arrayValue.values : [];
+        return values.map((entry) => parseFirestoreValue(entry));
     }
-});
-
-try {
-    const adminStatusMapRaw = localStorage.getItem('buyit_admin_product_status_map') || '{}';
-    const adminStatusMap = JSON.parse(adminStatusMapRaw);
-    if (adminStatusMap && typeof adminStatusMap === 'object') {
-        Object.keys(adminStatusMap).forEach((productId) => {
-            const catalogProduct = BUYIT_PRODUCT_CATALOG[productId];
-            if (!catalogProduct) {
-                return;
-            }
-
-            const override = adminStatusMap[productId] || {};
-            if (typeof override.inStock === 'boolean') {
-                catalogProduct.inStock = override.inStock;
-                return;
-            }
-
-            const normalizedStatus = String(override.status || '').trim().toLowerCase();
-            if (normalizedStatus) {
-                catalogProduct.inStock = normalizedStatus === 'active';
-            }
+    if ('mapValue' in value) {
+        const fields = value.mapValue?.fields || {};
+        const result = {};
+        Object.keys(fields).forEach((key) => {
+            result[key] = parseFirestoreValue(fields[key]);
         });
+        return result;
     }
-} catch (_error) {
-    // Ignore invalid admin status payloads and keep default catalog availability.
+    return null;
 }
+
+function normalizeFirestoreProduct(documentItem, index) {
+    const docPath = String(documentItem?.name || '');
+    const docId = docPath ? docPath.split('/').pop() : `product-${index + 1}`;
+    const fields = documentItem?.fields || {};
+
+    const raw = {};
+    Object.keys(fields).forEach((fieldName) => {
+        raw[fieldName] = parseFirestoreValue(fields[fieldName]);
+    });
+
+    const id = String(raw.id || docId || '').trim();
+    if (!id) {
+        return null;
+    }
+
+    const title = String(raw.title || raw.name || '').trim() || 'Product';
+    const category = normalizeCategory(raw.category || 'general') || 'general';
+    const price = parsePrice(raw.price);
+    const regularPrice = parsePrice(raw.regularPrice) || Math.round(price * BUYIT_REGULAR_PRICE_MULTIPLIER);
+
+    const imageUrl = String(raw.imageUrl || raw.image || '').trim();
+    const image = imageUrl || 'buyit-logo.png';
+    const galleryImages = Array.isArray(raw.galleryImages)
+        ? raw.galleryImages.map((entry) => String(entry || '').trim()).filter(Boolean)
+        : [];
+
+    const specifications = Array.isArray(raw.specifications)
+        ? raw.specifications.map((entry) => String(entry || '').trim()).filter(Boolean)
+        : [];
+
+    const inStock = typeof raw.inStock === 'boolean'
+        ? raw.inStock
+        : Number(raw.stock || 0) > 0 || raw.isActive !== false;
+
+    return {
+        id,
+        title,
+        category,
+        price,
+        regularPrice,
+        image,
+        imageUrl,
+        imagePath: String(raw.imagePath || '').trim(),
+        galleryImages: galleryImages.length > 0 ? galleryImages : [image],
+        specifications,
+        featured: Boolean(raw.featured),
+        sortOrder: Number.isFinite(Number(raw.sortOrder)) ? Number(raw.sortOrder) : (index + 1),
+        inStock,
+        tags: Array.isArray(raw.tags) ? raw.tags : [],
+        createdAt: raw.createdAt || null,
+        updatedAt: raw.updatedAt || null
+    };
+}
+
+function upsertCategoryDisplay(category) {
+    if (!category) {
+        return;
+    }
+
+    BUYIT_CATEGORY_MAP[category] = category;
+    if (!BUYIT_CATEGORY_DISPLAY_MAP[category]) {
+        BUYIT_CATEGORY_DISPLAY_MAP[category] = toCategoryLabel(category);
+    }
+    if (!BUYIT_CATEGORY_ICON_MAP[category]) {
+        BUYIT_CATEGORY_ICON_MAP[category] = 'category';
+    }
+}
+
+async function fetchProductsFromFirestore() {
+    const runtimeProjectId = String(window.BUYIT_FIREBASE_CONFIG?.projectId || '').trim();
+    const projectId = runtimeProjectId || 'buy-it-2514';
+    const endpointBase = `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(projectId)}/databases/(default)/documents/products`;
+
+    let pageToken = '';
+    const allDocuments = [];
+
+    do {
+        const url = new URL(endpointBase);
+        url.searchParams.set('pageSize', '200');
+        if (pageToken) {
+            url.searchParams.set('pageToken', pageToken);
+        }
+
+        const response = await fetch(url.toString());
+        if (!response.ok) {
+            throw new Error(`Failed to fetch products from Firestore: ${response.status}`);
+        }
+
+        const payload = await response.json();
+        const documents = Array.isArray(payload?.documents) ? payload.documents : [];
+        allDocuments.push(...documents);
+        pageToken = String(payload?.nextPageToken || '');
+    } while (pageToken);
+
+    return allDocuments
+        .map((documentItem, index) => normalizeFirestoreProduct(documentItem, index))
+        .filter(Boolean);
+}
+
+function replaceCatalogProducts(products) {
+    Object.keys(BUYIT_PRODUCT_CATALOG).forEach((key) => {
+        delete BUYIT_PRODUCT_CATALOG[key];
+    });
+
+    products.forEach((product) => {
+        BUYIT_PRODUCT_CATALOG[product.id] = product;
+        upsertCategoryDisplay(product.category);
+    });
+}
+
+const BUYIT_PRODUCTS_READY = (async () => {
+    try {
+        const products = await fetchProductsFromFirestore();
+        replaceCatalogProducts(products);
+    } catch (error) {
+        console.error('Could not load products from Firestore.', error);
+        replaceCatalogProducts([]);
+    } finally {
+        window.dispatchEvent(new CustomEvent('buyitProductsLoaded', {
+            detail: { count: Object.keys(BUYIT_PRODUCT_CATALOG).length }
+        }));
+    }
+})();
 
 function getProductById(productId) {
     if (!productId) {
@@ -419,6 +284,7 @@ window.BUYIT_SORT_OPTIONS = BUYIT_SORT_OPTIONS;
 window.BUYIT_NORMALIZE_CATEGORY = normalizeCategory;
 window.BUYIT_GET_CATEGORY_DISPLAY_NAME = getCategoryDisplayName;
 window.BUYIT_GET_CATEGORY_CARD_ITEMS = getCategoryCardItems;
+window.BUYIT_PRODUCTS_READY = BUYIT_PRODUCTS_READY;
 
 function parsePrice(value) {
     if (typeof value === 'number' && Number.isFinite(value)) {
