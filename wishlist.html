@@ -39,17 +39,15 @@
     <link rel="stylesheet" href="main.css">
 </head>
 
-<body
-    class="bg-background-light text-text-primary-light font-display antialiased min-h-screen flex flex-col">
-    <header
-        class="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-200 ">
+<body class="bg-background-light text-text-primary-light font-display antialiased min-h-screen flex flex-col">
+    <header class="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-200 ">
         <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex h-16 items-center justify-between gap-4 sm:gap-8">
-                                <a href="index.html" class="flex items-center gap-2 flex-shrink-0 group">
+                <a href="index.html" class="flex items-center gap-2 flex-shrink-0 group">
                     <div class="justify-center">
                         <img src="buyit-logo-tansperant.png" alt="Buy it Logo" class="h-24 w-auto object-contain">
                     </div>
- <!--                   <h1 class="text-xl font-bold tracking-tight text-slate-900 hidden sm:block transition-colors group-hover:text-primary">Buy it</h1>  -->
+                    <!--                   <h1 class="text-xl font-bold tracking-tight text-slate-900 hidden sm:block transition-colors group-hover:text-primary">Buy it</h1>  -->
                 </a>
                 <div class="hidden lg:flex flex-1 max-w-lg">
                     <div class="relative w-full group">
@@ -71,8 +69,7 @@
                         href="contact.html">Contact</a>
                 </nav>
                 <div class="flex items-center gap-2 sm:gap-4">
-                    <button
-                        class="p-2 text-slate-500 hover:text-primary  :text-primary transition-colors lg:hidden">
+                    <button class="p-2 text-slate-500 hover:text-primary  :text-primary transition-colors lg:hidden">
                         <span class="material-symbols-outlined">search</span>
                     </button>
                     <a href="wishlist.html" class="relative p-2 text-slate-500 hover:text-primary transition-colors"
@@ -87,7 +84,13 @@
                         <span id="cart-count"
                             class="absolute top-1 right-0 hidden h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white ring-2 ring-white">0</span>
                     </a>
-                    <a href="account.html" class="flex items-center gap-2 p-1 pl-2 pr-1 rounded-full border border-slate-200 hover:bg-slate-50 transition-colors ml-2" title="Account / Login"><div class="size-6 rounded-full bg-slate-200 overflow-hidden"><img alt="User Avatar" class="h-full w-full object-cover" src="https://ui-avatars.com/api/?name=User&background=random" /></div></a>
+                    <a href="account.html"
+                        class="flex items-center gap-2 p-1 pl-2 pr-1 rounded-full border border-slate-200 hover:bg-slate-50 transition-colors ml-2"
+                        title="Account / Login">
+                        <div class="size-6 rounded-full bg-slate-200 overflow-hidden"><img alt="User Avatar"
+                                class="h-full w-full object-cover"
+                                src="https://ui-avatars.com/api/?name=User&background=random" /></div>
+                    </a>
                 </div>
             </div>
         </div>
@@ -100,15 +103,13 @@
                     <li><a class="text-text-secondary-light hover:text-primary text-sm font-medium"
                             href="index.html">Home</a></li>
                     <li><span class="text-text-secondary-light text-sm">/</span></li>
-                    <li><span aria-current="page"
-                            class="text-text-primary-light text-sm font-semibold">My
+                    <li><span aria-current="page" class="text-text-primary-light text-sm font-semibold">My
                             Wishlist</span></li>
                 </ol>
             </nav>
             <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                 <div>
-                    <h1
-                        class="text-3xl sm:text-4xl font-bold text-text-primary-light tracking-tight">
+                    <h1 class="text-3xl sm:text-4xl font-bold text-text-primary-light tracking-tight">
                         My Wishlist</h1>
                     <p class="mt-2 text-text-secondary-light max-w-2xl">Items you've saved
                         for later.</p>
@@ -119,8 +120,7 @@
         <div id="wishlist-empty" class="hidden flex flex-col items-center justify-center py-20 text-center">
             <div
                 class="w-24 h-24 bg-surface-light border border-border-light rounded-full flex items-center justify-center mb-6 shadow-sm">
-                <span
-                    class="material-symbols-outlined text-4xl text-text-secondary-light ">favorite_border</span>
+                <span class="material-symbols-outlined text-4xl text-text-secondary-light ">favorite_border</span>
             </div>
             <h2 class="text-2xl font-bold text-text-primary-light mb-2">Your wishlist is
                 empty</h2>
@@ -148,15 +148,19 @@
                         </div>
                     </div>
                     <p class="text-slate-500 text-sm leading-relaxed max-w-sm mb-8">
-                        Experience the next generation of tech shopping. Buy it brings you the latest electronics, handpicked for quality and value, with a focus on customer satisfaction at every step.
+                        Experience the next generation of tech shopping. Buy it brings you the latest electronics,
+                        handpicked for quality and value, with a focus on customer satisfaction at every step.
                     </p>
                     <div class="flex gap-5">
-                                                <a class="text-slate-400 hover:text-green-500 transition-colors" href="https://wa.me/916363770057?text=Hello%2C%20I%20would%20like%20to%20know%20more%20about%20Buy%20it%20products%20and%20offers." target="_blank" rel="noopener" title="WhatsApp">
-                                                    <span class="sr-only">WhatsApp</span>
-                                                    <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.472-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.5-.669-.51-.173-.007-.372-.009-.571-.009-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.099 3.2 5.077 4.363.709.244 1.262.389 1.694.497.712.181 1.36.156 1.872.095.571-.067 1.758-.719 2.006-1.413.248-.694.248-1.288.173-1.413-.074-.124-.272-.198-.57-.347zm-5.421 7.617h-.001a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.999-3.648-.235-.374A9.86 9.86 0 012.1 12.045C2.111 6.479 6.58 2.01 12.153 2c2.652.004 5.146 1.037 7.022 2.915A9.822 9.822 0 0122.3 12.04c-.003 5.572-4.472 10.041-9.949 10.041zm8.413-17.453A11.815 11.815 0 0012.153.001C5.495.013.111 6.006.1 12.045c0 2.13.557 4.21 1.613 6.033L.057 23.925a1 1 0 001.225 1.225l5.874-1.641a11.822 11.822 0 005.001 1.106h.005c6.658 0 12.042-5.994 12.053-12.033a11.82 11.82 0 00-3.33-8.233z"/>
-                                                    </svg>
-                                                </a>
+                        <a class="text-slate-400 hover:text-green-500 transition-colors"
+                            href="https://wa.me/916363770057?text=Hello%2C%20I%20would%20like%20to%20know%20more%20about%20Buy%20it%20products%20and%20offers."
+                            target="_blank" rel="noopener" title="WhatsApp">
+                            <span class="sr-only">WhatsApp</span>
+                            <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.472-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.5-.669-.51-.173-.007-.372-.009-.571-.009-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.099 3.2 5.077 4.363.709.244 1.262.389 1.694.497.712.181 1.36.156 1.872.095.571-.067 1.758-.719 2.006-1.413.248-.694.248-1.288.173-1.413-.074-.124-.272-.198-.57-.347zm-5.421 7.617h-.001a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.999-3.648-.235-.374A9.86 9.86 0 012.1 12.045C2.111 6.479 6.58 2.01 12.153 2c2.652.004 5.146 1.037 7.022 2.915A9.822 9.822 0 0122.3 12.04c-.003 5.572-4.472 10.041-9.949 10.041zm8.413-17.453A11.815 11.815 0 0012.153.001C5.495.013.111 6.006.1 12.045c0 2.13.557 4.21 1.613 6.033L.057 23.925a1 1 0 001.225 1.225l5.874-1.641a11.822 11.822 0 005.001 1.106h.005c6.658 0 12.042-5.994 12.053-12.033a11.82 11.82 0 00-3.33-8.233z" />
+                            </svg>
+                        </a>
                         <a class="text-slate-400 hover:text-primary transition-colors" href="index.html">
                             <span class="sr-only">Facebook</span>
                             <svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
@@ -192,18 +196,24 @@
                         <li><a class="hover:text-primary transition-colors" href="account.html">Track My order</a></li>
                         <!-- Global Warranty removed -->
                         <!-- Return Policy removed -->
-                        <li><a class="hover:text-primary transition-colors" href="terms-and-conditions.html">Terms & Conditions</a></li>
-                        <li><a class="hover:text-primary transition-colors" href="shipping-policy.html">Shipping Policy</a></li>
-                        <li><a class="hover:text-primary transition-colors" href="return-and-refund-policy.html">Return and Refund policy</a></li>
-                        <li><a class="hover:text-primary transition-colors" href="payment-and-security.html">Payment & Security</a></li>
-                        <li><a class="hover:text-primary transition-colors" href="privacy-policy.html">Privacy Policy</a></li>
-                        <li><a class="hover:text-primary transition-colors" href="order-cancellation-policy.html">Order Cancellation Policy</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="terms-and-conditions.html">Terms &
+                                Conditions</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="shipping-policy.html">Shipping
+                                Policy</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="return-and-refund-policy.html">Return
+                                and Refund policy</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="payment-and-security.html">Payment &
+                                Security</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="privacy-policy.html">Privacy
+                                Policy</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="order-cancellation-policy.html">Order
+                                Cancellation Policy</a></li>
                     </ul>
                 </div>
             </div>
-            <div
-                class="border-t border-slate-100 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
-                    <p class="text-xs font-medium text-slate-400 w-full text-center">© 2026 Buy it Inc. All rights reserved.</p>
+            <div class="border-t border-slate-100 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
+                <p class="text-xs font-medium text-slate-400 w-full text-center">© 2026 Buy it Inc. All rights reserved.
+                </p>
                 <div class="flex gap-8 text-xs font-bold text-slate-400 uppercase tracking-widest">
                 </div>
             </div>
@@ -212,201 +222,207 @@
 
     <script src="shop.js"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const wishlistGrid = document.getElementById('wishlist-grid');
-        const wishlistEmpty = document.getElementById('wishlist-empty');
-        const readWishlist = () => JSON.parse(localStorage.getItem('buyit_wishlist')) || [];
-        const formatINRLocal = (value) => typeof window.formatINR === 'function'
-            ? window.formatINR(value)
-            : new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(Number(value || 0));
-        const calculateRegularPrice = (price) => Math.round(Number(price || 0) * 2.1451612903);
-        const escapeHtml = (value) => String(value || '')
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;');
+        document.addEventListener('DOMContentLoaded', function () {
+            const wishlistGrid = document.getElementById('wishlist-grid');
+            const wishlistEmpty = document.getElementById('wishlist-empty');
+            const readWishlist = () => JSON.parse(localStorage.getItem('buyit_wishlist')) || [];
+            const formatINRLocal = (value) => typeof window.formatINR === 'function'
+                ? window.formatINR(value)
+                : new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(Number(value || 0));
+            const calculateRegularPrice = (price) => Math.round(Number(price || 0) * 2.1451612903);
+            const escapeHtml = (value) => String(value || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
 
-        function buildProductDetailsLink(productId) {
-            const params = new URLSearchParams();
-            if (productId) {
-                params.set('id', productId);
-            }
-            const query = params.toString();
-            return query ? `product-details.html?${query}` : 'product-details.html';
-        }
-
-        function resolveCatalogProduct(item) {
-            if (!item) {
-                return null;
-            }
-
-            const hasCatalog = !!window.BUYIT_PRODUCT_CATALOG;
-            if (!hasCatalog) {
-                return null;
-            }
-
-            const normalizeSlug = (value) => String(value || '')
-                .toLowerCase()
-                .replace(/[^a-z0-9]+/g, '-')
-                .replace(/^-+|-+$/g, '');
-
-            const normalizeImageKey = (value) => {
-                const raw = String(value || '').trim().toLowerCase();
-                if (!raw) {
-                    return '';
+            function buildProductDetailsLink(productId) {
+                const params = new URLSearchParams();
+                if (productId) {
+                    params.set('id', productId);
                 }
-                const withoutQuery = raw.split('?')[0].split('#')[0];
-                const normalizedSlashes = withoutQuery.replace(/\\/g, '/');
-                const parts = normalizedSlashes.split('/').filter(Boolean);
-                const file = parts[parts.length - 1] || '';
-                return file;
-            };
+                const query = params.toString();
+                return query ? `product-details.html?${query}` : 'product-details.html';
+            }
 
-            const itemTitle = String(item.title || '').trim().toLowerCase();
-            const itemTitleSlug = normalizeSlug(item.title);
-            const itemImageKey = normalizeImageKey(item.image);
-
-            const title = itemTitle;
-            if (title) {
-                const exactMatch = Object.values(window.BUYIT_PRODUCT_CATALOG).find((product) =>
-                    String(product?.title || '').trim().toLowerCase() === title
-                );
-                if (exactMatch) {
-                    return exactMatch;
+            function resolveCatalogProduct(item) {
+                if (!item) {
+                    return null;
                 }
-            }
 
-            const titleSlug = normalizeSlug(item.title);
-
-            const slugMatch = Object.values(window.BUYIT_PRODUCT_CATALOG).find((product) => {
-                const productTitleSlug = normalizeSlug(product?.title);
-                const productIdSlug = normalizeSlug(product?.id);
-                if (titleSlug && (productTitleSlug === titleSlug || productIdSlug === titleSlug)) {
-                    return true;
+                const hasCatalog = !!window.BUYIT_PRODUCT_CATALOG;
+                if (!hasCatalog) {
+                    return null;
                 }
-                return false;
-            }) || null;
 
-            if (slugMatch) {
-                return slugMatch;
-            }
+                const normalizeSlug = (value) => String(value || '')
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/^-+|-+$/g, '');
 
-            if (!itemImageKey) {
-                return null;
-            }
+                const normalizeImageKey = (value) => {
+                    const raw = String(value || '').trim().toLowerCase();
+                    if (!raw) {
+                        return '';
+                    }
+                    const withoutQuery = raw.split('?')[0].split('#')[0];
+                    const normalizedSlashes = withoutQuery.replace(/\\/g, '/');
+                    const parts = normalizedSlashes.split('/').filter(Boolean);
+                    const file = parts[parts.length - 1] || '';
+                    return file;
+                };
 
-            const byImage = Object.values(window.BUYIT_PRODUCT_CATALOG).find((product) => {
-                const productImageKey = normalizeImageKey(product?.image || product?.localImage || '');
-                return productImageKey && productImageKey === itemImageKey;
-            });
+                const itemTitle = String(item.title || '').trim().toLowerCase();
+                const itemTitleSlug = normalizeSlug(item.title);
+                const itemImageKey = normalizeImageKey(item.image);
 
-            if (byImage) {
-                return byImage;
-            }
+                const title = itemTitle;
+                if (title) {
+                    const exactMatch = Object.values(window.BUYIT_PRODUCT_CATALOG).find((product) =>
+                        String(product?.title || '').trim().toLowerCase() === title
+                    );
+                    if (exactMatch) {
+                        return exactMatch;
+                    }
+                }
 
-            const byId = typeof getProductById === 'function' ? getProductById(item.id) : null;
-            if (byId) {
-                return byId;
-            }
+                const titleSlug = normalizeSlug(item.title);
 
-            return null;
-        }
-
-        function migrateWishlistStorage() {
-            const migrationVersion = 'wishlist_migration_v11';
-            if (localStorage.getItem(migrationVersion) === 'done') {
-                return;
-            }
-
-            const wishlist = readWishlist();
-            if (!Array.isArray(wishlist) || wishlist.length === 0) {
-                localStorage.setItem(migrationVersion, 'done');
-                return;
-            }
-
-            const migratedMap = new Map();
-            let hasChanges = false;
-            const hasValidCatalogId = (value) => {
-                if (!value || typeof getProductById !== 'function') {
+                const slugMatch = Object.values(window.BUYIT_PRODUCT_CATALOG).find((product) => {
+                    const productTitleSlug = normalizeSlug(product?.title);
+                    const productIdSlug = normalizeSlug(product?.id);
+                    if (titleSlug && (productTitleSlug === titleSlug || productIdSlug === titleSlug)) {
+                        return true;
+                    }
                     return false;
+                }) || null;
+
+                if (slugMatch) {
+                    return slugMatch;
                 }
-                return Boolean(getProductById(value));
-            };
-            wishlist.forEach((item, index) => {
-                const catalogProduct = resolveCatalogProduct(item);
-                const resolvedId = catalogProduct?.id || (hasValidCatalogId(item.id) ? item.id : '') || `wishlist-item-${index + 1}`;
-                if (!resolvedId) {
+
+                if (!itemImageKey) {
+                    return null;
+                }
+
+                const byImage = Object.values(window.BUYIT_PRODUCT_CATALOG).find((product) => {
+                    const productImageKey = normalizeImageKey(product?.image || product?.localImage || '');
+                    return productImageKey && productImageKey === itemImageKey;
+                });
+
+                if (byImage) {
+                    return byImage;
+                }
+
+                const byId = typeof getProductById === 'function' ? getProductById(item.id) : null;
+                if (byId) {
+                    return byId;
+                }
+
+                return null;
+            }
+
+            function migrateWishlistStorage() {
+                const migrationVersion = 'wishlist_migration_v11';
+                if (localStorage.getItem(migrationVersion) === 'done') {
                     return;
                 }
 
-                const resolvedTitle = item.title || catalogProduct?.title || 'Product';
-                const resolvedImage = item.image || catalogProduct?.image || 'buyit-logo.png';
-                const resolvedPrice = Number(item.price ?? catalogProduct?.price ?? 0);
-                const resolvedRegularPrice = Number(item.regularPrice ?? catalogProduct?.regularPrice ?? calculateRegularPrice(item.price ?? catalogProduct?.price ?? 0));
-
-                if (
-                    resolvedId !== item.id ||
-                    resolvedTitle !== item.title ||
-                    resolvedImage !== item.image ||
-                    resolvedPrice !== Number(item.price ?? 0) ||
-                    resolvedRegularPrice !== Number(item.regularPrice ?? 0)
-                ) {
-                    hasChanges = true;
+                const wishlist = readWishlist();
+                if (!Array.isArray(wishlist) || wishlist.length === 0) {
+                    localStorage.setItem(migrationVersion, 'done');
+                    return;
                 }
 
-                const dedupeKey = `${String(resolvedId)}::${String(resolvedTitle).trim().toLowerCase()}`;
-                migratedMap.set(dedupeKey, {
-                    ...item,
-                    id: resolvedId,
-                    title: resolvedTitle,
-                    image: resolvedImage,
-                    price: resolvedPrice,
-                    regularPrice: resolvedRegularPrice
+                const migratedMap = new Map();
+                let hasChanges = false;
+                const hasValidCatalogId = (value) => {
+                    if (!value || typeof getProductById !== 'function') {
+                        return false;
+                    }
+                    return Boolean(getProductById(value));
+                };
+                wishlist.forEach((item, index) => {
+                    const catalogProduct = resolveCatalogProduct(item);
+                    const resolvedId = catalogProduct?.id || (hasValidCatalogId(item.id) ? item.id : '') || `wishlist-item-${index + 1}`;
+                    if (!resolvedId) {
+                        return;
+                    }
+
+                    const resolvedTitle = item.title || catalogProduct?.title || 'Product';
+                    const resolvedImage = item.image || catalogProduct?.image || 'buyit-logo.png';
+                    const resolvedPrice = Number(item.price ?? catalogProduct?.price ?? 0);
+                    const resolvedRegularPrice = Number(item.regularPrice ?? catalogProduct?.regularPrice ?? calculateRegularPrice(item.price ?? catalogProduct?.price ?? 0));
+
+                    if (
+                        resolvedId !== item.id ||
+                        resolvedTitle !== item.title ||
+                        resolvedImage !== item.image ||
+                        resolvedPrice !== Number(item.price ?? 0) ||
+                        resolvedRegularPrice !== Number(item.regularPrice ?? 0)
+                    ) {
+                        hasChanges = true;
+                    }
+
+                    const dedupeKey = `${String(resolvedId)}::${String(resolvedTitle).trim().toLowerCase()}`;
+                    migratedMap.set(dedupeKey, {
+                        ...item,
+                        id: resolvedId,
+                        title: resolvedTitle,
+                        image: resolvedImage,
+                        price: resolvedPrice,
+                        regularPrice: resolvedRegularPrice
+                    });
                 });
-            });
 
-            const migratedWishlist = Array.from(migratedMap.values());
-            if (hasChanges || migratedWishlist.length !== wishlist.length) {
-                localStorage.setItem('buyit_wishlist', JSON.stringify(migratedWishlist));
-                window.dispatchEvent(new Event('wishlistUpdated'));
+                const migratedWishlist = Array.from(migratedMap.values());
+                if (hasChanges || migratedWishlist.length !== wishlist.length) {
+                    localStorage.setItem('buyit_wishlist', JSON.stringify(migratedWishlist));
+                    window.dispatchEvent(new Event('wishlistUpdated'));
+                }
+                localStorage.setItem(migrationVersion, 'done');
             }
-            localStorage.setItem(migrationVersion, 'done');
-        }
 
-        function renderWishlist() {
-            const wishlist = readWishlist();
-            wishlistGrid.innerHTML = '';
-            if (!wishlist.length) {
-                wishlistEmpty.classList.remove('hidden');
-                wishlistGrid.classList.add('hidden');
-                return;
-            }
-            wishlistEmpty.classList.add('hidden');
-            wishlistGrid.classList.remove('hidden');
-            wishlist.forEach(item => {
-                const catalogProduct = resolveCatalogProduct(item);
-                const sourceId = item.id;
-                const sourceIdIsValid = Boolean(sourceId && typeof getProductById === 'function' && getProductById(sourceId));
-                const linkId = catalogProduct?.id || (sourceIdIsValid ? sourceId : '');
-                const itemPrice = Number(catalogProduct?.price ?? item.price ?? 0);
-                const regularPrice = Number(catalogProduct?.regularPrice ?? item.regularPrice ?? calculateRegularPrice(itemPrice));
-                const title = catalogProduct?.title || item.title || 'Product';
-                const image = catalogProduct?.image || item.image || 'buyit-logo.png';
-                const category = catalogProduct?.category || 'General';
-                const inStock = catalogProduct?.inStock !== false;
-                const productLinkRelative = linkId
-                    ? buildProductDetailsLink(linkId)
-                    : buildProductDetailsLink('');
-                const productLink = productLinkRelative;
+            function renderWishlist() {
+                const wishlist = readWishlist();
+                wishlistGrid.innerHTML = '';
+                if (!wishlist.length) {
+                    wishlistEmpty.classList.remove('hidden');
+                    wishlistGrid.classList.add('hidden');
+                    return;
+                }
+                wishlistEmpty.classList.add('hidden');
+                wishlistGrid.classList.remove('hidden');
+                wishlist.forEach(item => {
+                    const catalogProduct = resolveCatalogProduct(item);
+                    const sourceId = item.id;
+                    const sourceIdIsValid = Boolean(sourceId && typeof getProductById === 'function' && getProductById(sourceId));
+                    const linkId = catalogProduct?.id || sourceId || '';
+                    const itemPrice = Number(catalogProduct?.price ?? item.price ?? 0);
+                    const regularPrice = Number(catalogProduct?.regularPrice ?? item.regularPrice ?? calculateRegularPrice(itemPrice));
+                    const title = catalogProduct?.title || item.title || 'Product';
+                    const image = catalogProduct?.image || item.image || 'buyit-logo.png';
+                    const category = catalogProduct?.category || 'General';
+                    const inStock = catalogProduct?.inStock !== false;
+                    const params = new URLSearchParams();
+                    if (linkId) params.set('id', linkId);
+                    if (title) params.set('title', title);
+                    if (itemPrice) params.set('price', itemPrice);
+                    if (regularPrice) params.set('regularPrice', regularPrice);
+                    if (image) params.set('image', image);
+                    if (category) params.set('category', category);
 
-                const div = document.createElement('div');
-                div.className = 'wishlist-card group bg-surface-light rounded-2xl border border-border-light overflow-hidden shadow-sm flex flex-col transition-all duration-300 hover:shadow-xl hover:border-primary/30';
-                div.setAttribute('data-product-id', linkId || '');
-                div.setAttribute('data-source-id', sourceId);
-                div.setAttribute('data-item-title', title);
-                div.setAttribute('data-item-image', image);
-                div.innerHTML = `
+                    const productLinkRelative = `product-details?${params.toString()}`;
+                    const productLink = productLinkRelative;
+
+                    const div = document.createElement('div');
+                    div.className = 'wishlist-card group bg-surface-light rounded-2xl border border-border-light overflow-hidden shadow-sm flex flex-col transition-all duration-300 hover:shadow-xl hover:border-primary/30';
+                    div.setAttribute('data-product-id', linkId || '');
+                    div.setAttribute('data-source-id', sourceId);
+                    div.setAttribute('data-item-title', title);
+                    div.setAttribute('data-item-image', image);
+                    div.innerHTML = `
                     <div class="relative overflow-hidden bg-slate-50 border-b border-border-light h-52 flex items-center justify-center p-5">
                         <a href="${productLink}" data-action="view-product" class="inline-flex items-center justify-center w-full h-full">
                             <img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" class="w-auto h-full max-h-44 object-contain group-hover:scale-105 transition-transform duration-300 cursor-pointer" />
@@ -433,61 +449,68 @@
                         </div>
                     </div>
                 `;
-                wishlistGrid.appendChild(div);
-            });
-        }
-
-        wishlistGrid.addEventListener('click', (event) => {
-            const actionElement = event.target.closest('[data-action]');
-            if (!actionElement) {
-                return;
-            }
-
-            const card = actionElement.closest('[data-product-id]');
-            const productId = card ? card.getAttribute('data-product-id') : '';
-            const sourceId = card ? card.getAttribute('data-source-id') : '';
-
-            const action = actionElement.getAttribute('data-action');
-            const product = typeof getProductById === 'function' ? getProductById(productId) : null;
-
-            if (action === 'remove-wishlist') {
-                if (!productId && !sourceId) {
-                    return;
-                }
-                removeFromWishlist(sourceId || productId);
-                return;
-            }
-
-            if (action === 'add-to-cart') {
-                if (!productId) {
-                    return;
-                }
-                if (!product) {
-                    return;
-                }
-                addToCart({
-                    id: product.id,
-                    title: product.title,
-                    price: product.price,
-                    image: product.image
+                    wishlistGrid.appendChild(div);
                 });
-                window.dispatchEvent(new Event('cartUpdated'));
-                return;
             }
 
-            if (action === 'view-product') {
-                // Let the anchor navigate using its own href (visible on hover).
-                return;
-            }
+            wishlistGrid.addEventListener('click', (event) => {
+                const actionElement = event.target.closest('[data-action]');
+                if (!actionElement) {
+                    return;
+                }
+
+                const card = actionElement.closest('[data-product-id]');
+                const productId = card ? card.getAttribute('data-product-id') : '';
+                const sourceId = card ? card.getAttribute('data-source-id') : '';
+
+                const action = actionElement.getAttribute('data-action');
+                const product = typeof getProductById === 'function' ? getProductById(productId) : null;
+
+                if (action === 'remove-wishlist') {
+                    if (!productId && !sourceId) {
+                        return;
+                    }
+                    removeFromWishlist(sourceId || productId);
+                    return;
+                }
+
+                if (action === 'add-to-cart') {
+                    if (!productId && !sourceId) {
+                        return;
+                    }
+                    const wishlistData = readWishlist();
+                    const matchedItem = wishlistData.find(w => w.id === productId || w.id === sourceId);
+                    const actualProduct = product || matchedItem;
+
+                    if (!actualProduct) {
+                        return;
+                    }
+
+                    addToCart({
+                        id: actualProduct.id || productId || sourceId,
+                        title: actualProduct.title || card.getAttribute('data-item-title') || 'Product',
+                        price: actualProduct.price || 0,
+                        image: actualProduct.image || card.getAttribute('data-item-image') || ''
+                    });
+                    window.dispatchEvent(new Event('cartUpdated'));
+                    return;
+                }
+
+                if (action === 'view-product') {
+                    event.preventDefault();
+                    const href = actionElement.getAttribute('href');
+                    if (href) {
+                        window.location.href = href;
+                    }
+                    return;
+                }
+            });
+
+            window.addEventListener('wishlistUpdated', renderWishlist);
+            migrateWishlistStorage();
+            renderWishlist();
         });
-
-        window.addEventListener('wishlistUpdated', renderWishlist);
-        migrateWishlistStorage();
-        renderWishlist();
-    });
     </script>
 </body>
 
 </html>
-
-
