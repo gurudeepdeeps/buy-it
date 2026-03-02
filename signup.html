@@ -98,6 +98,15 @@
       margin-bottom: 4px;
       position: relative;
     }
+    .password-helper {
+      margin-top: 6px;
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+    .password-helper.easy { color: #d97706; }
+    .password-helper.strong { color: #2563eb; }
+    .password-helper.verystrong { color: #059669; }
+    .password-helper.mismatch { color: #dc2626; }
     .login-form-password .login-input {
       padding-right: 38px;
       box-sizing: border-box;
@@ -232,14 +241,23 @@
       <form id="signup-form" autocomplete="off" class="login-form">
         <div class="login-form-email">
           <label class="login-label" for="signup-email">Email</label>
-          <input class="login-input" type="email" id="signup-email" placeholder="demo@buyit.com (try this)" value="demo@buyit.com" required>
+          <input class="login-input" type="email" id="signup-email" placeholder="Enter your email" autocomplete="username" required>
         </div>
         <div class="login-form-password">
           <label class="login-label" for="signup-password">Password</label>
-          <input class="login-input" type="password" id="signup-password" placeholder="demo1234 (try this)" value="demo1234" required>
+          <input class="login-input" type="password" id="signup-password" placeholder="Create password" autocomplete="new-password" required>
           <button type="button" id="toggle-signup-password" class="login-password-toggle" tabindex="-1">
             <span id="eye-icon-signup">👁️</span>
           </button>
+          <p id="signup-password-strength" class="password-helper">Strength: —</p>
+        </div>
+        <div class="login-form-password">
+          <label class="login-label" for="signup-confirm-password">Confirm Password</label>
+          <input class="login-input" type="password" id="signup-confirm-password" placeholder="Confirm password" autocomplete="new-password" required>
+          <button type="button" id="toggle-signup-confirm-password" class="login-password-toggle" tabindex="-1">
+            <span id="eye-icon-signup-confirm">👁️</span>
+          </button>
+          <p id="signup-password-match" class="password-helper">Match: —</p>
         </div>
         <button type="submit" class="login-btn login-btn-margin">Sign Up</button>
       </form>
@@ -248,11 +266,58 @@
       </div>
     </div>
   </div>
+  <script src="shop.js"></script>
   <script>
     // Show/hide password toggle for signup
     const signupPasswordInput = document.getElementById('signup-password');
+    const signupConfirmPasswordInput = document.getElementById('signup-confirm-password');
     const toggleSignupPassword = document.getElementById('toggle-signup-password');
+    const toggleSignupConfirmPassword = document.getElementById('toggle-signup-confirm-password');
     const eyeIconSignup = document.getElementById('eye-icon-signup');
+    const eyeIconSignupConfirm = document.getElementById('eye-icon-signup-confirm');
+    const signupPasswordStrength = document.getElementById('signup-password-strength');
+    const signupPasswordMatch = document.getElementById('signup-password-match');
+
+    const getPasswordStrengthLevel = (password) =>
+      window.BUYIT_GET_PASSWORD_STRENGTH(password, {
+        easyClass: 'easy',
+        strongClass: 'strong',
+        veryStrongClass: 'verystrong'
+      });
+
+    function setHelperClass(element, className) {
+      element.classList.remove('easy', 'strong', 'verystrong', 'mismatch');
+      if (className) {
+        element.classList.add(className);
+      }
+    }
+
+    function updateSignupPasswordFeedback() {
+      const password = signupPasswordInput.value;
+      const confirmPassword = signupConfirmPasswordInput.value;
+      const strength = getPasswordStrengthLevel(password);
+
+      signupPasswordStrength.textContent = `Strength: ${strength.label}`;
+      setHelperClass(signupPasswordStrength, strength.className);
+
+      if (!confirmPassword) {
+        signupPasswordMatch.textContent = 'Match: —';
+        setHelperClass(signupPasswordMatch, '');
+        signupConfirmPasswordInput.setCustomValidity('');
+        return;
+      }
+
+      if (password === confirmPassword) {
+        signupPasswordMatch.textContent = 'Match: Passwords match';
+        setHelperClass(signupPasswordMatch, 'verystrong');
+        signupConfirmPasswordInput.setCustomValidity('');
+      } else {
+        signupPasswordMatch.textContent = 'Match: Passwords do not match';
+        setHelperClass(signupPasswordMatch, 'mismatch');
+        signupConfirmPasswordInput.setCustomValidity('Passwords do not match');
+      }
+    }
+
     toggleSignupPassword.addEventListener('click', function() {
       if (signupPasswordInput.type === 'password') {
         signupPasswordInput.type = 'text';
@@ -262,10 +327,39 @@
         eyeIconSignup.textContent = '👁️';
       }
     });
+
+    toggleSignupConfirmPassword.addEventListener('click', function() {
+      if (signupConfirmPasswordInput.type === 'password') {
+        signupConfirmPasswordInput.type = 'text';
+        eyeIconSignupConfirm.textContent = '🙈';
+      } else {
+        signupConfirmPasswordInput.type = 'password';
+        eyeIconSignupConfirm.textContent = '👁️';
+      }
+    });
+
+    signupPasswordInput.addEventListener('input', updateSignupPasswordFeedback);
+    signupConfirmPasswordInput.addEventListener('input', updateSignupPasswordFeedback);
+    updateSignupPasswordFeedback();
+
     document.getElementById('signup-form').addEventListener('submit', function(e) {
       e.preventDefault();
+      const password = signupPasswordInput.value;
+      const confirmPassword = signupConfirmPasswordInput.value;
+      if (password !== confirmPassword) {
+        alert('Passwords do not match.');
+        return;
+      }
+
+      const strength = getPasswordStrengthLevel(password);
+      if (strength.label === 'Easy') {
+        alert('Password strength is Easy. Use a Strong or VeryStrong password.');
+        return;
+      }
+
       // Simulate signup success
       localStorage.setItem('loggedIn', '1');
+      localStorage.setItem('role', 'user');
       window.location.href = 'index.html';
     });
   </script>

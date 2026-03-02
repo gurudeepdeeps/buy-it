@@ -7,6 +7,7 @@
   <link rel="icon" href="buyit-logo-tansperant.png" type="image/png">
   <script src="admin-auth.js"></script>
   <script src="admin-data.js"></script>
+  <script src="shop.js"></script>
   <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>
@@ -30,7 +31,7 @@
   <div class="min-h-screen md:flex">
     <aside class="hidden md:flex md:w-64 md:flex-col bg-white border-r border-slate-200">
       <div class="h-16 px-5 flex items-center border-b border-slate-200">
-        <img src="buyit-logo.png" alt="Buy it" class="h-8 w-8 rounded" />
+        <img src="buyit-logo-tansperant.png" alt="Buy it" class="h-20 w-auto object-contain" />
         <span class="ml-3 text-lg font-bold">Admin Panel</span>
       </div>
       <nav class="p-3 space-y-1 flex-1">
@@ -74,6 +75,7 @@
               <input id="new-password" type="password" title="New Password" placeholder="Enter new password" class="w-full rounded-lg border-slate-200 pr-12" />
               <button type="button" data-toggle-password="new-password" aria-label="Show new password" class="absolute inset-y-0 right-0 px-3 text-slate-500 hover:text-slate-700">👁️</button>
             </div>
+            <p id="new-password-strength" class="mt-1 text-xs text-slate-500">Strength: —</p>
           </div>
           <div>
             <label class="block text-sm font-medium mb-1">Confirm Password</label>
@@ -81,6 +83,7 @@
               <input id="confirm-password" type="password" title="Confirm Password" placeholder="Confirm new password" class="w-full rounded-lg border-slate-200 pr-12" />
               <button type="button" data-toggle-password="confirm-password" aria-label="Show confirm password" class="absolute inset-y-0 right-0 px-3 text-slate-500 hover:text-slate-700">👁️</button>
             </div>
+            <p id="confirm-password-status" class="mt-1 text-xs text-slate-500">Match: —</p>
           </div>
           <div class="md:col-span-2">
             <button type="submit" class="px-4 py-2 rounded-lg bg-slate-900 text-white hover:bg-slate-700">Update Admin Account</button>
@@ -98,6 +101,50 @@
     }
 
     function bindSettingsForms() {
+      const newPasswordInput = document.getElementById('new-password');
+      const confirmPasswordInput = document.getElementById('confirm-password');
+      const strengthText = document.getElementById('new-password-strength');
+      const matchText = document.getElementById('confirm-password-status');
+
+      const getPasswordStrengthLevel = (password) =>
+        window.BUYIT_GET_PASSWORD_STRENGTH(password, {
+          emptyClass: 'text-slate-500',
+          easyClass: 'text-amber-600',
+          strongClass: 'text-blue-600',
+          veryStrongClass: 'text-emerald-600'
+        });
+
+      function setFeedbackClass(element, className) {
+        element.classList.remove('text-slate-500', 'text-amber-600', 'text-blue-600', 'text-emerald-600', 'text-red-600');
+        element.classList.add(className);
+      }
+
+      function updatePasswordFeedback() {
+        const newPassword = newPasswordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+
+        const strength = getPasswordStrengthLevel(newPassword);
+        strengthText.textContent = `Strength: ${strength.label}`;
+        setFeedbackClass(strengthText, strength.className);
+
+        if (!confirmPassword) {
+          matchText.textContent = 'Match: —';
+          setFeedbackClass(matchText, 'text-slate-500');
+          confirmPasswordInput.setCustomValidity('');
+          return;
+        }
+
+        if (newPassword === confirmPassword) {
+          matchText.textContent = 'Match: Passwords match';
+          setFeedbackClass(matchText, 'text-emerald-600');
+          confirmPasswordInput.setCustomValidity('');
+        } else {
+          matchText.textContent = 'Match: Passwords do not match';
+          setFeedbackClass(matchText, 'text-red-600');
+          confirmPasswordInput.setCustomValidity('Passwords do not match');
+        }
+      }
+
       document.querySelectorAll('[data-toggle-password]').forEach((toggleButton) => {
         toggleButton.addEventListener('click', function () {
           const targetId = this.getAttribute('data-toggle-password');
@@ -119,6 +166,10 @@
           this.setAttribute('aria-label', (isHidden ? 'Hide ' : 'Show ') + label);
         });
       });
+
+      newPasswordInput.addEventListener('input', updatePasswordFeedback);
+      confirmPasswordInput.addEventListener('input', updatePasswordFeedback);
+      updatePasswordFeedback();
 
       document.getElementById('admin-account-form').addEventListener('submit', function (event) {
         event.preventDefault();
@@ -145,6 +196,12 @@
         if (newPassword || confirmPassword) {
           if (newPassword !== confirmPassword) {
             alert('Passwords do not match.');
+            return;
+          }
+
+          const strength = getPasswordStrengthLevel(newPassword);
+          if (strength.label === 'Easy') {
+            alert('Password strength is Easy. Use a Strong or VeryStrong password.');
             return;
           }
         }

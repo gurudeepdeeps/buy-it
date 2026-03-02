@@ -187,13 +187,7 @@
                                 Add to Cart
                             </button>
                         </div>
-                        <div class="flex gap-3">
-                            <button
-                                onclick="addToWishlist({ id: 'zenith-x1-ultra', title: 'Zenith X1 Carbon Ultra', price: 207417, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDvcZLPrU-hLvrkRaN840CcHQZef_ijXdIDgCsmgDd6jI3DgGbcW6yIZp2pTw0Aw14vC4kLRaZHSWLMXG3wXrelh5thka19QRl4irHSwAGOC34vnlzUG0FobitA8DUUhCHSP07LYxCu96feqcW05uOtSlio_fH9rYk7InFlDIvKnr6Cey7uaURMKLGFYLUVuKtVj3Y8ohLLJYIrXJqQ5MHiA7DEQEK1LgS3gI3geUy_SVdu_hl9uKQWJiV1EnMbDYxkHkIUMlXdrknW' })"
-                                class="flex-1 h-12 text-sm font-bold text-text-main hover:bg-white :bg-surface-dark flex items-center justify-center gap-2 border border-border-light rounded-xl transition-all shadow-sm">
-                                <span class="material-symbols-outlined text-[20px]">favorite</span>
-                                Add to Wishlist
-                            </button>
+                        <div class="flex justify-end gap-3">
                             <button
                                 class="w-12 h-12 flex items-center justify-center border border-border-light rounded-xl hover:bg-white :bg-surface-dark transition-all shadow-sm">
                                 <span class="material-symbols-outlined text-[20px]">share</span>
@@ -731,18 +725,6 @@
                 addToCartButton.button.disabled = !inStock;
                 addToCartButton.button.classList.toggle('opacity-50', !inStock);
                 addToCartButton.button.classList.toggle('cursor-not-allowed', !inStock);
-            }
-
-            const addToWishlistButton = normalizedButtons.find((entry) => entry.label === 'Add to Wishlist');
-            if (addToWishlistButton) {
-                addToWishlistButton.button.onclick = () => {
-                    addToWishlist({
-                        id: product.id,
-                        title: product.title,
-                        price: product.price,
-                        image: product.image
-                    });
-                };
             }
 
             const shareButton = Array.from(document.querySelectorAll('button')).find((button) => {

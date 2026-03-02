@@ -30,7 +30,7 @@
   <div class="min-h-screen md:flex">
     <aside class="hidden md:flex md:w-64 md:flex-col bg-white border-r border-slate-200">
       <div class="h-16 px-5 flex items-center border-b border-slate-200">
-        <img src="buyit-logo.png" alt="Buy it" class="h-8 w-8 rounded" />
+        <img src="buyit-logo-tansperant.png" alt="Buy it" class="h-20 w-auto object-contain" />
         <span class="ml-3 text-lg font-bold">Admin Panel</span>
       </div>
       <nav class="p-3 space-y-1 flex-1">
@@ -53,6 +53,60 @@
         <button id="add-product-btn" class="px-4 py-2 rounded-lg bg-primary text-white hover:opacity-90">Add Product</button>
       </header>
 
+      <section class="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 mb-6">
+        <h2 id="product-form-title" class="text-lg font-semibold mb-4">Add Product</h2>
+        <form id="product-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input id="product-id" type="hidden" />
+          <div>
+            <label for="product-name" class="block text-sm font-medium mb-1">Product Name</label>
+            <input id="product-name" type="text" class="w-full rounded-lg border-slate-200" placeholder="e.g. iPhone 17 Pro Max" required />
+            <p class="mt-1 text-xs text-slate-500">Enter normal product name. Product ID is generated automatically.</p>
+          </div>
+          <div>
+            <label for="product-category" class="block text-sm font-medium mb-1">Category</label>
+            <select id="product-category" class="w-full rounded-lg border-slate-200" required></select>
+            <div class="mt-2 flex items-center gap-2">
+              <input id="new-category-input" type="text" class="flex-1 rounded-lg border-slate-200" placeholder="Create new category" />
+              <button id="add-category-btn" type="button" class="px-3 py-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50">Add</button>
+            </div>
+            <div class="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <select id="manage-category-select" title="Select Category to Manage" class="w-full rounded-lg border-slate-200"></select>
+              <input id="rename-category-input" title="New Category Name" type="text" class="w-full rounded-lg border-slate-200" placeholder="Rename selected category" />
+              <div class="flex gap-2">
+                <button id="rename-category-btn" title="Rename Category" type="button" class="px-3 py-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50">Rename</button>
+                <button id="delete-category-btn" title="Delete Category" type="button" class="px-3 py-2 rounded-lg border border-red-200 text-red-700 hover:bg-red-50">Delete</button>
+              </div>
+            </div>
+          </div>
+          <div>
+            <label for="product-price" class="block text-sm font-medium mb-1">Price (INR)</label>
+            <input id="product-price" type="number" min="0" class="w-full rounded-lg border-slate-200" placeholder="129999" required />
+            <p class="mt-1 text-xs text-slate-500">Enter plain number only in INR, without ₹ or commas.</p>
+          </div>
+          <div>
+            <label for="product-status" class="block text-sm font-medium mb-1">Stock Status</label>
+            <select id="product-status" class="w-full rounded-lg border-slate-200" required>
+              <option value="Active">Active</option>
+              <option value="Out of Stock">Out of Stock</option>
+            </select>
+          </div>
+          <div class="md:col-span-2">
+            <label for="product-image" class="block text-sm font-medium mb-1">Image Path / URL</label>
+            <input id="product-image" type="text" class="w-full rounded-lg border-slate-200" placeholder="product-images/... or https://..." />
+            <label for="product-image-file" class="sr-only">Upload Product Image</label>
+            <div class="mt-2 flex flex-col sm:flex-row sm:items-center gap-2">
+              <input id="product-image-file" type="file" accept="image/*" class="block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:text-sm file:font-medium file:text-slate-700 hover:file:bg-slate-200" />
+              <button id="clear-product-image-btn" type="button" class="px-3 py-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50">Clear Image</button>
+            </div>
+            <img id="product-image-preview" alt="Product image preview" class="mt-3 hidden h-20 w-20 rounded-lg border border-slate-200 object-cover" />
+          </div>
+          <div class="md:col-span-2 flex items-center gap-2">
+            <button id="product-save-btn" type="submit" class="px-4 py-2 rounded-lg bg-primary text-white hover:opacity-90">Save Product</button>
+            <button id="product-cancel-btn" type="button" class="px-4 py-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 hidden">Cancel Edit</button>
+          </div>
+        </form>
+      </section>
+
       <section class="bg-white border border-slate-200 rounded-xl overflow-hidden">
         <div class="overflow-x-auto">
           <table class="w-full text-sm">
@@ -61,8 +115,7 @@
                 <th class="text-left px-4 py-3">Product</th>
                 <th class="text-left px-4 py-3">Category</th>
                 <th class="text-left px-4 py-3">Price</th>
-                <th class="text-left px-4 py-3">Stock</th>
-                <th class="text-left px-4 py-3">Status</th>
+                <th class="text-left px-4 py-3">Availability</th>
                 <th class="text-left px-4 py-3">Actions</th>
               </tr>
             </thead>
@@ -74,12 +127,146 @@
   </div>
 
   <script>
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function toCategoryLabel(slug) {
+      return String(slug || '')
+        .split('-')
+        .filter(Boolean)
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(' ');
+    }
+
+    function normalizeCategorySlug(value) {
+      return String(value || '')
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    }
+
+    function updateProductImagePreview(imageValue) {
+      const preview = document.getElementById('product-image-preview');
+      if (!preview) {
+        return;
+      }
+      const src = String(imageValue || '').trim();
+      if (!src) {
+        preview.removeAttribute('src');
+        preview.classList.add('hidden');
+        return;
+      }
+      preview.src = src;
+      preview.classList.remove('hidden');
+    }
+
+    function renderCategoryOptions(selectedCategory) {
+      const categorySelect = document.getElementById('product-category');
+      const manageSelect = document.getElementById('manage-category-select');
+      if (!categorySelect) {
+        return;
+      }
+
+      const categories = (window.AdminData.getCategories() || []).slice();
+      if (categories.length === 0) {
+        categories.push({ slug: 'smartphones', label: 'Smartphones' });
+      }
+
+      const selectedSlug = normalizeCategorySlug(selectedCategory) || categories[0].slug;
+      categorySelect.innerHTML = categories
+        .map((category) => `<option value="${escapeHtml(category.slug)}">${escapeHtml(category.label || toCategoryLabel(category.slug))}</option>`)
+        .join('');
+
+      if (Array.from(categorySelect.options).some((option) => option.value === selectedSlug)) {
+        categorySelect.value = selectedSlug;
+      } else {
+        categorySelect.value = categories[0].slug;
+      }
+
+      if (manageSelect) {
+        manageSelect.innerHTML = categories
+          .map((category) => `<option value="${escapeHtml(category.slug)}">${escapeHtml(category.label || toCategoryLabel(category.slug))}</option>`)
+          .join('');
+        manageSelect.value = categorySelect.value;
+      }
+    }
+
+    function resetProductForm() {
+      document.getElementById('product-id').value = '';
+      document.getElementById('product-name').value = '';
+      renderCategoryOptions('smartphones');
+      document.getElementById('product-price').value = '';
+      document.getElementById('product-status').value = 'Active';
+      document.getElementById('product-image').value = '';
+      document.getElementById('product-image-file').value = '';
+      updateProductImagePreview('');
+      document.getElementById('product-form-title').textContent = 'Add Product';
+      document.getElementById('product-save-btn').textContent = 'Save Product';
+      document.getElementById('product-cancel-btn').classList.add('hidden');
+    }
+
+    function fillProductForm(product) {
+      const normalizedCategory = normalizeCategorySlug(product.category || '');
+      renderCategoryOptions(normalizedCategory || 'smartphones');
+
+      document.getElementById('product-id').value = product.id || '';
+      document.getElementById('product-name').value = product.title || '';
+      document.getElementById('product-price').value = Number(product.price || 0);
+      document.getElementById('product-status').value = product.status || 'Active';
+      document.getElementById('product-image').value = product.image || '';
+      document.getElementById('product-image-file').value = '';
+      updateProductImagePreview(product.image || '');
+      document.getElementById('product-form-title').textContent = 'Edit Product';
+      document.getElementById('product-save-btn').textContent = 'Update Product';
+      document.getElementById('product-cancel-btn').classList.remove('hidden');
+    }
+
+    function readProductForm() {
+      const id = document.getElementById('product-id').value.trim();
+      const title = document.getElementById('product-name').value.trim();
+      const category = normalizeCategorySlug(document.getElementById('product-category').value);
+      const price = Number(document.getElementById('product-price').value);
+      const status = document.getElementById('product-status').value;
+      const image = document.getElementById('product-image').value.trim() || 'buyit-logo.png';
+
+      if (!title) {
+        alert('Product title is required.');
+        return null;
+      }
+      if (!category) {
+        alert('Category is required.');
+        return null;
+      }
+      if (!Number.isFinite(price) || price < 0) {
+        alert('Please enter a valid price.');
+        return null;
+      }
+
+      return {
+        id,
+        payload: {
+          title,
+          category,
+          price,
+          status,
+          image
+        }
+      };
+    }
+
     function renderProducts() {
       const products = window.AdminData.getProducts();
       const tbody = document.getElementById('products-body');
 
       if (products.length === 0) {
-        tbody.innerHTML = '<tr class="border-t border-slate-100"><td colspan="6" class="px-4 py-8 text-center text-slate-500">No real product data available yet.</td></tr>';
+        tbody.innerHTML = '<tr class="border-t border-slate-100"><td colspan="5" class="px-4 py-8 text-center text-slate-500">No real product data available yet.</td></tr>';
         return;
       }
 
@@ -87,18 +274,66 @@
         const title = product.title || product.name || '-';
         const category = product.category || '-';
         const price = window.AdminData.formatCurrency(product.price || 0);
-        const stock = Number(product.stock || 0);
-        const status = stock > 0 ? 'Active' : 'Out of Stock';
-        const statusClass = stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
+        const status = product.status || 'Active';
+        const statusClass = String(status).toLowerCase() === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
         return '<tr class="border-t border-slate-100">'
-          + '<td class="px-4 py-3 font-medium">' + title + '</td>'
-          + '<td class="px-4 py-3">' + category + '</td>'
+          + '<td class="px-4 py-3 font-medium">' + escapeHtml(title) + '</td>'
+          + '<td class="px-4 py-3">' + escapeHtml(category) + '</td>'
           + '<td class="px-4 py-3">' + price + '</td>'
-          + '<td class="px-4 py-3">' + stock + '</td>'
-          + '<td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs ' + statusClass + '">' + status + '</span></td>'
-          + '<td class="px-4 py-3 text-slate-400">-</td>'
+          + '<td class="px-4 py-3">'
+          + '<div class="flex items-center gap-2">'
+          + '<span class="px-2 py-1 rounded-full text-xs ' + statusClass + '">' + status + '</span>'
+          + '<select class="rounded border-slate-200 text-xs" data-action="status" data-id="' + escapeHtml(product.id) + '">'
+          + '<option value="Active"' + (status === 'Active' ? ' selected' : '') + '>Active</option>'
+          + '<option value="Out of Stock"' + (status === 'Out of Stock' ? ' selected' : '') + '>Out of Stock</option>'
+          + '</select>'
+          + '</div>'
+          + '</td>'
+          + '<td class="px-4 py-3">'
+          + '<div class="flex items-center gap-2">'
+          + '<button class="px-2 py-1 text-xs rounded border border-slate-200 hover:bg-slate-50" data-action="edit" data-id="' + escapeHtml(product.id) + '">Edit</button>'
+          + '<button class="px-2 py-1 text-xs rounded border border-red-200 text-red-700 hover:bg-red-50" data-action="delete" data-id="' + escapeHtml(product.id) + '">Delete</button>'
+          + '</div>'
+          + '</td>'
           + '</tr>';
       }).join('');
+
+      tbody.querySelectorAll('[data-action="status"]').forEach((select) => {
+        select.addEventListener('change', () => {
+          const productId = select.getAttribute('data-id');
+          window.AdminData.updateProduct(productId, { status: select.value });
+          renderProducts();
+        });
+      });
+
+      tbody.querySelectorAll('[data-action="edit"]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const productId = button.getAttribute('data-id');
+          const product = window.AdminData.getProducts().find((item) => item.id === productId);
+          if (!product) {
+            return;
+          }
+          fillProductForm(product);
+          document.getElementById('product-name').focus();
+        });
+      });
+
+      tbody.querySelectorAll('[data-action="delete"]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const productId = button.getAttribute('data-id');
+          const product = window.AdminData.getProducts().find((item) => item.id === productId);
+          if (!product) {
+            return;
+          }
+          const shouldDelete = window.confirm('Delete product "' + product.title + '"?');
+          if (!shouldDelete) {
+            return;
+          }
+
+          window.AdminData.deleteProduct(productId);
+          renderProducts();
+        });
+      });
     }
 
     function adminLogout() {
@@ -108,9 +343,159 @@
     }
 
     document.getElementById('add-product-btn').addEventListener('click', function () {
-      alert('Add Product requires backend/form integration. No fake product will be added.');
+      resetProductForm();
+      document.getElementById('product-name').focus();
     });
 
+    document.getElementById('add-category-btn').addEventListener('click', function () {
+      const input = document.getElementById('new-category-input');
+      const slug = normalizeCategorySlug(input.value);
+      if (!slug) {
+        alert('Enter a valid category name.');
+        return;
+      }
+
+      window.AdminData.addCategory({ slug, label: toCategoryLabel(slug) });
+      renderCategoryOptions(slug);
+      input.value = '';
+    });
+
+    document.getElementById('rename-category-btn').addEventListener('click', function () {
+      const manageSelect = document.getElementById('manage-category-select');
+      const renameInput = document.getElementById('rename-category-input');
+      const fromSlug = normalizeCategorySlug(manageSelect.value);
+      const toSlug = normalizeCategorySlug(renameInput.value);
+
+      if (!fromSlug || !toSlug) {
+        alert('Select a category and enter a new name.');
+        return;
+      }
+
+      const result = window.AdminData.renameCategory(fromSlug, { slug: toSlug, label: toCategoryLabel(toSlug) });
+      if (!result?.ok) {
+        if (result?.reason === 'exists') {
+          alert('Category already exists.');
+          return;
+        }
+        alert('Unable to rename category.');
+        return;
+      }
+
+      renameInput.value = '';
+      renderCategoryOptions(toSlug);
+      renderProducts();
+    });
+
+    document.getElementById('delete-category-btn').addEventListener('click', function () {
+      const manageSelect = document.getElementById('manage-category-select');
+      const slug = normalizeCategorySlug(manageSelect.value);
+      if (!slug) {
+        alert('Select a category to delete.');
+        return;
+      }
+
+      const result = window.AdminData.deleteCategory(slug);
+      if (!result?.ok && result?.reason === 'in-use') {
+        const categories = (window.AdminData.getCategories() || []).filter((category) => category.slug !== slug);
+        if (!categories.length) {
+          alert('Cannot delete the only category while products are using it.');
+          return;
+        }
+
+        const replacementPrompt = window.prompt('This category is used by products. Reassign them to one of: ' + categories.map((c) => c.slug).join(', '), categories[0].slug);
+        if (replacementPrompt === null) {
+          return;
+        }
+
+        const replacementSlug = normalizeCategorySlug(replacementPrompt);
+        const retry = window.AdminData.deleteCategory(slug, replacementSlug);
+        if (!retry?.ok) {
+          alert('Unable to delete category. Ensure replacement exists.');
+          return;
+        }
+
+        renderCategoryOptions(replacementSlug);
+        renderProducts();
+        return;
+      }
+
+      if (!result?.ok) {
+        alert('Unable to delete category.');
+        return;
+      }
+
+      renderCategoryOptions('smartphones');
+      renderProducts();
+    });
+
+    document.getElementById('product-cancel-btn').addEventListener('click', function () {
+      resetProductForm();
+    });
+
+    document.getElementById('product-image').addEventListener('input', function () {
+      updateProductImagePreview(this.value);
+    });
+
+    document.getElementById('clear-product-image-btn').addEventListener('click', function () {
+      document.getElementById('product-image').value = '';
+      document.getElementById('product-image-file').value = '';
+      updateProductImagePreview('');
+    });
+
+    document.getElementById('product-image-file').addEventListener('change', function (event) {
+      const selectedFile = event.target.files && event.target.files[0];
+      if (!selectedFile) {
+        return;
+      }
+
+      const maxFileSizeBytes = 500 * 1024;
+      if (selectedFile.size > maxFileSizeBytes) {
+        alert('Image size must be below 500KB.');
+        event.target.value = '';
+        return;
+      }
+
+      if (!selectedFile.type || !selectedFile.type.startsWith('image/')) {
+        alert('Please choose a valid image file.');
+        event.target.value = '';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function (loadEvent) {
+        const result = String(loadEvent.target?.result || '');
+        if (!result) {
+          alert('Unable to read selected image.');
+          return;
+        }
+        document.getElementById('product-image').value = result;
+        updateProductImagePreview(result);
+      };
+      reader.onerror = function () {
+        alert('Unable to read selected image.');
+      };
+      reader.readAsDataURL(selectedFile);
+    });
+
+    document.getElementById('product-form').addEventListener('submit', function (event) {
+      event.preventDefault();
+      const formValue = readProductForm();
+      if (!formValue) {
+        return;
+      }
+
+      if (formValue.id) {
+        window.AdminData.updateProduct(formValue.id, formValue.payload);
+      } else {
+        window.AdminData.addProduct(formValue.payload);
+      }
+
+      resetProductForm();
+      renderProducts();
+    });
+
+    renderCategoryOptions('smartphones');
+    resetProductForm();
     renderProducts();
   </script>
 </body>

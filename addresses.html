@@ -49,6 +49,7 @@
     .address-form-btn:hover { background: #b31318; }
     .address-checkbox-label { display: flex; align-items: center; gap: 0.5rem; font-weight: 500; color: #444; }
     .saved-addresses-section { margin-top: 2rem; border-top: 1px solid #efefef; padding-top: 1.5rem; }
+    .saved-addresses-section-top { margin-top: 0; border-top: 0; padding-top: 0; margin-bottom: 1.5rem; }
     .saved-addresses-title { font-size: 1.2rem; font-weight: 700; color: #111; margin-bottom: 1rem; }
     .saved-address-list { display: grid; gap: 0.8rem; }
     .saved-address-card { border: 1px solid #e8e8e8; border-radius: 0.7rem; padding: 0.8rem 1rem; background: #fafafa; }
@@ -105,6 +106,11 @@
 
   <main class="flex-grow w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
     <div class="container">
+      <div class="saved-addresses-section saved-addresses-section-top">
+        <div class="saved-addresses-title">Saved Addresses</div>
+        <div id="saved-addresses" class="saved-address-list"></div>
+      </div>
+
       <div class="add-address-btn-row">
         <button class="add-address-btn">+ ADD A NEW ADDRESS</button>
       </div>
@@ -118,11 +124,8 @@
             <label>Last name
               <input type="text" placeholder="Last name" name="last-name">
             </label>
-            <label>Address 1
-              <input type="text" placeholder="Address 1" name="address-line1" autocomplete="address-line1">
-            </label>
-            <label>Address 2
-              <input type="text" placeholder="Address 2" name="address-line2">
+            <label>Address
+              <input type="text" placeholder="Address" name="address-line1" autocomplete="address-line1">
             </label>
             <label>City
               <input type="text" placeholder="City" name="city">
@@ -179,19 +182,12 @@
             <label>Phone
               <input type="text" placeholder="Phone" name="phone" autocomplete="tel">
             </label>
-            <label class="address-checkbox-label span-2">
-              <input type="checkbox" name="is-default">Set as default address
-            </label>
           </div>
           <div class="address-form-actions">
             <button type="submit" class="address-form-btn">Save Address</button>
             <button type="button" class="address-form-btn" onclick="window.location.href='account.html'">Close</button>
           </div>
         </form>
-        <div class="saved-addresses-section">
-          <div class="saved-addresses-title">Saved Addresses</div>
-          <div id="saved-addresses" class="saved-address-list"></div>
-        </div>
       </div>
     </div>
   </main>
@@ -288,15 +284,12 @@
 
       container.innerHTML = addresses.map((address, index) => {
         const fullName = `${address['first-name'] || ''} ${address['last-name'] || ''}`.trim() || 'Unnamed';
-        const badges = [
-          address['is-default'] ? '<span class="saved-badge">Default</span>' : '',
-          index === selectedAddressIndex ? '<span class="saved-badge">Selected</span>' : ''
-        ].join('');
+        const badges = index === selectedAddressIndex ? '<span class="saved-badge">Selected</span>' : '';
 
         return `
           <div class="saved-address-card">
             <div class="saved-address-name">${escapeHtml(fullName)}${badges}</div>
-            <div class="saved-address-line">${escapeHtml(address['address-line1'])}${address['address-line2'] ? ', ' + escapeHtml(address['address-line2']) : ''}</div>
+            <div class="saved-address-line">${escapeHtml(address['address-line1'])}</div>
             <div class="saved-address-line">${escapeHtml(address['city'])}, ${escapeHtml(address['state'])} ${escapeHtml(address['postal-code'])}</div>
             <div class="saved-address-meta">${address['phone'] ? 'Phone: ' + escapeHtml(address['phone']) : ''}</div>
           </div>
@@ -311,23 +304,18 @@
         'first-name': form['first-name'].value,
         'last-name': form['last-name'].value,
         'address-line1': form['address-line1'].value,
-        'address-line2': form['address-line2'].value,
         'city': form['city'].value,
         'state': form['state'].value,
         'country': form['country'].value,
         'postal-code': form['postal-code'].value,
-        'phone': form['phone'].value,
-        'is-default': form['is-default'].checked
+        'phone': form['phone'].value
       };
 
       let addresses = readAddresses();
-      if (address['is-default']) {
-        addresses = addresses.map(existingAddress => ({ ...existingAddress, 'is-default': false }));
-      }
       addresses.push(address);
       localStorage.setItem('buyit_addresses', JSON.stringify(addresses));
 
-      if (address['is-default'] || addresses.length === 1) {
+      if (addresses.length === 1) {
         localStorage.setItem('buyit_selected_address', addresses.length - 1);
       }
 

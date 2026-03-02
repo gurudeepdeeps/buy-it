@@ -30,7 +30,7 @@
   <div class="min-h-screen md:flex">
     <aside class="hidden md:flex md:w-64 md:flex-col bg-white border-r border-slate-200">
       <div class="h-16 px-5 flex items-center border-b border-slate-200">
-        <img src="buyit-logo.png" alt="Buy it" class="h-8 w-8 rounded" />
+        <img src="buyit-logo-tansperant.png" alt="Buy it" class="h-20 w-auto object-contain" />
         <span class="ml-3 text-lg font-bold">Admin Panel</span>
       </div>
       <nav class="p-3 space-y-1 flex-1">
@@ -71,6 +71,8 @@
   </div>
 
   <script>
+    const ORDER_STATUSES = ['Processing', 'Shipped', 'Delivered', 'Cancelled'];
+
     function renderOrders() {
       const orders = window.AdminData.getOrders();
       const tbody = document.getElementById('orders-body');
@@ -87,6 +89,7 @@
         const amount = window.AdminData.formatCurrency(order.amount || 0);
         const status = order.status || 'Unknown';
         const badgeClass = window.AdminData.statusBadgeClass(status);
+        const selectOptions = ORDER_STATUSES.map((value) => '<option value="' + value + '"' + (value === status ? ' selected' : '') + '>' + value + '</option>').join('');
 
         return '<tr class="border-t border-slate-100">'
           + '<td class="px-4 py-3 font-medium">' + id + '</td>'
@@ -94,9 +97,19 @@
           + '<td class="px-4 py-3">' + date + '</td>'
           + '<td class="px-4 py-3">' + amount + '</td>'
           + '<td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs ' + badgeClass + '">' + status + '</span></td>'
-          + '<td class="px-4 py-3 text-slate-400">-</td>'
+          + '<td class="px-4 py-3">'
+          + '<select class="rounded border-slate-200 text-xs" data-action="status" data-id="' + id + '">' + selectOptions + '</select>'
+          + '</td>'
           + '</tr>';
       }).join('');
+
+      tbody.querySelectorAll('[data-action="status"]').forEach((select) => {
+        select.addEventListener('change', () => {
+          const orderId = select.getAttribute('data-id');
+          window.AdminData.updateOrderStatus(orderId, select.value);
+          renderOrders();
+        });
+      });
     }
 
     function adminLogout() {

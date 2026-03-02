@@ -417,8 +417,12 @@
                             <span class="text-lg font-bold text-red-600">${formatINRLocal(itemPrice)}</span>
                             <span class="text-sm text-text-secondary-light line-through">${formatINRLocal(regularPrice)}</span>
                         </div>
-                        <div class="mt-auto pt-2">
-                            <button data-action="add-to-cart" class="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors ${inStock ? '' : 'opacity-50 cursor-not-allowed'}" ${inStock ? '' : 'disabled'}>
+                        <div class="mt-auto pt-2 grid grid-cols-2 gap-2">
+                            <button data-action="buy-now" class="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors ${inStock ? '' : 'opacity-50 cursor-not-allowed'}" ${inStock ? '' : 'disabled'}>
+                                <span class='material-symbols-outlined text-[18px]'>bolt</span>
+                                Buy Now
+                            </button>
+                            <button data-action="add-to-cart" class="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-border-light text-text-primary-light text-sm font-semibold hover:bg-slate-50 transition-colors ${inStock ? '' : 'opacity-50 cursor-not-allowed'}" ${inStock ? '' : 'disabled'}>
                                 <span class='material-symbols-outlined text-[18px]'>add_shopping_cart</span>
                                 Add
                             </button>
@@ -469,6 +473,28 @@
                         image: actualProduct.image || card.getAttribute('data-item-image') || ''
                     });
                     window.dispatchEvent(new Event('cartUpdated'));
+                    return;
+                }
+
+                if (action === 'buy-now') {
+                    if (!productId && !sourceId) {
+                        return;
+                    }
+
+                    const wishlistData = readWishlist();
+                    const matchedItem = wishlistData.find(w => w.id === productId || w.id === sourceId);
+                    const actualProduct = product || matchedItem;
+
+                    if (!actualProduct || typeof buyNow !== 'function') {
+                        return;
+                    }
+
+                    buyNow({
+                        id: actualProduct.id || productId || sourceId,
+                        title: actualProduct.title || card.getAttribute('data-item-title') || 'Product',
+                        price: actualProduct.price || 0,
+                        image: actualProduct.image || card.getAttribute('data-item-image') || ''
+                    });
                     return;
                 }
 

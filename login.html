@@ -238,11 +238,11 @@
       <form id="login-form" autocomplete="off" class="login-form">
         <div class="login-form-email">
           <label class="login-label" for="login-email">Email</label>
-          <input class="login-input" type="email" id="login-email" placeholder="admin@buyit.com or demo@hub.com" value="demo@hub.com" required>
+          <input class="login-input" type="email" id="login-email" placeholder="Enter your email" autocomplete="username" required>
         </div>
         <div class="login-form-password">
           <label class="login-label" for="login-password">Password</label>
-          <input class="login-input" type="password" id="login-password" placeholder="admin1234 or demo1234" value="demo1234" required>
+          <input class="login-input" type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password" required>
           <button type="button" id="toggle-password" class="login-password-toggle" tabindex="-1">
             <span id="eye-icon">👁️</span>
           </button>
@@ -255,20 +255,21 @@
       </div>
     </div>
   </div>
+  <script src="shop.js"></script>
   <script>
     // Show/hide password toggle
     const passwordInput = document.getElementById('login-password');
     const togglePassword = document.getElementById('toggle-password');
     const eyeIcon = document.getElementById('eye-icon');
-    togglePassword.addEventListener('click', function() {
-      if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        eyeIcon.textContent = '🙈';
-      } else {
-        passwordInput.type = 'password';
-        eyeIcon.textContent = '👁️';
-      }
-    });
+
+    if (togglePassword && passwordInput && eyeIcon) {
+      togglePassword.addEventListener('click', function() {
+        const showPassword = passwordInput.type === 'password';
+        passwordInput.type = showPassword ? 'text' : 'password';
+        eyeIcon.textContent = showPassword ? '🙈' : '👁️';
+        togglePassword.setAttribute('aria-label', showPassword ? 'Hide password' : 'Show password');
+      });
+    }
     document.getElementById('login-form').addEventListener('submit', function(e) {
       e.preventDefault();
       const email = document.getElementById('login-email').value.trim().toLowerCase();

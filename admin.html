@@ -30,7 +30,7 @@
   <div class="min-h-screen md:flex">
     <aside class="hidden md:flex md:w-64 md:flex-col bg-white border-r border-slate-200">
       <div class="h-16 px-5 flex items-center border-b border-slate-200">
-        <img src="buyit-logo.png" alt="Buy it" class="h-8 w-8 rounded" />
+        <img src="buyit-logo-tansperant.png" alt="Buy it" class="h-20 w-auto object-contain" />
         <span class="ml-3 text-lg font-bold">Admin Panel</span>
       </div>
       <nav class="p-3 space-y-1 flex-1">
@@ -108,7 +108,7 @@
 
       const totalOrders = orders.length;
       const pendingOrders = orders.filter(order => String(order.status || '').toLowerCase() === 'processing').length;
-      const activeProducts = products.filter(product => Number(product.stock || 0) > 0).length;
+      const activeProducts = products.filter(product => String(product.status || '').toLowerCase() === 'active').length;
       const totalRevenue = orders.reduce((sum, order) => sum + Number(order.amount || 0), 0);
 
       document.getElementById('kpi-total-orders').textContent = String(totalOrders);

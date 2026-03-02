@@ -238,6 +238,95 @@ const BUYIT_CATEGORY_ICON_MAP = {
     accessories: 'cable'
 };
 
+function slugifyCategory(value) {
+    return String(value || '')
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+
+function toCategoryLabel(slug) {
+    return String(slug || '')
+        .split('-')
+        .filter(Boolean)
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(' ');
+}
+
+try {
+    const adminCategories = JSON.parse(localStorage.getItem('buyit_admin_categories') || '[]');
+    if (Array.isArray(adminCategories)) {
+        adminCategories.forEach((entry) => {
+            const slug = slugifyCategory(entry?.slug || entry?.id || entry?.label || entry);
+            if (!slug) {
+                return;
+            }
+
+            BUYIT_CATEGORY_MAP[slug] = slug;
+            BUYIT_CATEGORY_DISPLAY_MAP[slug] = String(entry?.label || toCategoryLabel(slug));
+            if (!BUYIT_CATEGORY_ICON_MAP[slug]) {
+                BUYIT_CATEGORY_ICON_MAP[slug] = String(entry?.icon || 'category');
+            }
+        });
+    }
+} catch (_error) {
+    // Ignore malformed category payloads and keep defaults.
+}
+
+try {
+    const adminProductsRaw = localStorage.getItem('buyit_admin_products') || '[]';
+    const adminProducts = JSON.parse(adminProductsRaw);
+    if (Array.isArray(adminProducts)) {
+        adminProducts.forEach((entry) => {
+            const id = String(entry?.id || '').trim();
+            if (!id) {
+                return;
+            }
+
+            const title = String(entry?.title || entry?.name || '').trim() || 'Product';
+            const category = slugifyCategory(entry?.category || 'general') || 'general';
+            const image = String(entry?.image || 'buyit-logo.png').trim() || 'buyit-logo.png';
+            const price = parsePrice(entry?.price);
+            const regularPrice = parsePrice(entry?.regularPrice);
+            const status = String(entry?.status || '').trim().toLowerCase();
+            const inStock = typeof entry?.inStock === 'boolean'
+                ? entry.inStock
+                : status
+                    ? status === 'active'
+                    : true;
+
+            BUYIT_PRODUCT_CATALOG[id] = {
+                ...(BUYIT_PRODUCT_CATALOG[id] || {}),
+                id,
+                title,
+                category,
+                price,
+                regularPrice: regularPrice > 0 ? regularPrice : Math.round(price * BUYIT_REGULAR_PRICE_MULTIPLIER),
+                image,
+                localImage: image,
+                galleryImages: Array.isArray(entry?.galleryImages) && entry.galleryImages.length
+                    ? entry.galleryImages
+                    : [image],
+                specifications: Array.isArray(entry?.specifications) ? entry.specifications : [],
+                featured: Boolean(entry?.featured),
+                sortOrder: Number.isFinite(Number(entry?.sortOrder)) ? Number(entry.sortOrder) : Number.MAX_SAFE_INTEGER,
+                inStock
+            };
+
+            BUYIT_CATEGORY_MAP[category] = category;
+            if (!BUYIT_CATEGORY_DISPLAY_MAP[category]) {
+                BUYIT_CATEGORY_DISPLAY_MAP[category] = toCategoryLabel(category);
+            }
+            if (!BUYIT_CATEGORY_ICON_MAP[category]) {
+                BUYIT_CATEGORY_ICON_MAP[category] = 'category';
+            }
+        });
+    }
+} catch (_error) {
+    // Ignore malformed admin products and keep static catalog.
+}
+
 function normalizeCategory(value) {
     const cleaned = (value || '').toString().trim().toLowerCase();
     const compact = cleaned.replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim();
@@ -282,6 +371,32 @@ Object.values(BUYIT_PRODUCT_CATALOG).forEach((product) => {
     }
 });
 
+try {
+    const adminStatusMapRaw = localStorage.getItem('buyit_admin_product_status_map') || '{}';
+    const adminStatusMap = JSON.parse(adminStatusMapRaw);
+    if (adminStatusMap && typeof adminStatusMap === 'object') {
+        Object.keys(adminStatusMap).forEach((productId) => {
+            const catalogProduct = BUYIT_PRODUCT_CATALOG[productId];
+            if (!catalogProduct) {
+                return;
+            }
+
+            const override = adminStatusMap[productId] || {};
+            if (typeof override.inStock === 'boolean') {
+                catalogProduct.inStock = override.inStock;
+                return;
+            }
+
+            const normalizedStatus = String(override.status || '').trim().toLowerCase();
+            if (normalizedStatus) {
+                catalogProduct.inStock = normalizedStatus === 'active';
+            }
+        });
+    }
+} catch (_error) {
+    // Ignore invalid admin status payloads and keep default catalog availability.
+}
+
 function getProductById(productId) {
     if (!productId) {
         return null;
@@ -323,6 +438,54 @@ function formatINR(value) {
         currency: 'INR',
         maximumFractionDigits: 0
     }).format(parsePrice(value));
+}
+
+function getPasswordStrengthLevel(password, options = {}) {
+    const value = String(password || '');
+    const {
+        emptyLabel = '—',
+        easyLabel = 'Easy',
+        strongLabel = 'Strong',
+        veryStrongLabel = 'VeryStrong',
+        emptyClass = '',
+        easyClass = 'easy',
+        strongClass = 'strong',
+        veryStrongClass = 'verystrong'
+    } = options;
+
+    if (!value) {
+        return {
+            label: emptyLabel,
+            className: emptyClass,
+            score: 0
+        };
+    }
+
+    let score = 0;
+    if (value.length >= 8) score += 1;
+    if (/[a-z]/.test(value) && /[A-Z]/.test(value)) score += 1;
+    if (/\d/.test(value)) score += 1;
+    if (/[^A-Za-z0-9]/.test(value)) score += 1;
+
+    if (score <= 1) {
+        return {
+            label: easyLabel,
+            className: easyClass,
+            score
+        };
+    }
+    if (score <= 3) {
+        return {
+            label: strongLabel,
+            className: strongClass,
+            score
+        };
+    }
+    return {
+        label: veryStrongLabel,
+        className: veryStrongClass,
+        score
+    };
 }
 
 function findCatalogProduct(product) {
@@ -410,6 +573,7 @@ migrateStoredOrders();
 localStorage.setItem('buyit_cart', JSON.stringify(cart));
 localStorage.setItem('buyit_wishlist', JSON.stringify(wishlist));
 window.formatINR = formatINR;
+window.BUYIT_GET_PASSWORD_STRENGTH = getPasswordStrengthLevel;
 
 // Core Functions
 function saveState() {
@@ -541,6 +705,7 @@ function buyNow(product) {
     const normalizedProduct = normalizeProductInput(product);
     // Store as single-item buy now session (doesn't affect cart)
     sessionStorage.setItem('buyit_buynow', JSON.stringify({ ...normalizedProduct, quantity: 1 }));
+    sessionStorage.setItem('buyit_checkout_source', 'buyNow');
     window.location.href = 'checkout.html';
 }
 
