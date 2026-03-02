@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "import:firebase-env": "node scripts/import-firebase-env.js",
+    "import:firebase-env:clean": "node scripts/import-firebase-env.js --delete-env"
+  },
   "dependencies": {
     "firebase": "^12.10.0",
     "jsdom": "^28.1.0"
