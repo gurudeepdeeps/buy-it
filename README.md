@@ -8,7 +8,7 @@ A modern, multi-page e-commerce website built with HTML, CSS, and JavaScript. **
 
 - Responsive layout for desktop and mobile-friendly browsing
 - Complete storefront flow: home → product listing → product details → cart → checkout
-- User account pages: login, signup, profile, addresses, orders, wishlist
+- User account pages: login (Phone OTP / Google), profile, addresses, orders, wishlist
 - Policy and support pages for production-style UX
 - Dedicated admin pages for products, orders, and settings
 - Lightweight stack with no heavy framework dependencies
@@ -20,6 +20,36 @@ A modern, multi-page e-commerce website built with HTML, CSS, and JavaScript. **
 - **HTML5** for page structure
 - **CSS3** (`main.css`, `products.css`, `admin.css`) for styling and responsive behavior
 - **Vanilla JavaScript** (`shop.js`) for interactive storefront logic
+- **Firebase** for Authentication, Firestore, Functions, and Storage integration
+
+---
+
+## 🔐 Authentication
+
+- Login is **signup-free** and supports only:
+   - **Phone Number + OTP**
+   - **Continue with Google**
+- Account pages are protected using Firebase auth state checks.
+- Sign-out is handled with Firebase `signOut`.
+
+---
+
+## ✅ Firebase Console Checklist
+
+- **Authentication → Sign-in method**
+   - Enable **Phone** provider
+   - Enable **Google** provider
+- **Authentication → Settings → Authorized domains**
+   - Add `localhost`
+   - Add your production domain (for example, `buy-it-shop.netlify.app`)
+- **Firestore Database**
+   - Create database in production mode
+   - Select nearest region for your users
+   - Deploy rules/indexes from project (`firestore.rules`, `firestore.indexes.json`)
+- **Storage**
+   - Enable Firebase Storage in the same regional family
+   - Upload product images under `products/...` paths
+   - Deploy storage rules to allow controlled access
 
 ---
 
@@ -112,9 +142,7 @@ http://localhost:5500
 
 ### User & Account
 - `login.html`
-- `signup.html`
 - `account.html`
-- `account-clone.html`
 - `profile.html`
 - `addresses.html`
 - `orders.html`

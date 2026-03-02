@@ -7,8 +7,6 @@
   <link rel="icon" href="buyit-logo-tansperant.png" type="image/png">
   <link rel="stylesheet" href="main.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-  <!-- Material Symbols for eye icon -->
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
   <style>
                         .login-header {
                           display: flex;
@@ -17,25 +15,6 @@
                           justify-content: center;
                           margin-bottom: 18px;
                         }
-                    .forgot-link {
-                      display: block;
-                      text-align: right;
-                      color: #3b82f6;
-                      font-size: 0.97rem;
-                      font-weight: 500;
-                      margin-bottom: 8px;
-                      margin-top: 2px;
-                      text-decoration: none;
-                      background: none;
-                      border: none;
-                      cursor: pointer;
-                      padding: 0;
-                      transition: color 0.2s;
-                    }
-                    .forgot-link:hover {
-                      color: #2563eb;
-                      text-decoration: underline;
-                    }
                 .divider {
                   display: flex;
                   align-items: center;
@@ -169,22 +148,6 @@
       border-color: #3b82f6;
       box-shadow: 0 0 0 2px #3b82f633;
     }
-    .login-password-toggle {
-      position: absolute;
-      right: 8px;
-      top: 0;
-      height: 80px;
-      width: 36px;
-      background: none;
-      border: none;
-      color: #94a3b8;
-      cursor: pointer;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 2;
-    }
     .login-btn {
       width: 100%;
       background: #3b82f6;
@@ -214,18 +177,19 @@
     .login-footer a:hover {
       text-decoration: underline;
     }
-    #eye-icon.material-symbols-outlined {
-      font-size: 22px;
-      line-height: 1;
-      display: block;
-      pointer-events: none;
+    .otp-hidden {
+      display: none;
+    }
+    .otp-status {
+      text-align: left;
+      margin-top: 8px;
     }
   </style>
 </head>
 <body class="bg-background-light min-h-screen flex items-center justify-center">
   <div class="login-bg">
     <div class="login-card">
-            <button type="button" class="google-btn" tabindex="0">
+            <button type="button" id="google-login-btn" class="google-btn" tabindex="0">
               <span class="google-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48"><g><path fill="#4285F4" d="M24 9.5c3.54 0 6.7 1.22 9.19 3.23l6.85-6.85C35.64 2.39 30.18 0 24 0 14.82 0 6.71 5.48 2.69 13.44l7.98 6.2C12.13 13.09 17.62 9.5 24 9.5z"/><path fill="#34A853" d="M46.1 24.55c0-1.64-.15-3.22-.42-4.74H24v9.01h12.42c-.54 2.9-2.18 5.36-4.65 7.01l7.19 5.6C43.98 37.13 46.1 31.36 46.1 24.55z"/><path fill="#FBBC05" d="M10.67 28.13a14.5 14.5 0 0 1 0-8.26l-7.98-6.2A23.94 23.94 0 0 0 0 24c0 3.91.94 7.62 2.69 10.87l7.98-6.2z"/><path fill="#EA4335" d="M24 48c6.18 0 11.36-2.05 15.14-5.59l-7.19-5.6c-2 1.36-4.56 2.17-7.95 2.17-6.38 0-11.87-3.59-14.33-8.74l-7.98 6.2C6.71 42.52 14.82 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></g></svg>
               </span>
@@ -235,55 +199,106 @@
       <div class="login-header">
 
       </div>
-      <form id="login-form" autocomplete="off" class="login-form">
+      <form id="phone-login-form" autocomplete="off" class="login-form">
         <div class="login-form-email">
-          <label class="login-label" for="login-email">Email</label>
-          <input class="login-input" type="email" id="login-email" placeholder="Enter your email" autocomplete="username" required>
+          <label class="login-label" for="login-phone">Phone Number</label>
+          <input class="login-input" type="tel" id="login-phone" placeholder="Enter phone number" autocomplete="tel" required>
         </div>
-        <div class="login-form-password">
-          <label class="login-label" for="login-password">Password</label>
-          <input class="login-input" type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password" required>
-          <button type="button" id="toggle-password" class="login-password-toggle" tabindex="-1">
-            <span id="eye-icon">👁️</span>
-          </button>
+        <div class="login-form-email otp-hidden" id="otp-section">
+          <label class="login-label" for="login-otp">OTP</label>
+          <input class="login-input" type="text" id="login-otp" placeholder="Enter 6-digit OTP" inputmode="numeric" pattern="[0-9]{6}">
         </div>
-        <a href="#" class="forgot-link">Forgot password?</a>
-        <button type="submit" class="login-btn login-btn-margin">Sign In</button>
+        <button type="button" id="send-otp-btn" class="login-btn login-btn-margin">Send OTP</button>
+        <button type="button" id="verify-otp-btn" class="login-btn login-btn-margin otp-hidden">Verify OTP</button>
+        <p id="otp-status" class="login-footer otp-status"></p>
       </form>
-      <div class="login-footer login-footer-margin">
-        Don't have an account? <a href="signup.html">Sign up</a>
-      </div>
+      <div id="recaptcha-container"></div>
     </div>
   </div>
   <script src="shop.js"></script>
   <script src="firebase-runtime-config.js"></script>
   <script type="module">
     import { auth } from "./firebase-config.js";
-    import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import { GoogleAuthProvider, RecaptchaVerifier, signInWithPhoneNumber, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
-    // Show/hide password toggle
-    const passwordInput = document.getElementById('login-password');
-    const togglePassword = document.getElementById('toggle-password');
-    const eyeIcon = document.getElementById('eye-icon');
+    const googleLoginButton = document.getElementById('google-login-btn');
+    const phoneInput = document.getElementById('login-phone');
+    const otpInput = document.getElementById('login-otp');
+    const otpSection = document.getElementById('otp-section');
+    const sendOtpButton = document.getElementById('send-otp-btn');
+    const verifyOtpButton = document.getElementById('verify-otp-btn');
+    const otpStatus = document.getElementById('otp-status');
 
-    if (togglePassword && passwordInput && eyeIcon) {
-      togglePassword.addEventListener('click', function() {
-        const showPassword = passwordInput.type === 'password';
-        passwordInput.type = showPassword ? 'text' : 'password';
-        eyeIcon.textContent = showPassword ? '🙈' : '👁️';
-        togglePassword.setAttribute('aria-label', showPassword ? 'Hide password' : 'Show password');
-      });
-    }
-    document.getElementById('login-form').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const email = document.getElementById('login-email').value.trim().toLowerCase();
-      const password = document.getElementById('login-password').value;
+    let confirmationResult = null;
+    let recaptchaVerifier = null;
+    const googleProvider = new GoogleAuthProvider();
 
+    googleLoginButton.addEventListener('click', async () => {
+      otpStatus.textContent = 'Signing in with Google...';
       try {
-        await signInWithEmailAndPassword(auth, email, password);
+        await signInWithPopup(auth, googleProvider);
         window.location.href = 'account.html';
       } catch (error) {
-        alert(error.message);
+        otpStatus.textContent = error.message || 'Google sign-in failed. Please try again.';
+      }
+    });
+
+    function normalizePhone(value) {
+      const digits = String(value || '').replace(/\D/g, '');
+      if (digits.length === 10) {
+        return `+91${digits}`;
+      }
+      if (digits.length > 10 && String(value || '').trim().startsWith('+')) {
+        return `+${digits}`;
+      }
+      return '';
+    }
+
+    function getRecaptchaVerifier() {
+      if (!recaptchaVerifier) {
+        recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+          size: 'invisible'
+        });
+      }
+      return recaptchaVerifier;
+    }
+
+    sendOtpButton.addEventListener('click', async () => {
+      const phoneNumber = normalizePhone(phoneInput.value);
+      if (!phoneNumber) {
+        otpStatus.textContent = 'Enter a valid phone number with country code (example: +91XXXXXXXXXX).';
+        return;
+      }
+
+      otpStatus.textContent = 'Sending OTP...';
+      try {
+        confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, getRecaptchaVerifier());
+        otpSection.classList.remove('otp-hidden');
+        verifyOtpButton.classList.remove('otp-hidden');
+        sendOtpButton.classList.add('otp-hidden');
+        otpStatus.textContent = `OTP sent to ${phoneNumber}.`;
+      } catch (error) {
+        otpStatus.textContent = error.message || 'Failed to send OTP. Please try again.';
+      }
+    });
+
+    verifyOtpButton.addEventListener('click', async () => {
+      const otp = String(otpInput.value || '').trim();
+      if (!confirmationResult) {
+        otpStatus.textContent = 'Please request OTP first.';
+        return;
+      }
+      if (!/^\d{6}$/.test(otp)) {
+        otpStatus.textContent = 'Enter a valid 6-digit OTP.';
+        return;
+      }
+
+      otpStatus.textContent = 'Verifying OTP...';
+      try {
+        await confirmationResult.confirm(otp);
+        window.location.href = 'account.html';
+      } catch (error) {
+        otpStatus.textContent = error.message || 'Invalid OTP. Please try again.';
       }
     });
   </script>
