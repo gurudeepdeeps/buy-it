@@ -48,6 +48,9 @@
         getDoc(doc(db, 'users', user.uid))
       ]);
 
+      console.log('Admin claims:', idTokenResult.claims);
+      console.log('User doc:', userDocSnapshot.data());
+
       const isAdminByClaim = idTokenResult?.claims?.admin === true;
       const isAdminByDoc = userDocSnapshot.exists() && String(userDocSnapshot.data()?.role || '').toLowerCase() === 'admin';
 
