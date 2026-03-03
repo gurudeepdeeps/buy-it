@@ -117,13 +117,6 @@ service cloud.firestore {
       }
     }
 
-    match /users/{uid}/orders/{orderId} {
-      allow read: if isSelf(uid) || isAdmin();
-      allow create: if isSelf(uid) && validUserOrderCreate(uid);
-      allow update: if isAdmin();
-      allow delete: if isAdmin();
-    }
-
     match /admin/{doc=**} {
       allow read, write: if isAdmin();
     }
