@@ -213,13 +213,49 @@
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
         import { doc, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             const getCurrentUser = () => new Promise((resolve) => {
                 const unsubscribe = onAuthStateChanged(auth, (user) => {
                     unsubscribe();
                     resolve(user || null);
                 });
             });
+
+            const currentUser = await getCurrentUser();
+            const addressesKey = currentUser?.uid ? `buyit_addresses_${currentUser.uid}` : 'buyit_addresses';
+            const selectedAddressKey = currentUser?.uid ? `buyit_selected_address_${currentUser.uid}` : 'buyit_selected_address';
+
+            const parseAddresses = (raw) => {
+                try {
+                    const parsed = JSON.parse(raw || '[]');
+                    return Array.isArray(parsed) ? parsed : [];
+                } catch (_error) {
+                    return [];
+                }
+            };
+
+            const migrateLegacyAddressesIfNeeded = () => {
+                if (!currentUser?.uid) {
+                    return;
+                }
+
+                const scopedAddresses = parseAddresses(localStorage.getItem(addressesKey));
+                if (scopedAddresses.length > 0) {
+                    return;
+                }
+
+                const legacyAddresses = parseAddresses(localStorage.getItem('buyit_addresses'));
+                if (legacyAddresses.length === 0) {
+                    return;
+                }
+
+                localStorage.setItem(addressesKey, JSON.stringify(legacyAddresses));
+                const legacySelected = String(localStorage.getItem('buyit_selected_address') || '0');
+                localStorage.setItem(selectedAddressKey, legacySelected);
+            };
+
+            const readAddresses = () => parseAddresses(localStorage.getItem(addressesKey));
+            const getSelectedAddressIndex = () => parseInt(localStorage.getItem(selectedAddressKey) || '0', 10);
 
             const SHIPPING = 1245;
             const fmt = n => typeof window.formatINR === 'function'
@@ -237,8 +273,10 @@
             const editAddressBtn = document.getElementById('edit-address-btn');
             const placeOrderBtn = document.getElementById('place-order-btn');
 
-            let addresses = JSON.parse(localStorage.getItem('buyit_addresses') || '[]');
-            let selectedAddressIndex = parseInt(localStorage.getItem('buyit_selected_address') || '0', 10);
+            migrateLegacyAddressesIfNeeded();
+
+            let addresses = readAddresses();
+            let selectedAddressIndex = getSelectedAddressIndex();
             const storedSource = sessionStorage.getItem('buyit_checkout_source');
             const buyNowRaw = sessionStorage.getItem('buyit_buynow');
 
@@ -299,7 +337,8 @@
                 }
 
                 addresses = JSON.parse(localStorage.getItem('buyit_addresses') || '[]');
-                selectedAddressIndex = parseInt(localStorage.getItem('buyit_selected_address') || '0', 10);
+                addresses = readAddresses();
+                selectedAddressIndex = getSelectedAddressIndex();
 
                 if (!addresses.length) {
                     addressContainer.innerHTML = '<div class="text-sm text-text-sub-light">No address found. <a href="addresses.html" class="text-primary underline">Add an address</a>.</div>';
@@ -312,7 +351,7 @@
 
                 if (!Number.isFinite(selectedAddressIndex) || selectedAddressIndex < 0 || selectedAddressIndex >= addresses.length) {
                     selectedAddressIndex = 0;
-                    localStorage.setItem('buyit_selected_address', '0');
+                    localStorage.setItem(selectedAddressKey, '0');
                 }
 
                 let html = '<select id="address-select" class="border border-slate-300 rounded-lg px-3 py-2 w-full max-w-lg mb-2">';
@@ -327,7 +366,7 @@
                 const select = document.getElementById('address-select');
                 if (select) {
                     select.addEventListener('change', () => {
-                        localStorage.setItem('buyit_selected_address', String(select.value));
+                        localStorage.setItem(selectedAddressKey, String(select.value));
                         renderAddressSelector();
                     });
                 }
@@ -444,8 +483,8 @@
                         return;
                     }
 
-                    const currentAddresses = JSON.parse(localStorage.getItem('buyit_addresses') || '[]');
-                    const selectedIndex = parseInt(localStorage.getItem('buyit_selected_address') || '0', 10);
+                    const currentAddresses = readAddresses();
+                    const selectedIndex = getSelectedAddressIndex();
                     const selectedAddress = currentAddresses[selectedIndex] || null;
 
                     if (!selectedAddress) {
@@ -472,6 +511,8 @@
                         const orderId = `ORD-${Date.now()}`;
                         const placedAtIso = new Date().toISOString();
 
+                        const user = await getCurrentUser();
+
                         const order = {
                             id: orderId,
                             items: normalizedItems,
@@ -481,10 +522,10 @@
                             totalAmount,
                             placedAt: placedAtIso,
                             date: placedAtIso,
-                            customer: `${selectedAddress['first-name'] || ''} ${selectedAddress['last-name'] || ''}`.trim() || 'Guest Customer'
+                            customer: `${selectedAddress['first-name'] || ''} ${selectedAddress['last-name'] || ''}`.trim() || 'Guest Customer',
+                            uid: user?.uid || null
                         };
 
-                        const user = await getCurrentUser();
                         if (user?.uid) {
                             const firestorePayload = {
                                 ...order,

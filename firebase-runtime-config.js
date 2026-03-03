@@ -7,3 +7,9 @@ window.BUYIT_FIREBASE_CONFIG = {
   "appId": "1:375235910142:web:7c56a6b193bb1dfd8f48af",
   "measurementId": "G-CJMB9FX0YR"
 };
+
+window.BUYIT_EMAILJS_CONFIG = {
+  "publicKey": "lBmXG8tGaZQdtooNp",
+  "serviceId": "service_buyit",
+  "templateId": "template_buyit"
+};

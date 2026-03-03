@@ -33,6 +33,20 @@
       }
   </script>
   <link rel="stylesheet" href="main.css">
+  <script src="firebase-runtime-config.js"></script>
+  <script type="module">
+    import { auth } from "./firebase-config.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+    document.documentElement.style.visibility = 'hidden';
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.replace('login.html');
+        return;
+      }
+      document.documentElement.style.visibility = '';
+    });
+  </script>
   <style>
     .add-address-btn-row { margin-bottom: 2.8rem; display: flex; justify-content: center; width: 100%; }
     .address-form-grid .address-checkbox-label.span-2 { grid-column: span 2; }
@@ -254,15 +268,21 @@
       </div>
   </footer>
 
-  <script src="firebase-runtime-config.js"></script>
   <script type="module">
     import { auth } from "./firebase-config.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        window.location.href = 'login.html';
-      }
+    window.BUYIT_AUTH_READY = new Promise((resolve) => {
+      onAuthStateChanged(auth, (user) => {
+        if (!user) {
+          window.location.href = 'login.html';
+          resolve(null);
+          return;
+        }
+
+        window.BUYIT_ACTIVE_UID = String(user.uid || '').trim();
+        resolve(user);
+      });
     });
 
     const logoutButton = document.getElementById('addresses-logout');
@@ -280,14 +300,56 @@
     }
   </script>
 
-  <script>
-    function readAddresses() {
+  <script type="module">
+    const authUser = await (window.BUYIT_AUTH_READY || Promise.resolve(null));
+    const activeUid = String(authUser?.uid || window.BUYIT_ACTIVE_UID || '').trim();
+    const addressesKey = activeUid ? `buyit_addresses_${activeUid}` : 'buyit_addresses';
+    const selectedAddressKey = activeUid ? `buyit_selected_address_${activeUid}` : 'buyit_selected_address';
+
+    function parseAddresses(raw) {
       try {
-        const parsed = JSON.parse(localStorage.getItem('buyit_addresses') || '[]');
+        const parsed = JSON.parse(raw || '[]');
         return Array.isArray(parsed) ? parsed : [];
       } catch {
         return [];
       }
+    }
+
+    function migrateLegacyAddressesIfNeeded() {
+      if (!activeUid) {
+        return;
+      }
+
+      const scopedAddresses = parseAddresses(localStorage.getItem(addressesKey));
+      if (scopedAddresses.length > 0) {
+        return;
+      }
+
+      const legacyAddresses = parseAddresses(localStorage.getItem('buyit_addresses'));
+      if (legacyAddresses.length === 0) {
+        return;
+      }
+
+      localStorage.setItem(addressesKey, JSON.stringify(legacyAddresses));
+
+      const legacySelected = String(localStorage.getItem('buyit_selected_address') || '0');
+      localStorage.setItem(selectedAddressKey, legacySelected);
+    }
+
+    function readAddresses() {
+      return parseAddresses(localStorage.getItem(addressesKey));
+    }
+
+    function saveAddresses(addresses) {
+      localStorage.setItem(addressesKey, JSON.stringify(addresses));
+    }
+
+    function getSelectedAddressIndex() {
+      return parseInt(localStorage.getItem(selectedAddressKey) || '0', 10);
+    }
+
+    function setSelectedAddressIndex(index) {
+      localStorage.setItem(selectedAddressKey, String(index));
     }
 
     function escapeHtml(value) {
@@ -302,7 +364,7 @@
     function renderSavedAddresses() {
       const container = document.getElementById('saved-addresses');
       const addresses = readAddresses();
-      const selectedAddressIndex = parseInt(localStorage.getItem('buyit_selected_address') || '0', 10);
+      const selectedAddressIndex = getSelectedAddressIndex();
 
       if (!addresses.length) {
         container.innerHTML = '<div class="saved-address-line">No saved addresses yet.</div>';
@@ -324,6 +386,8 @@
       }).join('');
     }
 
+    migrateLegacyAddressesIfNeeded();
+
     document.querySelector('.address-form').addEventListener('submit', function(e) {
       e.preventDefault();
       const form = e.target;
@@ -340,10 +404,10 @@
 
       let addresses = readAddresses();
       addresses.push(address);
-      localStorage.setItem('buyit_addresses', JSON.stringify(addresses));
+      saveAddresses(addresses);
 
       if (addresses.length === 1) {
-        localStorage.setItem('buyit_selected_address', addresses.length - 1);
+        setSelectedAddressIndex(addresses.length - 1);
       }
 
       form.reset();

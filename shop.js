@@ -613,6 +613,92 @@ function updateAccountAvatarPlaceholders() {
     });
 }
 
+function setAccountLinkState(isLoggedIn) {
+    const accountLinks = [];
+    const seen = new Set();
+
+    const addAccountLink = (link) => {
+        if (!link || seen.has(link)) {
+            return;
+        }
+        seen.add(link);
+        accountLinks.push(link);
+    };
+
+    document.querySelectorAll('a[title="Account / Login"], a[title="Login"], a[title="Account"]').forEach(addAccountLink);
+    document.querySelectorAll('img[alt="User Avatar"]').forEach((avatar) => addAccountLink(avatar.closest('a')));
+    document.querySelectorAll('.buyit-login-label').forEach((label) => addAccountLink(label.closest('a')));
+
+    const defaultHoverClasses = ['hover:bg-slate-50', 'hover:text-primary'];
+    const loginHighlightClasses = [
+        'bg-primary',
+        'text-white',
+        'border-primary',
+        'shadow-md',
+        'ring-4',
+        'ring-primary/30',
+        'transition-all',
+        'duration-200',
+        'hover:bg-primary',
+        'hover:text-white',
+        'hover:shadow-lg',
+        'hover:-translate-y-0.5'
+    ];
+    accountLinks.forEach((link) => {
+        const avatarContainer = link.querySelector('div');
+        let loginLabel = link.querySelector('.buyit-login-label');
+
+        if (isLoggedIn) {
+            link.href = 'account.html';
+            link.title = 'Account';
+            link.classList.remove(...loginHighlightClasses);
+            link.classList.add(...defaultHoverClasses);
+            if (avatarContainer) {
+                avatarContainer.classList.remove('hidden');
+            }
+            if (loginLabel) {
+                loginLabel.remove();
+            }
+            return;
+        }
+
+        link.href = 'login.html';
+        link.title = 'Login';
+        link.classList.remove(...defaultHoverClasses);
+        link.classList.add(...loginHighlightClasses);
+        if (avatarContainer) {
+            avatarContainer.classList.add('hidden');
+        }
+
+        if (!loginLabel) {
+            loginLabel = document.createElement('span');
+            loginLabel.className = 'buyit-login-label text-sm font-semibold text-white px-2';
+            loginLabel.textContent = 'Login';
+            link.appendChild(loginLabel);
+        }
+    });
+}
+
+async function initAccountHeaderAuthState() {
+    setAccountLinkState(false);
+    try {
+        const [{ auth }, { onAuthStateChanged }] = await Promise.all([
+            import('./firebase-config.js'),
+            import('https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js')
+        ]);
+
+        onAuthStateChanged(auth, (user) => {
+            const isLoggedIn = !!user;
+            setAccountLinkState(isLoggedIn);
+            if (isLoggedIn) {
+                updateAccountAvatarPlaceholders();
+            }
+        });
+    } catch (error) {
+        setAccountLinkState(false);
+    }
+}
+
 // Action Functions
 function addToCart(product) {
     const normalizedProduct = normalizeProductInput(product);
@@ -711,4 +797,5 @@ document.addEventListener('DOMContentLoaded', () => {
     updateHeaderCounts();
     updateWishlistButtons();
     updateAccountAvatarPlaceholders();
+    initAccountHeaderAuthState();
 });

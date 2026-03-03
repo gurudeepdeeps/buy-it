@@ -33,6 +33,20 @@
       }
   </script>
   <link rel="stylesheet" href="main.css">
+  <script src="firebase-runtime-config.js"></script>
+  <script type="module">
+    import { auth } from "./firebase-config.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+    document.documentElement.style.visibility = 'hidden';
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.replace('login.html');
+        return;
+      }
+      document.documentElement.style.visibility = '';
+    });
+  </script>
   <style>
     .container { max-width: 900px; margin: 2rem auto; background: #fff; border-radius: 1.5rem; box-shadow: 0 2px 12px 0 rgba(16,24,40,0.10); padding: 2.5rem 2rem; }
     .title { color: #ed1c24; font-size: 2.1rem; font-weight: 700; margin-bottom: 2rem; text-align: center; }
@@ -148,18 +162,58 @@
       </div>
   </footer>
 
-  <script src="firebase-runtime-config.js"></script>
   <script type="module">
-    import { auth } from "./firebase-config.js";
+    import { auth, db } from "./firebase-config.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-    onAuthStateChanged(auth, (user) => {
+    const logoutButton = document.getElementById('orders-logout');
+
+    async function loadCustomerOrders(user) {
+      const userOrdersRef = collection(db, 'users', user.uid, 'orders');
+      const snapshot = await getDocs(userOrdersRef);
+
+      const firestoreOrders = snapshot.docs.map((docSnapshot) => {
+        const data = docSnapshot.data() || {};
+        return {
+          id: String(data.id || docSnapshot.id),
+          items: Array.isArray(data.items) ? data.items : [],
+          address: data.address || null,
+          status: String(data.status || 'Processing'),
+          amount: Number(data.amount || data.totalAmount || 0),
+          totalAmount: Number(data.totalAmount || data.amount || 0),
+          placedAt: data.placedAt || data.date || new Date().toISOString(),
+          date: data.date || data.placedAt || new Date().toISOString(),
+          customer: String(data.customer || '').trim(),
+          uid: String(data.uid || user.uid)
+        };
+      });
+
+      firestoreOrders.sort((a, b) => new Date(b.placedAt).getTime() - new Date(a.placedAt).getTime());
+      return firestoreOrders;
+    }
+
+    onAuthStateChanged(auth, async (user) => {
       if (!user) {
         window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        const customerOrders = await loadCustomerOrders(user);
+        localStorage.setItem('buyit_orders', JSON.stringify(customerOrders));
+        if (typeof window.renderOrders === 'function') {
+          window.renderOrders(customerOrders);
+        }
+      } catch (_error) {
+        const localOrders = JSON.parse(localStorage.getItem('buyit_orders') || '[]');
+        const customerOrders = (Array.isArray(localOrders) ? localOrders : []).filter((order) => String(order?.uid || '') === String(user.uid));
+        if (typeof window.renderOrders === 'function') {
+          window.renderOrders(customerOrders);
+        }
       }
     });
 
-    const logoutButton = document.getElementById('orders-logout');
     if (logoutButton) {
       logoutButton.addEventListener('click', async () => {
         try {
@@ -186,8 +240,8 @@
     }
     const stageColors = ['#ed1c24', '#f59e42', '#1e90ff', '#0a7c1c'];
 
-    function renderOrders() {
-      const orders = JSON.parse(localStorage.getItem('buyit_orders') || '[]');
+    function renderOrders(ordersInput) {
+      const orders = Array.isArray(ordersInput) ? ordersInput : [];
       const container = document.getElementById('orders-list');
       const formatINRLocal = (value) => typeof window.formatINR === 'function'
         ? window.formatINR(value)
@@ -248,7 +302,7 @@
       }).join('');
     }
 
-    document.addEventListener('DOMContentLoaded', renderOrders);
+    window.renderOrders = renderOrders;
   </script>
   <script src="shop.js"></script>
 </body>

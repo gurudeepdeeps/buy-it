@@ -237,7 +237,7 @@
   <script src="firebase-runtime-config.js"></script>
   <script type="module">
     import { auth, db } from "./firebase-config.js";
-    import { GoogleAuthProvider, RecaptchaVerifier, getRedirectResult, signInWithPhoneNumber, signInWithPopup, signInWithRedirect, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import { GoogleAuthProvider, RecaptchaVerifier, getRedirectResult, onAuthStateChanged, signInWithPhoneNumber, signInWithPopup, signInWithRedirect, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
     import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
     const googleLoginButton = document.getElementById('google-login-btn');
@@ -273,7 +273,7 @@
     async function redirectAfterLogin(user) {
       const isAdmin = await isAdminUser(user);
       if (isAdmin) {
-        window.location.href = 'admin.html';
+        window.location.replace('admin.html');
         return;
       }
 
@@ -283,7 +283,7 @@
         return;
       }
 
-      window.location.href = 'index.html';
+      window.location.replace('index.html');
     }
 
     function getFriendlyAuthErrorMessage(error, fallbackMessage) {
@@ -329,6 +329,14 @@
 
       otpStatus.classList.add('otp-status-info');
     }
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        return;
+      }
+      redirectAfterLogin(user).catch(() => {
+      });
+    });
 
     getRedirectResult(auth)
       .then((result) => {
