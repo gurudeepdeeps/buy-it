@@ -45,7 +45,7 @@ service cloud.firestore {
       return request.resource.data.uid == uid
         && request.resource.data.status is string
         && request.resource.data.totalAmount is number
-        && request.resource.data.createdAt != null;
+        && request.resource.data.placedAt != null;
     }
 
     function validAddressWrite(uid) {
