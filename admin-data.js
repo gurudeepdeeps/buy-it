@@ -292,6 +292,13 @@
     return storefrontOrders;
   }
 
+  function setOrders(orders) {
+    const normalized = (Array.isArray(orders) ? orders : [])
+      .map((order, index) => normalizeOrder(order, index));
+    saveOrders(normalized);
+    return normalized;
+  }
+
   function updateOrderStatus(orderId, nextStatus) {
     const orders = getOrders();
     const nextOrders = orders.map((order) => {
@@ -305,6 +312,13 @@
     });
     saveOrders(nextOrders);
     return nextOrders;
+  }
+
+  function deleteOrder(orderId) {
+    const orders = getOrders();
+    const nextOrders = orders.filter((order) => String(order.id) !== String(orderId));
+    saveOrders(nextOrders);
+    return nextOrders.length !== orders.length;
   }
 
   function getSettings() {
@@ -361,7 +375,9 @@
     renameCategory,
     deleteCategory,
     getOrders,
+    setOrders,
     updateOrderStatus,
+    deleteOrder,
     getSettings,
     saveSettings,
     formatCurrency,

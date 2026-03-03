@@ -30,9 +30,6 @@
 <script>
 // Category filter logic
 document.addEventListener('DOMContentLoaded', async function() {
-    if (window.BUYIT_PRODUCTS_READY) {
-        await window.BUYIT_PRODUCTS_READY;
-    }
     const sharedNormalizeCategory = typeof window.BUYIT_NORMALIZE_CATEGORY === 'function'
         ? window.BUYIT_NORMALIZE_CATEGORY
         : null;
@@ -289,7 +286,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             </div>
             <div id="category-grid-products" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6"></div>
         </section>
-        <div id="products-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+        <div id="products-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 transition-opacity duration-300"></div>
         <div class="mt-12 flex justify-center">
             <button id="load-more-btn" onclick="loadMoreProducts()"
                 class="flex items-center gap-2 px-8 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 active:scale-95 transition-all duration-200 shadow-md hover:shadow-lg">
@@ -718,6 +715,37 @@ document.addEventListener('DOMContentLoaded', async function() {
         let catalogProductsForGrid = [];
         let renderedProductCount = 0;
         let activeSearchQuery = String(window.BUYIT_ACTIVE_SEARCH_QUERY || '').trim().toLowerCase();
+        let isCatalogLoading = true;
+
+        function hasCatalogData() {
+            return Boolean(window.BUYIT_PRODUCT_CATALOG && Object.keys(window.BUYIT_PRODUCT_CATALOG).length > 0);
+        }
+
+        function renderProductSkeletons(count = PRODUCT_CARD_BATCH_SIZE) {
+            const grid = document.getElementById('products-grid');
+            if (!grid) {
+                return;
+            }
+
+            const skeletonCard = `
+                <div class="group bg-surface-light rounded-xl border border-border-light overflow-hidden flex flex-col animate-pulse">
+                    <div class="relative aspect-[4/3] bg-slate-100 overflow-hidden p-8 flex items-center justify-center">
+                        <div class="h-24 w-24 rounded-lg bg-slate-200"></div>
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col">
+                        <div class="h-3 w-20 bg-slate-200 rounded mb-2"></div>
+                        <div class="h-4 w-4/5 bg-slate-200 rounded mb-3"></div>
+                        <div class="flex gap-2 mb-4">
+                            <div class="h-5 w-16 bg-slate-200 rounded"></div>
+                            <div class="h-5 w-14 bg-slate-200 rounded"></div>
+                        </div>
+                        <div class="h-5 w-24 bg-slate-200 rounded mb-4 mt-auto"></div>
+                        <div class="h-9 w-full bg-slate-200 rounded"></div>
+                    </div>
+                </div>`;
+
+            grid.innerHTML = Array.from({ length: count }).map(() => skeletonCard).join('');
+        }
 
         function getSelectedSortOrder() {
             const select = document.getElementById('sort-select');
@@ -838,7 +866,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             card.className = 'group bg-surface-light rounded-xl border border-border-light overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 flex flex-col';
             card.innerHTML = `
                 <div class="relative aspect-[4/3] bg-white overflow-hidden p-8 flex items-center justify-center">
-                    <img alt="${safeTitle}" class="w-auto h-full max-h-[90%] object-contain group-hover:scale-105 transition-transform duration-500 cursor-pointer" src="${escapeHtml(product.img)}" />
+                    <img alt="${safeTitle}" loading="lazy" decoding="async" class="w-auto h-full max-h-[90%] object-contain group-hover:scale-105 transition-transform duration-500 cursor-pointer" src="${escapeHtml(product.img)}" />
                     <button data-wishlist-id="${product.id}" class="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full text-text-secondary-light hover:text-red-500 transition-colors"><span class="material-symbols-outlined text-[20px]">favorite</span></button>
                 </div>
                 <div class="p-4 flex-1 flex flex-col">
@@ -860,6 +888,15 @@ document.addEventListener('DOMContentLoaded', async function() {
         function syncLoadMoreButton() {
             const btn = document.getElementById('load-more-btn');
             if (!btn) {
+                return;
+            }
+
+            if (isCatalogLoading && !hasCatalogData()) {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span> Loading products...';
+                if (!btn.className.includes('bg-slate-400')) {
+                    btn.className = btn.className.replace('bg-primary hover:bg-primary/90', 'bg-slate-400 cursor-default');
+                }
                 return;
             }
 
@@ -914,10 +951,31 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (!grid) {
                 return;
             }
+
+            if (isCatalogLoading && !hasCatalogData()) {
+                catalogProductsForGrid = [];
+                renderedProductCount = 0;
+                renderProductSkeletons(PRODUCT_CARD_BATCH_SIZE);
+                syncLoadMoreButton();
+                return;
+            }
+
             catalogProductsForGrid = buildVisibleCatalogProducts();
             renderedProductCount = 0;
+
+            const shouldFadeIn = grid.children.length > 0;
+            if (shouldFadeIn) {
+                grid.classList.add('opacity-0');
+            }
+
             grid.innerHTML = '';
             renderNextProductBatch(PRODUCT_CARD_BATCH_SIZE);
+
+            if (shouldFadeIn) {
+                window.requestAnimationFrame(() => {
+                    grid.classList.remove('opacity-0');
+                });
+            }
         }
 
         function bindProductsSearch() {
@@ -928,6 +986,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
 
             let activeSuggestionIndex = -1;
+            let searchDebounceTimeoutId = null;
 
             if (window.BUYIT_ACTIVE_SEARCH_QUERY && !searchInput.value) {
                 searchInput.value = window.BUYIT_ACTIVE_SEARCH_QUERY;
@@ -1003,8 +1062,14 @@ document.addEventListener('DOMContentLoaded', async function() {
             };
 
             searchInput.addEventListener('input', () => {
-                applySearchValue(searchInput.value || '');
-                renderSuggestions(searchInput.value || '');
+                const rawValue = searchInput.value || '';
+                if (searchDebounceTimeoutId) {
+                    window.clearTimeout(searchDebounceTimeoutId);
+                }
+                searchDebounceTimeoutId = window.setTimeout(() => {
+                    applySearchValue(rawValue);
+                    renderSuggestions(rawValue);
+                }, 180);
             });
 
             searchInput.addEventListener('focus', () => {
@@ -1090,17 +1155,25 @@ document.addEventListener('DOMContentLoaded', async function() {
                 btn.innerHTML = '<span class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span> Loading...';
             }
 
-            setTimeout(() => {
-                renderNextProductBatch(PRODUCT_CARD_BATCH_SIZE);
-            }, 500);
+            renderNextProductBatch(PRODUCT_CARD_BATCH_SIZE);
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
             bindProductsSearch();
-            if (window.BUYIT_PRODUCTS_READY) {
-                await window.BUYIT_PRODUCTS_READY;
-            }
+            isCatalogLoading = !hasCatalogData();
             initializeCatalogDrivenGrid();
+
+            window.addEventListener('buyitProductsLoaded', () => {
+                isCatalogLoading = false;
+                initializeCatalogDrivenGrid();
+            });
+
+            if (window.BUYIT_PRODUCTS_READY && typeof window.BUYIT_PRODUCTS_READY.finally === 'function') {
+                window.BUYIT_PRODUCTS_READY.finally(() => {
+                    isCatalogLoading = false;
+                    initializeCatalogDrivenGrid();
+                });
+            }
         });
     </script>
 </body>

@@ -70,9 +70,132 @@
     </main>
   </div>
 
+  <div id="admin-toast" class="fixed bottom-4 right-4 z-50 hidden max-w-xs rounded-lg px-4 py-3 text-sm font-medium shadow-lg"></div>
+
+  <script type="module">
+    import { db } from './firebase-config.js';
+    import { collection, collectionGroup, deleteDoc, doc, documentId, getDocs, query, updateDoc, where, writeBatch } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
+
+    async function loadOrdersFromCloud() {
+      try {
+        const [topLevelOrdersSnapshot, groupedOrdersSnapshot] = await Promise.all([
+          getDocs(collection(db, 'orders')).catch(() => null),
+          getDocs(collectionGroup(db, 'orders')).catch(() => null)
+        ]);
+
+        const orderByPath = new Map();
+        const appendOrders = (snapshot) => {
+          if (!snapshot?.docs?.length) {
+            return;
+          }
+          snapshot.docs.forEach((docSnapshot) => {
+            orderByPath.set(docSnapshot.ref.path, {
+              id: docSnapshot.id,
+              ...(docSnapshot.data() || {})
+            });
+          });
+        };
+
+        appendOrders(topLevelOrdersSnapshot);
+        appendOrders(groupedOrdersSnapshot);
+
+        const orders = Array.from(orderByPath.values());
+        return { ok: true, orders };
+      } catch (_error) {
+        return { ok: false, orders: [] };
+      }
+    }
+
+    async function updateOrderStatusEverywhere(orderId, nextStatus) {
+      const normalizedId = String(orderId || '').trim();
+      if (!normalizedId) {
+        return { ok: false, updated: 0, reason: 'invalid-id' };
+      }
+
+      try {
+        const groupedOrders = await getDocs(
+          query(collectionGroup(db, 'orders'), where(documentId(), '==', normalizedId))
+        );
+
+        if (!groupedOrders.empty) {
+          const batch = writeBatch(db);
+          groupedOrders.docs.forEach((docSnapshot) => {
+            batch.update(docSnapshot.ref, { status: String(nextStatus || 'Processing') });
+          });
+          await batch.commit();
+          return { ok: true, updated: groupedOrders.size };
+        }
+
+        await updateDoc(doc(db, 'orders', normalizedId), { status: String(nextStatus || 'Processing') });
+        return { ok: true, updated: 1 };
+      } catch (_error) {
+        return { ok: false, updated: 0, reason: 'cloud-update-failed' };
+      }
+    }
+
+    async function deleteOrderEverywhere(orderId) {
+      const normalizedId = String(orderId || '').trim();
+      if (!normalizedId) {
+        return { ok: false, deleted: 0, reason: 'invalid-id' };
+      }
+
+      try {
+        const groupedOrders = await getDocs(
+          query(collectionGroup(db, 'orders'), where(documentId(), '==', normalizedId))
+        );
+
+        if (!groupedOrders.empty) {
+          const batch = writeBatch(db);
+          groupedOrders.docs.forEach((docSnapshot) => {
+            batch.delete(docSnapshot.ref);
+          });
+          await batch.commit();
+          return { ok: true, deleted: groupedOrders.size };
+        }
+
+        await deleteDoc(doc(db, 'orders', normalizedId));
+        return { ok: true, deleted: 1 };
+      } catch (_error) {
+        return { ok: false, deleted: 0, reason: 'cloud-delete-failed' };
+      }
+    }
+
+    window.AdminOrdersCloud = {
+      loadOrdersFromCloud,
+      updateOrderStatusEverywhere,
+      deleteOrderEverywhere
+    };
+  </script>
+
   <script>
     const ORDER_STATUSES = ['Processing', 'Shipped', 'Delivered', 'Cancelled'];
     let isUpdatingOrderStatus = false;
+    let toastTimeoutId = null;
+
+    function showToast(message, type) {
+      const toast = document.getElementById('admin-toast');
+      if (!toast) {
+        return;
+      }
+
+      if (toastTimeoutId) {
+        window.clearTimeout(toastTimeoutId);
+      }
+
+      toast.className = 'fixed bottom-4 right-4 z-50 max-w-xs rounded-lg px-4 py-3 text-sm font-medium shadow-lg';
+      if (type === 'success') {
+        toast.classList.add('bg-green-600', 'text-white');
+      } else {
+        toast.classList.add('bg-red-600', 'text-white');
+      }
+
+      toast.textContent = message;
+      toast.classList.remove('hidden');
+
+      toastTimeoutId = window.setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 2400);
+    }
 
     function setOrderStatusUpdateInProgress(inProgress) {
       isUpdatingOrderStatus = Boolean(inProgress);
@@ -80,6 +203,11 @@
         select.disabled = isUpdatingOrderStatus;
         select.classList.toggle('opacity-70', isUpdatingOrderStatus);
         select.classList.toggle('cursor-not-allowed', isUpdatingOrderStatus);
+      });
+      document.querySelectorAll('[data-action="delete"]').forEach((button) => {
+        button.disabled = isUpdatingOrderStatus;
+        button.classList.toggle('opacity-70', isUpdatingOrderStatus);
+        button.classList.toggle('cursor-not-allowed', isUpdatingOrderStatus);
       });
     }
 
@@ -108,7 +236,10 @@
           + '<td class="px-4 py-3">' + amount + '</td>'
           + '<td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs ' + badgeClass + '">' + status + '</span></td>'
           + '<td class="px-4 py-3">'
-          + '<select class="rounded border-slate-200 text-xs" data-action="status" data-id="' + id + '">' + selectOptions + '</select>'
+            + '<div class="flex items-center gap-2">'
+            + '<select class="rounded border-slate-200 text-xs" data-action="status" data-id="' + id + '">' + selectOptions + '</select>'
+            + '<button type="button" class="px-2 py-1 rounded border border-red-200 text-red-600 text-xs hover:bg-red-50" data-action="delete" data-id="' + id + '">Delete</button>'
+            + '</div>'
           + '</td>'
           + '</tr>';
       }).join('');
@@ -121,8 +252,57 @@
           const orderId = select.getAttribute('data-id');
           try {
             setOrderStatusUpdateInProgress(true);
+            if (window.AdminOrdersCloud && typeof window.AdminOrdersCloud.updateOrderStatusEverywhere === 'function') {
+              const cloudResult = await window.AdminOrdersCloud.updateOrderStatusEverywhere(orderId, select.value);
+              if (!cloudResult.ok) {
+                showToast('Failed to sync status to cloud.', 'error');
+                renderOrders();
+                return;
+              }
+            }
             window.AdminData.updateOrderStatus(orderId, select.value);
             renderOrders();
+            showToast('Order status updated.', 'success');
+          } catch (_error) {
+            showToast('Failed to update order status.', 'error');
+            renderOrders();
+          } finally {
+            setOrderStatusUpdateInProgress(false);
+          }
+        });
+      });
+
+      tbody.querySelectorAll('[data-action="delete"]').forEach((button) => {
+        button.addEventListener('click', async () => {
+          if (isUpdatingOrderStatus) {
+            return;
+          }
+
+          const orderId = button.getAttribute('data-id');
+          const shouldDelete = window.confirm('Delete this order? This action cannot be undone.');
+          if (!shouldDelete) {
+            return;
+          }
+
+          try {
+            setOrderStatusUpdateInProgress(true);
+            if (window.AdminOrdersCloud && typeof window.AdminOrdersCloud.deleteOrderEverywhere === 'function') {
+              const cloudResult = await window.AdminOrdersCloud.deleteOrderEverywhere(orderId);
+              if (!cloudResult.ok) {
+                showToast('Failed to delete order from cloud.', 'error');
+                return;
+              }
+            }
+
+            const deleted = window.AdminData.deleteOrder(orderId);
+            renderOrders();
+            if (deleted) {
+              showToast('Order deleted successfully.', 'success');
+            } else {
+              showToast('Order could not be deleted.', 'error');
+            }
+          } catch (_error) {
+            showToast('Failed to delete order.', 'error');
           } finally {
             setOrderStatusUpdateInProgress(false);
           }
@@ -141,6 +321,23 @@
     }
 
     renderOrders();
+
+    (async function hydrateOrdersFromCloud() {
+      if (!window.AdminOrdersCloud || typeof window.AdminOrdersCloud.loadOrdersFromCloud !== 'function') {
+        return;
+      }
+
+      const result = await window.AdminOrdersCloud.loadOrdersFromCloud();
+      if (!result.ok) {
+        showToast('Using local order data (cloud unavailable).', 'error');
+        return;
+      }
+
+      if (typeof window.AdminData.setOrders === 'function') {
+        window.AdminData.setOrders(result.orders);
+      }
+      renderOrders();
+    })();
   </script>
 </body>
 </html>

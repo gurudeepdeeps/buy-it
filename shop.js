@@ -12,6 +12,8 @@ let wishlist = JSON.parse(localStorage.getItem('buyit_wishlist')) || [];
 const BUYIT_REGULAR_PRICE_MULTIPLIER = 2.1451612903;
 
 const BUYIT_PRODUCT_CATALOG = {};
+const BUYIT_PRODUCTS_CACHE_KEY = 'buyit_products_cache_v1';
+const BUYIT_PRODUCTS_CACHE_TTL_MS = 10 * 60 * 1000;
 
 const BUYIT_SORT_OPTIONS = {
     featured: 'Featured',
@@ -248,16 +250,76 @@ function replaceCatalogProducts(products) {
     });
 }
 
-const BUYIT_PRODUCTS_READY = (async () => {
+function loadCachedCatalogProducts() {
     try {
+        const raw = localStorage.getItem(BUYIT_PRODUCTS_CACHE_KEY);
+        if (!raw) {
+            return [];
+        }
+
+        const parsed = JSON.parse(raw);
+        const savedAt = Number(parsed?.savedAt || 0);
+        const products = Array.isArray(parsed?.products) ? parsed.products : [];
+
+        if (!savedAt || Date.now() - savedAt > BUYIT_PRODUCTS_CACHE_TTL_MS) {
+            return [];
+        }
+
+        return products
+            .filter((product) => product && product.id && product.title)
+            .map((product, index) => ({
+                ...product,
+                id: String(product.id),
+                title: String(product.title),
+                category: normalizeCategory(product.category || 'general') || 'general',
+                price: parsePrice(product.price),
+                regularPrice: parsePrice(product.regularPrice) || Math.round(parsePrice(product.price) * BUYIT_REGULAR_PRICE_MULTIPLIER),
+                sortOrder: Number.isFinite(Number(product.sortOrder)) ? Number(product.sortOrder) : (index + 1),
+                image: String(product.image || product.imageUrl || 'buyit-logo.png').trim() || 'buyit-logo.png',
+                galleryImages: Array.isArray(product.galleryImages)
+                    ? product.galleryImages.map((entry) => String(entry || '').trim()).filter(Boolean)
+                    : [String(product.image || product.imageUrl || 'buyit-logo.png').trim() || 'buyit-logo.png'],
+                tags: Array.isArray(product.tags) ? product.tags : [],
+                featured: Boolean(product.featured)
+            }));
+    } catch (_error) {
+        return [];
+    }
+}
+
+function saveCachedCatalogProducts(products) {
+    try {
+        localStorage.setItem(BUYIT_PRODUCTS_CACHE_KEY, JSON.stringify({
+            savedAt: Date.now(),
+            products: Array.isArray(products) ? products : []
+        }));
+    } catch (_error) {
+    }
+}
+
+const BUYIT_PRODUCTS_READY = (async () => {
+    let dispatchedInitialLoadedEvent = false;
+    try {
+        const cachedProducts = loadCachedCatalogProducts();
+        if (cachedProducts.length > 0) {
+            replaceCatalogProducts(cachedProducts);
+            window.dispatchEvent(new CustomEvent('buyitProductsLoaded', {
+                detail: { count: Object.keys(BUYIT_PRODUCT_CATALOG).length, source: 'cache' }
+            }));
+            dispatchedInitialLoadedEvent = true;
+        }
+
         const products = await fetchProductsFromFirestore();
         replaceCatalogProducts(products);
+        saveCachedCatalogProducts(products);
     } catch (error) {
         console.error('Could not load products from Firestore.', error);
-        replaceCatalogProducts([]);
+        if (!dispatchedInitialLoadedEvent) {
+            replaceCatalogProducts([]);
+        }
     } finally {
         window.dispatchEvent(new CustomEvent('buyitProductsLoaded', {
-            detail: { count: Object.keys(BUYIT_PRODUCT_CATALOG).length }
+            detail: { count: Object.keys(BUYIT_PRODUCT_CATALOG).length, source: 'network' }
         }));
     }
 })();
