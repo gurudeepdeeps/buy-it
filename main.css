@@ -1,3 +1,18 @@
+/* Sidebar should be fixed and not scroll */
+.admin-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 10;
+}
+
+/* Main content should have left margin to avoid overlap */
+.admin-main-content {
+  margin-left: 16rem; /* 256px, matches sidebar width */
+}
+
 /* Sidebar list styles to match screenshot */
 .sidebar-list {
     list-style: none;

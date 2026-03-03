@@ -346,9 +346,21 @@
     <script src="shop.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
+            // Show loading icon/message while products are being refreshed
+            const mainContent = document.querySelector('main');
+            const mainChildren = Array.from(mainContent.children);
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'product-loading-indicator';
+            loadingDiv.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:300px;"><span class="material-symbols-outlined animate-spin text-5xl text-primary">progress_activity</span><span class="ml-4 text-lg font-bold text-primary">Loading product details...</span></div>';
+            mainContent.innerHTML = '';
+            mainContent.appendChild(loadingDiv);
+
             if (window.BUYIT_PRODUCTS_READY) {
                 await window.BUYIT_PRODUCTS_READY;
             }
+            // Remove loading indicator and restore main content after products are loaded
+            loadingDiv.remove();
+            mainChildren.forEach(child => mainContent.appendChild(child));
             const formatINR = (amount) => new Intl.NumberFormat('en-IN', {
                 style: 'currency',
                 currency: 'INR',

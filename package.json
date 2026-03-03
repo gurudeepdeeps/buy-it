@@ -4,7 +4,13 @@
     "import:firebase-env:clean": "node scripts/import-firebase-env.js --delete-env"
   },
   "dependencies": {
+    "@tailwindcss/container-queries": "^0.1.1",
+    "@tailwindcss/forms": "^0.5.11",
+    "@tailwindcss/postcss": "^4.2.1",
+    "@tailwindcss/vite": "^4.2.1",
     "firebase": "^12.10.0",
-    "jsdom": "^28.1.0"
+    "jsdom": "^28.1.0",
+    "postcss": "^8.5.8",
+    "tailwindcss": "^4.2.1"
   }
 }

@@ -29,7 +29,7 @@
 </head>
 <body class="bg-background-light font-display text-slate-900">
   <div class="min-h-screen md:flex">
-    <aside class="hidden md:flex md:w-64 md:flex-col bg-white border-r border-slate-200">
+    <aside class="hidden md:flex md:w-64 md:flex-col bg-white border-r border-slate-200 admin-sidebar">
       <div class="h-16 px-5 flex items-center border-b border-slate-200">
         <img src="buyit-logo-tansperant.png" alt="Buy it" class="h-20 w-auto object-contain" />
         <span class="ml-3 text-lg font-bold">Admin Panel</span>
@@ -45,7 +45,7 @@
       </div>
     </aside>
 
-    <main class="flex-1 p-4 sm:p-6 lg:p-8">
+    <main class="flex-1 p-4 sm:p-6 lg:p-8 admin-main-content">
       <header class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 class="text-2xl sm:text-3xl font-bold">Products</h1>
@@ -409,10 +409,15 @@
     }
 
     async function loadProductsFromFirestore() {
-      const snapshot = await getDocs(collection(db, 'products'));
-      liveProducts = snapshot.docs.map((documentSnapshot) => mapFirestoreProduct(documentSnapshot));
-      liveProducts.sort((a, b) => String(a.title || '').localeCompare(String(b.title || '')));
-      return liveProducts;
+      try {
+        const snapshot = await getDocs(collection(db, 'products'));
+        liveProducts = snapshot.docs.map((documentSnapshot) => mapFirestoreProduct(documentSnapshot));
+        liveProducts.sort((a, b) => String(a.title || '').localeCompare(String(b.title || '')));
+        return liveProducts;
+      } catch (error) {
+        showAdminProductMessage(getFirestoreErrorMessage(error, 'load products'));
+        return [];
+      }
     }
 
     async function saveProductToFirestore(productId, payload, isUpdate) {
@@ -574,28 +579,40 @@
         return;
       }
 
-      const categories = (window.AdminData.getCategories() || []).slice();
-      if (categories.length === 0) {
-        categories.push({ slug: 'smartphones', label: 'Smartphones' });
-      }
+      // Load categories from Firebase
+      (async () => {
+        let categories = [];
+        try {
+          const snapshot = await getDocs(collection(db, 'categories'));
+          categories = snapshot.docs.map(docSnap => ({
+            slug: docSnap.id,
+            label: docSnap.data().label || toCategoryLabel(docSnap.id)
+          }));
+        } catch (error) {
+          showAdminProductMessage(error && error.message ? error.message : 'Failed to load categories from Firebase.');
+        }
+        if (categories.length === 0) {
+          categories.push({ slug: 'smartphones', label: 'Smartphones' });
+        }
 
-      const selectedSlug = normalizeCategorySlug(selectedCategory) || categories[0].slug;
-      categorySelect.innerHTML = categories
-        .map((category) => `<option value="${escapeHtml(category.slug)}">${escapeHtml(category.label || toCategoryLabel(category.slug))}</option>`)
-        .join('');
-
-      if (Array.from(categorySelect.options).some((option) => option.value === selectedSlug)) {
-        categorySelect.value = selectedSlug;
-      } else {
-        categorySelect.value = categories[0].slug;
-      }
-
-      if (manageSelect) {
-        manageSelect.innerHTML = categories
+        const selectedSlug = normalizeCategorySlug(selectedCategory) || categories[0].slug;
+        categorySelect.innerHTML = categories
           .map((category) => `<option value="${escapeHtml(category.slug)}">${escapeHtml(category.label || toCategoryLabel(category.slug))}</option>`)
           .join('');
-        manageSelect.value = categorySelect.value;
-      }
+
+        if (Array.from(categorySelect.options).some((option) => option.value === selectedSlug)) {
+          categorySelect.value = selectedSlug;
+        } else {
+          categorySelect.value = categories[0].slug;
+        }
+
+        if (manageSelect) {
+          manageSelect.innerHTML = categories
+            .map((category) => `<option value="${escapeHtml(category.slug)}">${escapeHtml(category.label || toCategoryLabel(category.slug))}</option>`)
+            .join('');
+          manageSelect.value = categorySelect.value;
+        }
+      })();
     }
 
     function resetProductForm() {
@@ -731,7 +748,7 @@
             await loadProductsFromFirestore();
             renderProducts();
           } catch (error) {
-            alert(getFirestoreErrorMessage(error, 'update product status'));
+            showAdminProductMessage(error && error.message ? error.message : getFirestoreErrorMessage(error, 'update product status'));
             await loadProductsFromFirestore();
             renderProducts();
           }
@@ -766,8 +783,9 @@
             await deleteProductFromFirestore(productId);
             await loadProductsFromFirestore();
             renderProducts();
+            showAdminProductMessage('Product deleted successfully.');
           } catch (error) {
-            alert(getFirestoreErrorMessage(error, 'delete product'));
+            showAdminProductMessage(error && error.message ? error.message : getFirestoreErrorMessage(error, 'delete product'));
           }
         });
       });
@@ -789,7 +807,7 @@
       document.getElementById('product-name').focus();
     });
 
-    document.getElementById('add-category-btn').addEventListener('click', function () {
+    document.getElementById('add-category-btn').addEventListener('click', async function () {
       const input = document.getElementById('new-category-input');
       const slug = normalizeCategorySlug(input.value);
       if (!slug) {
@@ -798,6 +816,17 @@
       }
 
       window.AdminData.addCategory({ slug, label: toCategoryLabel(slug) });
+      // Store category in Firebase
+      try {
+        await setDoc(doc(db, 'categories', slug), {
+          slug,
+          label: toCategoryLabel(slug),
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        }, { merge: true });
+      } catch (error) {
+        showAdminProductMessage(error && error.message ? error.message : 'Failed to store category in Firebase.');
+      }
       renderCategoryOptions(slug);
       input.value = '';
     });
@@ -827,7 +856,7 @@
         await bulkUpdateProductCategory(fromSlug, toSlug);
         await loadProductsFromFirestore();
       } catch (error) {
-        alert(getFirestoreErrorMessage(error, 'rename category for products'));
+        showAdminProductMessage(error && error.message ? error.message : getFirestoreErrorMessage(error, 'rename category for products'));
       }
       renameInput.value = '';
       renderCategoryOptions(toSlug);
@@ -868,7 +897,7 @@
             await bulkUpdateProductCategory(slug, replacementSlug);
             await loadProductsFromFirestore();
           } catch (error) {
-            alert(getFirestoreErrorMessage(error, 'reassign product category'));
+            showAdminProductMessage(error && error.message ? error.message : getFirestoreErrorMessage(error, 'reassign product category'));
             return;
           }
         }
@@ -922,7 +951,7 @@
       try {
         await appendSelectedGalleryFiles();
       } catch (error) {
-        alert(error?.message || 'Could not add selected gallery files.');
+        showAdminProductMessage(error?.message || 'Could not add selected gallery files.');
       }
     });
 
@@ -969,12 +998,38 @@
         await loadProductsFromFirestore();
         resetProductForm();
         renderProducts();
+        showAdminProductMessage(formValue.id ? 'Product updated successfully.' : 'Product added successfully.');
       } catch (error) {
-        alert(getFirestoreErrorMessage(error, formValue.id ? 'update product' : 'create product'));
+        showAdminProductMessage(error && error.message ? error.message : getFirestoreErrorMessage(error, formValue.id ? 'update product' : 'create product'));
       } finally {
         setProductSaveInProgress(false);
       }
     });
+
+    function showAdminProductMessage(msg) {
+      let el = document.getElementById('admin-product-message');
+      if (!el) {
+        el = document.createElement('div');
+        el.id = 'admin-product-message';
+        el.style.position = 'fixed';
+        el.style.top = '20px';
+        el.style.right = '20px';
+        el.style.zIndex = '9999';
+        el.style.background = '#38bdf8';
+        el.style.color = '#fff';
+        el.style.padding = '12px 24px';
+        el.style.borderRadius = '8px';
+        el.style.boxShadow = '0 2px 8px rgba(0,0,0,0.12)';
+        el.style.fontSize = '16px';
+        el.style.fontWeight = 'bold';
+        document.body.appendChild(el);
+      }
+      el.textContent = msg;
+      el.style.display = 'block';
+      setTimeout(() => {
+        el.style.display = 'none';
+      }, 2500);
+    }
 
     async function initializeAdminProductsPage() {
       renderCategoryOptions('smartphones');

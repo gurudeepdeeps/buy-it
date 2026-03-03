@@ -295,7 +295,7 @@
             if (window.AdminOrdersCloud && typeof window.AdminOrdersCloud.updateOrderStatusEverywhere === 'function') {
               const cloudResult = await window.AdminOrdersCloud.updateOrderStatusEverywhere(orderId, select.value);
               if (!cloudResult.ok) {
-                showToast('Failed to sync status to cloud.', 'error');
+                showToast(cloudResult.reason ? cloudResult.reason : 'Failed to sync status to cloud.', 'error');
                 renderOrders();
                 return;
               }
@@ -303,8 +303,8 @@
             window.AdminData.updateOrderStatus(orderId, select.value);
             renderOrders();
             showToast('Order status updated.', 'success');
-          } catch (_error) {
-            showToast('Failed to update order status.', 'error');
+          } catch (error) {
+            showToast(error && error.message ? error.message : 'Failed to update order status.', 'error');
             renderOrders();
           } finally {
             setOrderStatusUpdateInProgress(false);
