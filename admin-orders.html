@@ -48,6 +48,7 @@
       <header class="mb-6">
         <h1 class="text-2xl sm:text-3xl font-bold">Orders</h1>
         <p class="text-slate-600 mt-1">Track and update customer orders.</p>
+        <p id="orders-sync-status" class="mt-2 text-sm text-slate-500 hidden"></p>
       </header>
 
       <section class="bg-white border border-slate-200 rounded-xl overflow-hidden">
@@ -73,15 +74,33 @@
   <div id="admin-toast" class="fixed bottom-4 right-4 z-50 hidden max-w-xs rounded-lg px-4 py-3 text-sm font-medium shadow-lg"></div>
 
   <script type="module">
-    import { db } from './firebase-config.js';
+    import { auth, db } from './firebase-config.js';
+    import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
     import { collection, collectionGroup, deleteDoc, doc, documentId, getDocs, query, updateDoc, where, writeBatch } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
+
+    function waitForAuthenticatedUser() {
+      return new Promise((resolve) => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+          unsubscribe();
+          resolve(user || null);
+        });
+      });
+    }
 
     async function loadOrdersFromCloud() {
       try {
-        const [topLevelOrdersSnapshot, groupedOrdersSnapshot] = await Promise.all([
-          getDocs(collection(db, 'orders')).catch(() => null),
-          getDocs(collectionGroup(db, 'orders')).catch(() => null)
+        const [topLevelResult, groupedResult] = await Promise.all([
+          getDocs(collection(db, 'orders'))
+            .then((snapshot) => ({ ok: true, snapshot }))
+            .catch(() => ({ ok: false, snapshot: null })),
+          getDocs(collectionGroup(db, 'orders'))
+            .then((snapshot) => ({ ok: true, snapshot }))
+            .catch(() => ({ ok: false, snapshot: null }))
         ]);
+
+        if (!topLevelResult.ok && !groupedResult.ok) {
+          return { ok: false, orders: [] };
+        }
 
         const orderByPath = new Map();
         const appendOrders = (snapshot) => {
@@ -96,8 +115,8 @@
           });
         };
 
-        appendOrders(topLevelOrdersSnapshot);
-        appendOrders(groupedOrdersSnapshot);
+        appendOrders(topLevelResult.snapshot);
+        appendOrders(groupedResult.snapshot);
 
         const orders = Array.from(orderByPath.values());
         return { ok: true, orders };
@@ -161,16 +180,37 @@
     }
 
     window.AdminOrdersCloud = {
+      waitForAuthenticatedUser,
       loadOrdersFromCloud,
       updateOrderStatusEverywhere,
       deleteOrderEverywhere
     };
+
+    window.dispatchEvent(new CustomEvent('adminOrdersCloudReady'));
   </script>
 
   <script>
     const ORDER_STATUSES = ['Processing', 'Shipped', 'Delivered', 'Cancelled'];
     let isUpdatingOrderStatus = false;
     let toastTimeoutId = null;
+
+    function setOrdersSyncStatus(inProgress, message) {
+      const status = document.getElementById('orders-sync-status');
+      if (!status) {
+        return;
+      }
+
+      if (inProgress) {
+        status.textContent = message || 'Syncing orders from cloud...';
+        status.classList.remove('hidden');
+        status.classList.add('animate-pulse');
+        return;
+      }
+
+      status.classList.add('hidden');
+      status.classList.remove('animate-pulse');
+      status.textContent = '';
+    }
 
     function showToast(message, type) {
       const toast = document.getElementById('admin-toast');
@@ -322,14 +362,33 @@
 
     renderOrders();
 
-    (async function hydrateOrdersFromCloud() {
+    let hasHydratedOrdersFromCloud = false;
+
+    async function hydrateOrdersFromCloud() {
+      if (hasHydratedOrdersFromCloud) {
+        return;
+      }
       if (!window.AdminOrdersCloud || typeof window.AdminOrdersCloud.loadOrdersFromCloud !== 'function') {
         return;
       }
 
+      hasHydratedOrdersFromCloud = true;
+
+      setOrdersSyncStatus(true, 'Syncing orders from cloud...');
+
+      await window.AdminOrdersCloud.waitForAuthenticatedUser();
+
+      const existingLocalOrders = typeof window.AdminData.getOrders === 'function' ? window.AdminData.getOrders() : [];
+
       const result = await window.AdminOrdersCloud.loadOrdersFromCloud();
       if (!result.ok) {
         showToast('Using local order data (cloud unavailable).', 'error');
+        setOrdersSyncStatus(false);
+        return;
+      }
+
+      if (result.orders.length === 0 && existingLocalOrders.length > 0) {
+        setOrdersSyncStatus(false);
         return;
       }
 
@@ -337,7 +396,14 @@
         window.AdminData.setOrders(result.orders);
       }
       renderOrders();
-    })();
+      setOrdersSyncStatus(false);
+    }
+
+    window.addEventListener('adminOrdersCloudReady', () => {
+      hydrateOrdersFromCloud();
+    });
+
+    hydrateOrdersFromCloud();
   </script>
 </body>
 </html>

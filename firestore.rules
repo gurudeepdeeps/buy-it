@@ -101,10 +101,10 @@ service cloud.firestore {
       }
 
       match /orders/{orderId} {
-        allow read: if isSelf(uid);
+        allow read: if isSelf(uid) || isAdmin();
         allow create: if isSelf(uid)
           && validUserOrderCreate(uid);
-        allow update, delete: if false;
+        allow update, delete: if isAdmin();
       }
 
       match /addresses/{addressId} {
