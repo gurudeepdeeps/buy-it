@@ -48,8 +48,21 @@
         getDoc(doc(db, 'users', user.uid))
       ]);
 
+      // Debug logging for admin claims and user doc
+      console.log('--- ADMIN DEBUG ---');
+      console.log('User UID:', user.uid);
       console.log('Admin claims:', idTokenResult.claims);
-      console.log('User doc:', userDocSnapshot.data());
+      console.log('User doc exists:', userDocSnapshot.exists());
+      console.log('User doc data:', userDocSnapshot.data());
+      console.log('-------------------');
+
+      // Debug logging for admin claims and user doc
+      console.log('--- ADMIN DEBUG ---');
+      console.log('User UID:', user.uid);
+      console.log('Admin claims:', idTokenResult.claims);
+      console.log('User doc exists:', userDocSnapshot.exists());
+      console.log('User doc data:', userDocSnapshot.data());
+      console.log('-------------------');
 
       const isAdminByClaim = idTokenResult?.claims?.admin === true;
       const isAdminByDoc = userDocSnapshot.exists() && String(userDocSnapshot.data()?.role || '').toLowerCase() === 'admin';
