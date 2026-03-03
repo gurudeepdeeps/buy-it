@@ -170,6 +170,17 @@
 
     const updated = [...existing, next];
     saveCategories(updated);
+
+    // Add to Firestore
+    if (window.firebaseConfig && window.firebaseConfig.db) {
+      const { db } = window.firebaseConfig;
+      if (db) {
+        // Use Firestore 'categories' collection
+        import('https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js').then(({ setDoc, doc }) => {
+          setDoc(doc(db, 'categories', next.slug), next);
+        });
+      }
+    }
     return next;
   }
 
@@ -300,6 +311,7 @@
   }
 
   function updateOrderStatus(orderId, nextStatus) {
+    // Update local orders
     const orders = getOrders();
     const nextOrders = orders.map((order) => {
       if (String(order.id) !== String(orderId)) {
@@ -311,6 +323,11 @@
       };
     });
     saveOrders(nextOrders);
+
+    // Update Firestore
+    if (window.AdminOrdersCloud && typeof window.AdminOrdersCloud.updateOrderStatusEverywhere === 'function') {
+      window.AdminOrdersCloud.updateOrderStatusEverywhere(orderId, nextStatus);
+    }
     return nextOrders;
   }
 
@@ -318,6 +335,10 @@
     const orders = getOrders();
     const nextOrders = orders.filter((order) => String(order.id) !== String(orderId));
     saveOrders(nextOrders);
+    // Delete from Firestore
+    if (window.AdminOrdersCloud && typeof window.AdminOrdersCloud.deleteOrderEverywhere === 'function') {
+      window.AdminOrdersCloud.deleteOrderEverywhere(orderId);
+    }
     return nextOrders.length !== orders.length;
   }
 

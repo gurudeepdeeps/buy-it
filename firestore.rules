@@ -104,7 +104,8 @@ service cloud.firestore {
         allow read: if isSelf(uid) || isAdmin();
         allow create: if isSelf(uid)
           && validUserOrderCreate(uid);
-        allow update, delete: if isAdmin();
+        allow update: if isAdmin();
+        allow delete: if isAdmin();
       }
 
       match /addresses/{addressId} {
@@ -121,7 +122,7 @@ service cloud.firestore {
         && request.resource.data.uid == request.auth.uid
         && validUserOrderCreate(request.auth.uid);
       allow update: if isAdmin();
-      allow delete: if false;
+      allow delete: if isAdmin();
     }
 
     match /admin/{doc=**} {
