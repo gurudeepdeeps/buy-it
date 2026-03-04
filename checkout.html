@@ -315,15 +315,12 @@
             }
 
             let items = [];
-            if (checkoutSource === 'buyNow' && buyNowRaw) {
-                try {
-                    const parsed = JSON.parse(buyNowRaw);
-                    items = parsed ? [{ ...parsed, quantity: 1 }] : [];
-                } catch (error) {
-                    items = [];
-                }
-            } else {
-                items = JSON.parse(localStorage.getItem('buyit_cart') || '[]');
+            // Always read products from localStorage cart
+            try {
+                const cartRaw = localStorage.getItem('buyit_cart');
+                items = cartRaw ? JSON.parse(cartRaw) : [];
+            } catch (error) {
+                items = [];
             }
 
             const list = document.getElementById('order-items-list');
