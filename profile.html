@@ -17,25 +17,25 @@
   </div>
     <!-- Address Form -->
     <form id="addressForm">
-      <div style="display: flex; gap: 1rem;">
-        <input id="firstName" type="text" placeholder="First name" required style="flex:1;">
-        <input id="lastName" type="text" placeholder="Last name" required style="flex:1;">
+      <div class="address-row">
+        <input id="firstName" type="text" placeholder="First name" required class="address-input">
+        <input id="lastName" type="text" placeholder="Last name" required class="address-input">
       </div>
-      <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-        <input id="addressLine1" type="text" placeholder="Address" required style="flex:1;">
-        <input id="city" type="text" placeholder="City" required style="flex:1;">
+      <div class="address-row mt-1">
+        <input id="addressLine1" type="text" placeholder="Address" required class="address-input">
+        <input id="city" type="text" placeholder="City" required class="address-input">
       </div>
-      <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-        <input id="state" type="text" placeholder="State" required style="flex:1;">
-        <input id="country" type="text" placeholder="Country" required style="flex:1;">
+      <div class="address-row mt-1">
+        <input id="state" type="text" placeholder="State" required class="address-input">
+        <input id="country" type="text" placeholder="Country" required class="address-input">
       </div>
-      <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-        <input id="pincode" type="text" placeholder="Postal/ZIP code" required style="flex:1;">
-        <input id="phone" type="text" placeholder="Phone" required style="flex:1;">
+      <div class="address-row mt-1">
+        <input id="pincode" type="text" placeholder="Postal/ZIP code" required class="address-input">
+        <input id="phone" type="text" placeholder="Phone" required class="address-input">
       </div>
-      <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-        <button type="submit" style="background-color:#e53935;color:white;padding:0.5rem 1.5rem;border:none;border-radius:4px;">Save Address</button>
-        <button type="button" onclick="document.getElementById('addressForm').reset();" style="background-color:#bdbdbd;color:white;padding:0.5rem 1.5rem;border:none;border-radius:4px;">Close</button>
+      <div class="address-row mt-1">
+        <button type="submit" class="address-btn-save">Save Address</button>
+        <button type="button" class="address-btn-close" onclick="document.getElementById('addressForm').reset();">Close</button>
       </div>
     </form>
 
