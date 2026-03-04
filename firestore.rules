@@ -115,6 +115,13 @@ service cloud.firestore {
       }
     }
 
+    match /users/{uid}/orders/{orderId} {
+      allow read: if isSignedIn() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow create: if request.auth != null;
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
     match /admin/{doc=**} {
       allow read, write: if isAdmin();
     }
