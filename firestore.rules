@@ -117,7 +117,7 @@ service cloud.firestore {
 
     match /users/{uid}/orders/{orderId} {
       allow read: if isSignedIn() && (resource.data.uid == request.auth.uid || isAdmin());
-      allow create: if request.auth != null;
+      allow create: if request.auth != null && request.auth.uid == uid && validUserOrderCreate(uid);
       allow update: if isAdmin();
       allow delete: if isAdmin();
     }
