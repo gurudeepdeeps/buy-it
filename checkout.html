@@ -214,25 +214,6 @@
         import { doc, getDoc, collection } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
         document.addEventListener('DOMContentLoaded', async () => {
-            // DEMO: Add products to localStorage cart if empty
-            if (!localStorage.getItem('buyit_cart') || localStorage.getItem('buyit_cart') === '[]') {
-                localStorage.setItem('buyit_cart', JSON.stringify([
-                    {
-                        id: "product1",
-                        title: "Demo Product 1",
-                        price: 1000,
-                        image: "buyit-logo.png",
-                        quantity: 1
-                    },
-                    {
-                        id: "product2",
-                        title: "Demo Product 2",
-                        price: 2000,
-                        image: "buyit-logo.png",
-                        quantity: 2
-                    }
-                ]));
-            }
             const getCurrentUser = () => new Promise((resolve) => {
                 const unsubscribe = onAuthStateChanged(auth, (user) => {
                     unsubscribe();
