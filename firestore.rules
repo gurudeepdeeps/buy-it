@@ -116,10 +116,16 @@ service cloud.firestore {
     }
 
     match /users/{uid}/orders/{orderId} {
-      allow read: if isSignedIn() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow read: if isSignedIn() && (resour  ce.data.uid == request.auth.uid || isAdmin());
       allow create: if request.auth != null;
       allow update: if isAdmin();
       allow delete: if isAdmin();
+    }
+
+    match /users/{uid}/addresses/{addressId} {
+      allow read: if isSelf(uid);
+      allow create, update: if isSelf(uid) && validAddressWrite(uid);
+      allow delete: if isSelf(uid);
     }
 
     match /admin/{doc=**} {
