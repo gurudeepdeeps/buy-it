@@ -303,8 +303,11 @@
 
   <script type="module">
     import { addAddress } from "./scripts/user-address.js";
-    import { getFirestore, collection, getDocs } from "firebase/firestore";
+    import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
     import { getAuth } from "firebase/auth";
+
+    let editingAddressId = null;
+    let selectedAddressId = localStorage.getItem('selectedAddressId') || null;
 
     // Fetch and render addresses from Firestore
     async function renderSavedAddresses() {
@@ -323,17 +326,66 @@
           container.innerHTML = '<div class="saved-address-line">No saved addresses yet.</div>';
           return;
         }
-        container.innerHTML = Array.from(snapshot.docs).map(doc => {
-          const address = doc.data();
+        container.innerHTML = Array.from(snapshot.docs).map(docSnap => {
+          const address = docSnap.data();
+          const id = docSnap.id;
+          const isSelected = selectedAddressId === id;
           return `
             <div class="saved-address-card">
-              <div class="saved-address-name">${address.name || ''}</div>
+              <div class="saved-address-name">${address.name || ''} ${isSelected ? '<span class="saved-badge">Selected</span>' : ''}</div>
               <div class="saved-address-line">${address.addressLine1 || ''}</div>
               <div class="saved-address-line">${address.city || ''}, ${address.state || ''} ${address.pincode || ''}</div>
               <div class="saved-address-meta">${address.phone ? 'Phone: ' + address.phone : ''}</div>
+              <div style="margin-top:8px;display:flex;gap:8px;">
+                <button class="address-edit-btn" data-id="${id}">Edit</button>
+                <button class="address-delete-btn" data-id="${id}">Delete</button>
+                <button class="address-select-btn" data-id="${id}">${isSelected ? 'Selected' : 'Select'}</button>
+              </div>
             </div>
           `;
         }).join('');
+
+        // Add event listeners for edit, delete, select
+        container.querySelectorAll('.address-edit-btn').forEach(btn => {
+          btn.onclick = async function() {
+            const id = btn.getAttribute('data-id');
+            const docSnap = snapshot.docs.find(d => d.id === id);
+            if (!docSnap) return;
+            const address = docSnap.data();
+            editingAddressId = id;
+            const form = document.querySelector('.address-form');
+            const [firstName, lastName] = (address.name || '').split(' ');
+            form['first-name'].value = firstName || '';
+            form['last-name'].value = lastName || '';
+            form['address-line1'].value = address.addressLine1 || '';
+            form['city'].value = address.city || '';
+            form['state'].value = address.state || '';
+            form['country'].value = address.country || '';
+            form['postal-code'].value = address.pincode || '';
+            form['phone'].value = address.phone || '';
+          };
+        });
+        container.querySelectorAll('.address-delete-btn').forEach(btn => {
+          btn.onclick = async function() {
+            const id = btn.getAttribute('data-id');
+            if (confirm('Delete this address?')) {
+              await deleteDoc(doc(addressesRef, id));
+              if (selectedAddressId === id) {
+                selectedAddressId = null;
+                localStorage.removeItem('selectedAddressId');
+              }
+              renderSavedAddresses();
+            }
+          };
+        });
+        container.querySelectorAll('.address-select-btn').forEach(btn => {
+          btn.onclick = function() {
+            const id = btn.getAttribute('data-id');
+            selectedAddressId = id;
+            localStorage.setItem('selectedAddressId', id);
+            renderSavedAddresses();
+          };
+        });
       } catch (err) {
         container.innerHTML = '<div class="saved-address-line">Failed to load addresses.</div>';
       }
@@ -351,13 +403,25 @@
         pincode: form['postal-code'].value,
         country: form['country'].value
       };
+      const db = getFirestore();
+      const auth = getAuth();
+      const user = auth.currentUser;
+      const addressesRef = collection(db, "users", user.uid, "addresses");
       try {
-        await addAddress(addressData);
-        alert('Address added successfully!');
+        if (editingAddressId) {
+          // Update existing address
+          await updateDoc(doc(addressesRef, editingAddressId), addressData);
+          alert('Address updated successfully!');
+          editingAddressId = null;
+        } else {
+          // Add new address
+          await addAddress(addressData);
+          alert('Address added successfully!');
+        }
         form.reset();
         renderSavedAddresses();
       } catch (err) {
-        alert('Failed to add address: ' + err.message);
+        alert('Failed to save address: ' + err.message);
       }
     });
 
