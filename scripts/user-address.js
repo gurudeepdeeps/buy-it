@@ -4,7 +4,7 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-aut
 const db = getFirestore();
 const auth = getAuth();
 
-async function addAddress(addressData) {
+export async function addAddress(addressData) {
   const user = auth.currentUser;
   if (!user) {
     throw new Error("User not signed in");
