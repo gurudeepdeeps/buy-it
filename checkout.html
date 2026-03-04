@@ -598,8 +598,26 @@
                         };
 
                         if (user?.uid) {
+                            // Only include required address fields
+                            const minimalAddress = {
+                                'first-name': selectedAddress['first-name'] || '',
+                                'last-name': selectedAddress['last-name'] || '',
+                                'address-line1': selectedAddress['address-line1'] || '',
+                                'city': selectedAddress['city'] || '',
+                                'state': selectedAddress['state'] || '',
+                                'postal-code': selectedAddress['postal-code'] || '',
+                                'phone': selectedAddress['phone'] || ''
+                            };
                             const firestorePayload = {
-                                ...order,
+                                id: orderId,
+                                items: normalizedItems,
+                                address: minimalAddress,
+                                status: 'Processing',
+                                amount: totalAmount,
+                                totalAmount,
+                                placedAt: placedAtIso,
+                                date: placedAtIso,
+                                customer: `${minimalAddress['first-name']} ${minimalAddress['last-name']}`.trim() || 'Guest Customer',
                                 uid: user.uid,
                                 createdAt: serverTimestamp()
                             };
