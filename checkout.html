@@ -222,6 +222,11 @@
             });
 
             const currentUser = await getCurrentUser();
+            // Debug log for Buy Now sessionStorage
+            console.log('Checkout page sessionStorage:', {
+                buyit_buynow: sessionStorage.getItem('buyit_buynow'),
+                buyit_checkout_source: sessionStorage.getItem('buyit_checkout_source')
+            });
             const addressesKey = currentUser?.uid ? `buyit_addresses_${currentUser.uid}` : 'buyit_addresses';
             const selectedAddressKey = currentUser?.uid ? `buyit_selected_address_${currentUser.uid}` : 'buyit_selected_address';
 

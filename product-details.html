@@ -740,6 +740,13 @@
                         regularPrice: product.regularPrice || Math.round(product.price * 2.1451612903),
                         image: product.image
                     });
+                    // Debug log for Buy Now sessionStorage
+                    setTimeout(() => {
+                        console.log('Buy Now sessionStorage:', {
+                            buyit_buynow: sessionStorage.getItem('buyit_buynow'),
+                            buyit_checkout_source: sessionStorage.getItem('buyit_checkout_source')
+                        });
+                    }, 100);
                 };
                 buyNowButton.button.disabled = !inStock;
                 buyNowButton.button.classList.toggle('opacity-50', !inStock);
