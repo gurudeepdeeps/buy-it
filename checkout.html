@@ -598,21 +598,19 @@
                         };
 
                         if (user?.uid) {
-                                                    console.log('Order Firestore user:', user);
-                                                    console.log('Order Firestore payload:', firestorePayload);
                             const firestorePayload = {
                                 ...order,
                                 uid: user.uid,
                                 createdAt: serverTimestamp()
                             };
+                            console.log('Order Firestore user:', user);
+                            console.log('Order Firestore payload:', firestorePayload);
 
                             const batch = writeBatch(db);
                             batch.set(doc(db, 'orders', orderId), firestorePayload);
                             batch.set(doc(db, 'users', user.uid, 'orders', orderId), firestorePayload);
                             await batch.commit();
                         }
-
-                        const orders = JSON.parse(localStorage.getItem('buyit_orders') || '[]');
                         orders.push(order);
                         localStorage.setItem('buyit_orders', JSON.stringify(orders));
 
