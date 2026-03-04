@@ -613,11 +613,8 @@
                                 items: normalizedItems,
                                 address: minimalAddress,
                                 status: 'Processing',
-                                amount: totalAmount,
-                                totalAmount,
+                                totalAmount: totalAmount,
                                 placedAt: placedAtIso,
-                                date: placedAtIso,
-                                customer: `${minimalAddress['first-name']} ${minimalAddress['last-name']}`.trim() || 'Guest Customer',
                                 uid: user.uid,
                                 createdAt: serverTimestamp()
                             };
