@@ -211,7 +211,7 @@
     <script type="module">
         import { auth, db } from "./firebase-config.js";
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-        import { doc, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+        import { doc, getDoc, collection } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
         document.addEventListener('DOMContentLoaded', async () => {
             const getCurrentUser = () => new Promise((resolve) => {
@@ -273,10 +273,35 @@
             const editAddressBtn = document.getElementById('edit-address-btn');
             const placeOrderBtn = document.getElementById('place-order-btn');
 
-            migrateLegacyAddressesIfNeeded();
+            // Show selected address from Firestore
+            async function showSelectedAddress() {
+                const selectedAddressId = localStorage.getItem('selectedAddressId');
+                if (!currentUser || !selectedAddressId) {
+                    addressContainer.innerHTML = '<div class="text-slate-500">No address selected. Please add or select an address.</div>';
+                    return;
+                }
+                const addressRef = doc(collection(db, "users", currentUser.uid, "addresses"), selectedAddressId);
+                try {
+                    const addressSnap = await getDoc(addressRef);
+                    if (!addressSnap.exists()) {
+                        addressContainer.innerHTML = '<div class="text-slate-500">Selected address not found.</div>';
+                        return;
+                    }
+                    const address = addressSnap.data();
+                    addressContainer.innerHTML = `
+                        <div class="saved-address-card">
+                            <div class="saved-address-name">${escapeHtml(address.name || '')}</div>
+                            <div class="saved-address-line">${escapeHtml(address.addressLine1 || '')}</div>
+                            <div class="saved-address-line">${escapeHtml(address.city || '')}, ${escapeHtml(address.state || '')} ${escapeHtml(address.pincode || '')}</div>
+                            <div class="saved-address-meta">${address.phone ? 'Phone: ' + escapeHtml(address.phone) : ''}</div>
+                        </div>
+                    `;
+                } catch (err) {
+                    addressContainer.innerHTML = '<div class="text-slate-500">Failed to load address.</div>';
+                }
+            }
 
-            let addresses = readAddresses();
-            let selectedAddressIndex = getSelectedAddressIndex();
+            await showSelectedAddress();
             const storedSource = sessionStorage.getItem('buyit_checkout_source');
             const buyNowRaw = sessionStorage.getItem('buyit_buynow');
 
