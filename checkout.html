@@ -289,13 +289,30 @@
                     }
                     const address = addressSnap.data();
                     addressContainer.innerHTML = `
-                        <div class="saved-address-card">
-                            <div class="saved-address-name">${escapeHtml(address.name || '')}</div>
-                            <div class="saved-address-line">${escapeHtml(address.addressLine1 || '')}</div>
-                            <div class="saved-address-line">${escapeHtml(address.city || '')}, ${escapeHtml(address.state || '')} ${escapeHtml(address.pincode || '')}</div>
-                            <div class="saved-address-meta">${address.phone ? 'Phone: ' + escapeHtml(address.phone) : ''}</div>
+                        <div class="flex flex-col gap-2">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="selected-address" checked class="accent-primary" />
+                                <div class="saved-address-card">
+                                    <div class="saved-address-name">${escapeHtml(address.name || '')}</div>
+                                    <div class="saved-address-line">${escapeHtml(address.addressLine1 || '')}</div>
+                                    <div class="saved-address-line">${escapeHtml(address.city || '')}, ${escapeHtml(address.state || '')} ${escapeHtml(address.pincode || '')}</div>
+                                    <div class="saved-address-meta">${address.phone ? 'Phone: ' + escapeHtml(address.phone) : ''}</div>
+                                </div>
+                            </label>
+                            <button id="change-address-btn" class="text-primary hover:underline text-sm font-medium flex items-center gap-1 py-[0.2rem] px-[0.7rem] rounded-[0.4rem] border border-slate-200 bg-background-light w-fit">
+                                <span class="material-symbols-outlined text-[18px]">edit</span> Change Address
+                            </button>
                         </div>
                     `;
+                    // Add event listener for change address button
+                    setTimeout(() => {
+                        const changeBtn = document.getElementById('change-address-btn');
+                        if (changeBtn) {
+                            changeBtn.addEventListener('click', () => {
+                                window.location.href = 'addresses.html';
+                            });
+                        }
+                    }, 100);
                 } catch (err) {
                     addressContainer.innerHTML = '<div class="text-slate-500">Failed to load address.</div>';
                 }
