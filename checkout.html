@@ -315,6 +315,8 @@
             }
 
             let items = [];
+            let addresses = [];
+            let selectedAddressIndex = 0;
             if (checkoutSource === 'buyNow' && buyNowRaw) {
                 try {
                     const buyNowItem = JSON.parse(buyNowRaw);
