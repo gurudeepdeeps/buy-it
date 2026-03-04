@@ -160,39 +160,62 @@
                 </div>
                 <div class="space-y-8">
                     <div class="flex flex-col gap-4 pt-4 sticky bottom-6 z-10 lg:static">
-                        <div
-                            class="flex flex-col sm:flex-row gap-4 p-4 lg:p-0 bg-white/80 lg:bg-transparent backdrop-blur-md rounded-2xl lg:backdrop-blur-none border border-border-light lg:border-none shadow-xl lg:shadow-none">
-                            <div
-                                class="flex items-center border border-border-light rounded-2xl bg-white h-14 w-full sm:w-36 px-2 shadow-sm">
-                                <button onclick="document.getElementById('product-qty').stepDown()"
+                        <!-- Desktop row layout -->
+                        <div class="hidden lg:flex items-center gap-4">
+                            <div class="flex items-center border border-border-light rounded-2xl bg-white h-14 w-36 px-2 shadow-sm">
+                                <button onclick="document.getElementById('product-qty-desktop').stepDown()"
                                     class="w-10 h-10 flex items-center justify-center text-text-secondary hover:bg-background-light :bg-background-dark rounded-xl transition-colors">
                                     <span class="material-symbols-outlined text-[20px]">remove</span>
                                 </button>
-                                <input id="product-qty"
+                                <input id="product-qty-desktop"
                                     class="flex-1 w-full text-center bg-transparent border-none focus:ring-0 text-text-main font-black p-0 text-lg"
                                     min="1" type="number" value="1" title="Quantity" placeholder="Quantity" />
-                                <button onclick="document.getElementById('product-qty').stepUp()"
+                                <button onclick="document.getElementById('product-qty-desktop').stepUp()"
                                     class="w-10 h-10 flex items-center justify-center text-text-secondary hover:bg-background-light :bg-background-dark rounded-xl transition-colors">
                                     <span class="material-symbols-outlined text-[20px]">add</span>
                                 </button>
                             </div>
+                            <button class="w-12 h-12 flex items-center justify-center border border-border-light rounded-xl hover:bg-white :bg-surface-dark transition-all shadow-sm">
+                                <span class="material-symbols-outlined text-[20px]">share</span>
+                            </button>
                             <button onclick="window.location.href='checkout.html'"
                                 class="flex-[2] h-14 bg-primary hover:bg-blue-700 text-white font-bold rounded-2xl transition-all shadow-xl shadow-primary/30 flex items-center justify-center gap-2 transform active:scale-95">
                                 <span class="material-symbols-outlined text-[22px]">bolt</span>
                                 Buy Now
                             </button>
                             <button id="add-to-cart-btn" type="button" disabled
-                                class="flex-1 h-14 bg-white border-2 border-primary text-primary font-bold rounded-2xl hover:bg-primary/5 transition-all flex items-center justify-center gap-2 shadow-sm opacity-50 cursor-not-allowed">
+                                class="flex-1 h-14 px-6 bg-white border-2 border-primary text-primary font-bold rounded-2xl hover:bg-primary/5 transition-all flex items-center justify-center gap-2 shadow-sm opacity-50 cursor-not-allowed whitespace-nowrap">
                                 <span class="material-symbols-outlined text-[24px]">shopping_cart</span>
                                 Add to Cart
                             </button>
                         </div>
-                        <div class="flex justify-end gap-3">
-                            <button
-                                class="w-12 h-12 flex items-center justify-center border border-border-light rounded-xl hover:bg-white :bg-surface-dark transition-all shadow-sm">
+                        <!-- Mobile column layout -->
+                        <div class="buyit-mobile-qty-share lg:hidden">
+                            <div class="flex items-center border border-border-light rounded-2xl bg-white h-14 w-full sm:w-36 px-2 shadow-sm">
+                                <button onclick="document.getElementById('product-qty-mobile').stepDown()"
+                                    class="w-10 h-10 flex items-center justify-center text-text-secondary hover:bg-background-light :bg-background-dark rounded-xl transition-colors">
+                                    <span class="material-symbols-outlined text-[20px]">remove</span>
+                                </button>
+                                <input id="product-qty-mobile"
+                                    class="flex-1 w-full text-center bg-transparent border-none focus:ring-0 text-text-main font-black p-0 text-lg"
+                                    min="1" type="number" value="1" title="Quantity" placeholder="Quantity" />
+                                <button onclick="document.getElementById('product-qty-mobile').stepUp()"
+                                    class="w-10 h-10 flex items-center justify-center text-text-secondary hover:bg-background-light :bg-background-dark rounded-xl transition-colors">
+                                    <span class="material-symbols-outlined text-[20px]">add</span>
+                                </button>
+                            </div>
+                            <button class="buyit-mobile-share-btn">
                                 <span class="material-symbols-outlined text-[20px]">share</span>
                             </button>
                         </div>
+                        <button onclick="window.location.href='checkout.html'" class="flex-[2] h-14 bg-primary hover:bg-blue-700 text-white font-bold rounded-2xl transition-all shadow-xl shadow-primary/30 flex items-center justify-center gap-2 transform active:scale-95 lg:hidden">
+                            <span class="material-symbols-outlined text-[22px]">bolt</span>
+                            Buy Now
+                        </button>
+                        <button id="add-to-cart-btn" type="button" disabled class="flex-1 h-14 bg-white border-2 border-primary text-primary font-bold rounded-2xl hover:bg-primary/5 transition-all flex items-center justify-center gap-2 shadow-sm opacity-50 cursor-not-allowed lg:hidden">
+                            <span class="material-symbols-outlined text-[24px]">shopping_cart</span>
+                            Add to Cart
+                        </button>
                     </div>
                     <div class="pt-6">
                         <h3 class="text-sm font-black text-text-main tracking-wider mb-3 flex items-center gap-1">Why
