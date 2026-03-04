@@ -315,12 +315,22 @@
             }
 
             let items = [];
-            // Always read products from localStorage cart
-            try {
-                const cartRaw = localStorage.getItem('buyit_cart');
-                items = cartRaw ? JSON.parse(cartRaw) : [];
-            } catch (error) {
-                items = [];
+            if (checkoutSource === 'buyNow' && buyNowRaw) {
+                try {
+                    const buyNowItem = JSON.parse(buyNowRaw);
+                    if (buyNowItem && typeof buyNowItem === 'object') {
+                        items = [buyNowItem];
+                    }
+                } catch (error) {
+                    items = [];
+                }
+            } else {
+                try {
+                    const cartRaw = localStorage.getItem('buyit_cart');
+                    items = cartRaw ? JSON.parse(cartRaw) : [];
+                } catch (error) {
+                    items = [];
+                }
             }
 
             const list = document.getElementById('order-items-list');

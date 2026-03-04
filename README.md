@@ -1,43 +1,158 @@
-# 🛍️ Buy It — Responsive E-Commerce Frontend
+# Buy It — E-Commerce Platform
 
-A modern, multi-page e-commerce website built with HTML, CSS, and JavaScript. **Buy It** includes customer-facing shopping flows and admin-facing management pages, designed to be clean, responsive, and easy to extend.
+## Overview
 
----
-
-## ✨ Highlights
-
-- Responsive layout for desktop and mobile-friendly browsing
-- Complete storefront flow: home → product listing → product details → cart → checkout
-- User account pages: login (Phone OTP / Google), profile, addresses, orders, wishlist
-- Policy and support pages for production-style UX
-- Dedicated admin pages for products, orders, and settings
-- Lightweight stack with no heavy framework dependencies
+Buy It is a modern, multi-page e-commerce web application built with HTML, CSS, and JavaScript, featuring Firebase integration for authentication, database, and storage. It provides a complete shopping experience for customers and management tools for admins.
 
 ---
 
-## 🧩 Tech Stack
+## Features
 
-- **HTML5** for page structure
-- **CSS3** (`main.css`, `products.css`, `admin.css`) for styling and responsive behavior
-- **Vanilla JavaScript** (`shop.js`) for interactive storefront logic
-- **Firebase** for Authentication, Firestore, Functions, and Storage integration
-
----
-
-## 🔐 Authentication
-
-- Login is **signup-free** and supports only:
-   - **Phone Number + OTP**
-   - **Continue with Google**
-- Account pages are protected using Firebase auth state checks.
-- Sign-out is handled with Firebase `signOut`.
+- Responsive design for desktop and mobile
+- Product catalog, details, cart, and checkout flows
+- User account management: login (Phone OTP/Google), profile, addresses, orders, wishlist
+- Policy/support pages for real-world UX
+- Admin dashboard for products, orders, and settings
+- Firebase-powered authentication, Firestore database, and storage
+- LocalStorage-based cart and checkout for fast UX
 
 ---
 
-## ✅ Firebase Console Checklist
+## Tech Stack
 
-- **Authentication → Sign-in method**
-   - Enable **Phone** provider
+- **HTML5** — Page structure
+- **CSS3** — Styling and responsive layouts (`main.css`, `products.css`, `admin.css`)
+- **JavaScript (Vanilla)** — Interactive logic (`shop.js`, etc.)
+- **Firebase** — Authentication, Firestore, Functions, Storage
+
+---
+
+## Project Structure
+
+```
+├── index.html                # Home page
+├── products.html             # Product listing
+├── product-details.html      # Product details
+├── cart.html                 # Cart page
+├── checkout.html             # Checkout page
+├── login.html                # Login (Phone OTP/Google)
+├── profile.html              # User profile
+├── addresses.html            # Address management
+├── orders.html               # User orders
+├── wishlist.html             # Wishlist
+├── admin.html                # Admin dashboard
+├── admin-products.html       # Admin product management
+├── admin-orders.html         # Admin order management
+├── admin-settings.html       # Admin settings
+├── main.css                  # Main styles
+├── products.css              # Product styles
+├── admin.css                 # Admin styles
+├── shop.js                   # Storefront logic
+├── scripts/                  # Additional JS modules
+├── functions/                # Firebase functions
+├── firebase-config.js        # Firebase initialization
+├── firestore.rules           # Firestore security rules
+├── README.md                 # Project documentation
+```
+
+---
+
+## Setup & Installation
+
+1. **Clone the repository:**
+    ```sh
+    git clone <repo-url>
+    cd Buy-it
+    ```
+2. **Install dependencies:**
+    - No npm dependencies required for frontend.
+    - For Firebase functions, run:
+       ```sh
+       cd functions
+       npm install
+       ```
+3. **Configure Firebase:**
+    - Create a Firebase project.
+    - Enable Authentication (Phone, Google).
+    - Set up Firestore and Storage.
+    - Copy your Firebase config to `firebase-config.js`.
+    - Update `firestore.rules` for security.
+4. **Deploy:**
+    - Host on Vercel, Netlify, or Firebase Hosting.
+
+---
+
+## Usage
+
+### Customer Flow
+1. Browse products on the home or products page.
+2. Add products to cart or wishlist.
+3. Login via Phone OTP or Google.
+4. Manage profile, addresses, and orders.
+5. Checkout and place orders.
+
+### Admin Flow
+1. Login as admin (role set in Firestore).
+2. Manage products, orders, and site settings.
+
+---
+
+## Firebase Integration
+
+- **Authentication:**
+   - Phone OTP and Google sign-in enabled.
+   - Auth state checks protect account/admin pages.
+- **Firestore:**
+   - Products, orders, users, addresses stored in Firestore.
+   - Security rules in `firestore.rules` restrict access.
+- **Storage:**
+   - Product images and user uploads stored in Firebase Storage.
+- **Functions:**
+   - Custom backend logic in `functions/`.
+
+---
+
+## LocalStorage Usage
+
+- Cart items are stored in `localStorage` under the key `buyit_cart`.
+- Wishlist items in `buyit_wishlist`.
+- Selected address ID in `selectedAddressId`.
+- Checkout page reads from localStorage for fast UX.
+
+---
+
+## Troubleshooting
+
+- **Google sign-in not working:**
+   - Ensure Google provider is enabled in Firebase Authentication.
+   - Add your domain to Firebase authorized domains.
+- **Products not showing in checkout:**
+   - Make sure products are added to localStorage under `buyit_cart`.
+   - Check browser console for errors.
+- **Address not saving:**
+   - Confirm user is signed in.
+   - Check Firestore rules and JS imports (use CDN URLs for Firebase modules).
+
+---
+
+## Changelog / Implementation Notes
+
+- All corrections and updates are now documented here.
+- Cart and checkout logic uses localStorage for speed and reliability.
+- Address selection is synced between addresses.html and checkout.html using localStorage and Firestore.
+- All Firebase imports use CDN URLs for browser compatibility.
+- Inline styles have been moved to CSS files for best practices.
+- Error and success messages are shown near form actions for better UX.
+- **[2026-03-04] Checkout now supports direct "Buy Now" purchases:**
+    - When a user clicks "Buy Now" on a product, the product is stored in `sessionStorage` under `buyit_buynow` and the checkout source is set to `buyNow`.
+    - The checkout page now checks for this and loads the product from `sessionStorage` if present, instead of always loading from the cart.
+    - This ensures the selected product appears in checkout when using "Buy Now".
+
+---
+
+## License
+
+MIT License
    - Enable **Google** provider
 - **Authentication → Settings → Authorized domains**
    - Add `localhost`
