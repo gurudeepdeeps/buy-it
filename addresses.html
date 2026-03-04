@@ -129,6 +129,7 @@
       <div class="add-address-btn-row">
         <button class="add-address-btn">+ ADD A NEW ADDRESS</button>
       </div>
+      <div id="address-message" style="margin-bottom:1rem;color:#e53935;font-weight:600;"></div>
       <div class="address-form-container">
         <form class="address-form">
           <div class="address-form-title">ADD A NEW ADDRESS</div>
@@ -407,21 +408,26 @@
       const auth = getAuth();
       const user = auth.currentUser;
       const addressesRef = collection(db, "users", user.uid, "addresses");
+      const messageDiv = document.getElementById('address-message');
+      messageDiv.style.color = '#e53935';
+      messageDiv.textContent = '';
       try {
         if (editingAddressId) {
           // Update existing address
           await updateDoc(doc(addressesRef, editingAddressId), addressData);
-          alert('Address updated successfully!');
+          messageDiv.style.color = '#43a047';
+          messageDiv.textContent = 'Address updated successfully!';
           editingAddressId = null;
         } else {
           // Add new address
           await addAddress(addressData);
-          alert('Address added successfully!');
+          messageDiv.style.color = '#43a047';
+          messageDiv.textContent = 'Address added successfully!';
         }
         form.reset();
         renderSavedAddresses();
       } catch (err) {
-        alert('Failed to save address: ' + err.message);
+        messageDiv.textContent = 'Failed to save address: ' + err.message;
       }
     });
 
