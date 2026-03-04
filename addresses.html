@@ -304,8 +304,8 @@
 
   <script type="module">
     import { addAddress } from "./scripts/user-address.js";
-    import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
-    import { getAuth } from "firebase/auth";
+    import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
     let editingAddressId = null;
     let selectedAddressId = localStorage.getItem('selectedAddressId') || null;
