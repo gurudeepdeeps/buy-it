@@ -2,22 +2,3 @@
 .admin-inline-style-1 { /* Example: background: #f6f6f8; */ }
 .admin-inline-style-2 { /* Example: color: #135bec; */ }
 .admin-inline-style-3 { /* Add more as needed based on actual inline styles */ }
-
-/* Responsive adjustments for mobile screens */
-@media (max-width: 768px) {
-	.admin-sidebar {
-		position: static;
-		width: 100%;
-		height: auto;
-		overflow: auto;
-	}
-	.admin-main-content {
-		margin-left: 0;
-		padding: 1rem;
-	}
-	.admin-header {
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 0.5rem;
-	}
-}

@@ -14,22 +14,3 @@ body { font-family: 'Inter', sans-serif; }
 .hide-scrollbar { -ms-overflow-style: none; }
 .star-filled { font-variation-settings: 'FILL' 1; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
-
-/* Responsive adjustments for mobile screens */
-@media (max-width: 768px) {
-    .product-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    .product-card {
-        padding: 0.5rem;
-        border-radius: 0.5rem;
-    }
-    .product-image {
-        max-width: 100%;
-        height: auto;
-    }
-    .product-details {
-        padding: 1rem;
-    }
-}
