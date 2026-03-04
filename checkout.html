@@ -518,11 +518,25 @@
                         return;
                     }
 
-                    const currentAddresses = readAddresses();
-                    const selectedIndex = getSelectedAddressIndex();
-                    const selectedAddress = currentAddresses[selectedIndex] || null;
+                    // Try to get Firestore address from DOM
+                    let selectedAddress = null;
+                    const addressCard = document.querySelector('.saved-address-card');
+                    if (addressCard) {
+                        selectedAddress = {
+                            name: addressCard.querySelector('.saved-address-name')?.textContent?.trim() || '',
+                            addressLine1: addressCard.querySelector('.saved-address-line')?.textContent?.trim() || '',
+                            city: '',
+                            state: '',
+                            pincode: '',
+                            phone: addressCard.querySelector('.saved-address-meta')?.textContent?.replace('Phone: ', '').trim() || ''
+                        };
+                    } else {
+                        const currentAddresses = readAddresses();
+                        const selectedIndex = getSelectedAddressIndex();
+                        selectedAddress = currentAddresses[selectedIndex] || null;
+                    }
 
-                    if (!selectedAddress) {
+                    if (!selectedAddress || !selectedAddress.name) {
                         alert('Please add and select a shipping address before placing your order.');
                         window.location.href = 'addresses.html';
                         return;
