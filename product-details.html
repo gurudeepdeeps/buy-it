@@ -208,10 +208,31 @@
                                 <span class="material-symbols-outlined text-[20px]">share</span>
                             </button>
                         </div>
-                        <button onclick="window.location.href='checkout.html'" class="flex-[2] h-14 bg-primary hover:bg-blue-700 text-white font-bold rounded-2xl transition-all shadow-xl shadow-primary/30 flex items-center justify-center gap-2 transform active:scale-95 lg:hidden">
+                        <button id="buy-now-mobile-btn" class="flex-[2] h-14 bg-primary hover:bg-blue-700 text-white font-bold rounded-2xl transition-all shadow-xl shadow-primary/30 flex items-center justify-center gap-2 transform active:scale-95 lg:hidden">
                             <span class="material-symbols-outlined text-[22px]">bolt</span>
                             Buy Now
                         </button>
+                                                // Mobile Buy Now button logic for hosted environment
+                                                document.addEventListener('DOMContentLoaded', function() {
+                                                    var mobileBuyNowBtn = document.getElementById('buy-now-mobile-btn');
+                                                    if (mobileBuyNowBtn) {
+                                                        mobileBuyNowBtn.onclick = function() {
+                                                            // Use same product object as desktop Buy Now
+                                                            if (typeof buyNow === 'function' && window.product) {
+                                                                buyNow({
+                                                                    id: product.id,
+                                                                    title: product.title,
+                                                                    price: product.price,
+                                                                    regularPrice: product.regularPrice || Math.round(product.price * 2.1451612903),
+                                                                    image: product.image
+                                                                });
+                                                            }
+                                                            setTimeout(function() {
+                                                                window.location.href = '/checkout';
+                                                            }, 100);
+                                                        };
+                                                    }
+                                                });
                         <script>
                         // Update Buy Now navigation for hosted environment
                         document.querySelectorAll('button[onclick*="checkout.html"]').forEach(btn => {
