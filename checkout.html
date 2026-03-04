@@ -423,9 +423,9 @@
                 }
 
                 if (placeOrderBtn) {
-                    // Enable if Firestore address is shown or local address exists
+                    // Enable if Firestore address is shown OR if there is at least one item
                     const addressCard = document.querySelector('.saved-address-card');
-                    const hasAddress = (Array.isArray(addresses) && addresses.length > 0) || addressCard;
+                    const hasAddress = !!addressCard;
                     placeOrderBtn.disabled = !hasAddress;
                     placeOrderBtn.classList.toggle('opacity-50', !hasAddress);
                     placeOrderBtn.classList.toggle('cursor-not-allowed', !hasAddress);
