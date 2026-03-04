@@ -15,30 +15,31 @@
     <script>
         tailwind.config = {
             darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#135bec",
-                        "primary-content": "#ffffff",
-                        "background-light": "#f6f6f8",
-                        "background-dark": "#101622",
-                        "surface-light": "#ffffff",
-                        "surface-dark": "#1c2433",
-                        "text-main": "#0d121b",
-                        "text-secondary": "#4c669a",
-                        "border-light": "#e7ebf3",
-                        "border-dark": "#2a3447",
-                    },
-                    fontFamily: {
-                        "display": ["Inter", "sans-serif"]
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "2xl": "1rem",
-                        "full": "9999px"
-                    },
+                            <div class="flex flex-col w-full gap-2 md:flex-row md:gap-4">
+                                <div class="flex items-center border border-border-light rounded-2xl bg-white h-12 md:h-14 w-full sm:w-36 px-2 shadow-sm">
+                                    <button onclick="document.getElementById('product-qty').stepDown()"
+                                        class="w-10 h-10 flex items-center justify-center text-text-secondary hover:bg-background-light :bg-background-dark rounded-xl transition-colors">
+                                        <span class="material-symbols-outlined text-[20px]">remove</span>
+                                    </button>
+                                    <input id="product-qty"
+                                        class="flex-1 w-full text-center bg-transparent border-none focus:ring-0 text-text-main font-black p-0 text-base md:text-lg max-w-[60px]"
+                                        min="1" type="number" value="1" title="Quantity" placeholder="Quantity" />
+                                    <button onclick="document.getElementById('product-qty').stepUp()"
+                                        class="w-10 h-10 flex items-center justify-center text-text-secondary hover:bg-background-light :bg-background-dark rounded-xl transition-colors">
+                                        <span class="material-symbols-outlined text-[20px]">add</span>
+                                    </button>
+                                    <button id="add-to-cart-btn" type="button" disabled
+                                        class="ml-2 h-12 md:h-14 bg-white border-2 border-primary text-primary font-bold rounded-2xl hover:bg-primary/5 transition-all flex items-center justify-center gap-2 shadow-sm opacity-50 cursor-not-allowed text-base px-4">
+                                        <span class="material-symbols-outlined text-[24px]">shopping_cart</span>
+                                        Add to Cart
+                                    </button>
+                                </div>
+                                <button onclick="window.location.href='checkout.html'"
+                                    class="w-full h-14 md:h-16 bg-primary hover:bg-blue-700 text-white font-bold rounded-2xl transition-all shadow-xl shadow-primary/30 flex items-center justify-center gap-2 transform active:scale-95 text-lg md:text-xl mt-2 md:mt-0">
+                                    <span class="material-symbols-outlined text-[22px]">bolt</span>
+                                    Buy Now
+                                </button>
+                            </div>
                 },
             },
         }
@@ -113,28 +114,27 @@
         </nav>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 mb-12 md:mb-16">
             <div class="flex flex-col gap-4 md:gap-6 md:sticky md:top-24 md:self-start">
-                <div
-                    class="w-full aspect-square bg-white rounded-2xl md:rounded-3xl overflow-hidden border border-border-light relative group shadow-sm">
-                    <img id="main-product-image" alt="Flagship laptop open view with screen showing abstract art"
-                        class="w-full h-full object-contain p-2 md:p-4 group-hover:scale-105 transition-transform duration-700"
+                <div class="w-full max-w-xs mx-auto aspect-square bg-white rounded-2xl md:rounded-3xl overflow-hidden border border-border-light relative group shadow-sm">
+                    <img id="main-product-image" alt="Product image"
+                        class="w-full h-full object-contain p-1 md:p-4 group-hover:scale-105 transition-transform duration-700"
                         src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSefGoXqjnp9ZQQZN46YTq9kGHAL19TSVn8VIUkiHoioqCN6FbVDhh3T7wQ8sIFMpb1XSI1B4TU2Eme3qbIvI2NjfK9ht7LlzD5v3YGJqs6JL5NgtD4MvJgdGJglO1v7PRRQsw9lPCC0VcLHyaj58NXpQnt2MKWtg5ZcyosrKMQtttBBzG3LjyIZ-tdByk1Io0Cew_LQ7LdxLLW51UjkOG21iCIwvZVdegwPl8T3dx3soRXgZsDfuc_Xo0iCzH4zuRX5rIDTW_YCzw" />
                     <div id="gallery-dots"
-                        class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 bg-white/40 backdrop-blur-md p-1 rounded-full border border-white/20">
+                        class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1 bg-white/40 backdrop-blur-md p-0.5 rounded-full border border-white/20">
                     </div>
                     <button id="gallery-prev"
-                        class="absolute top-1/2 -translate-y-1/2 left-4 w-11 h-11 inline-flex items-center justify-center bg-white/90 rounded-full shadow-lg border border-border-light text-text-main hover:text-primary transition-all">
-                        <span class="material-symbols-outlined text-[20px] leading-none">chevron_left</span>
+                        class="absolute top-1/2 -translate-y-1/2 left-2 w-8 h-8 inline-flex items-center justify-center bg-white/90 rounded-full shadow-lg border border-border-light text-text-main hover:text-primary transition-all">
+                        <span class="material-symbols-outlined text-[16px] leading-none">chevron_left</span>
                     </button>
                     <button id="gallery-next"
-                        class="absolute top-1/2 -translate-y-1/2 right-4 w-11 h-11 inline-flex items-center justify-center bg-white/90 rounded-full shadow-lg border border-border-light text-text-main hover:text-primary transition-all">
-                        <span class="material-symbols-outlined text-[20px] leading-none">chevron_right</span>
+                        class="absolute top-1/2 -translate-y-1/2 right-2 w-8 h-8 inline-flex items-center justify-center bg-white/90 rounded-full shadow-lg border border-border-light text-text-main hover:text-primary transition-all">
+                        <span class="material-symbols-outlined text-[16px] leading-none">chevron_right</span>
                     </button>
                     <button id="open-gallery-fullscreen"
-                        class="absolute bottom-6 right-6 bg-white p-3 rounded-full shadow-2xl border border-border-light text-text-main hover:text-primary transition-all scale-90 hover:scale-100">
-                        <span class="material-symbols-outlined text-[24px]">zoom_in</span>
+                        class="absolute bottom-3 right-3 bg-white p-2 rounded-full shadow-2xl border border-border-light text-text-main hover:text-primary transition-all scale-90 hover:scale-100">
+                        <span class="material-symbols-outlined text-[18px]">zoom_in</span>
                     </button>
                 </div>
-                <div id="gallery-thumbnails" class="grid grid-cols-3 sm:grid-cols-5 gap-2 md:gap-3">
+                <div id="gallery-thumbnails" class="grid grid-cols-4 gap-1 md:grid-cols-5 md:gap-2">
                 </div>
             </div>
             <div class="flex flex-col">
@@ -145,7 +145,7 @@
                             Stock</span>
                     </div>
                     <h1 class="text-2xl sm:text-4xl md:text-5xl font-black text-text-main mb-4 md:mb-6 tracking-tight leading-none">
-                        Zenith X1 Carbon <span class="text-primary">Ultra</span></h1>
+                        <span id="product-title" class="text-2xl sm:text-4xl md:text-5xl font-black text-text-main mb-4 md:mb-6 tracking-tight leading-none">iPhone 17 Pro max</span>
                         <div class="flex items-center gap-2 md:gap-4 mb-4 md:mb-8">
                         <div class="flex flex-col">
                             <p id="product-sale-price" class="text-4xl font-black text-red-600">₹186</p>
@@ -168,7 +168,7 @@
                                     <span class="material-symbols-outlined text-[20px]">remove</span>
                                 </button>
                                 <input id="product-qty"
-                                    class="flex-1 w-full text-center bg-transparent border-none focus:ring-0 text-text-main font-black p-0 text-lg"
+                                    class="flex-1 w-full text-center bg-transparent border-none focus:ring-0 text-text-main font-black p-0 text-base md:text-lg max-w-[60px]"
                                     min="1" type="number" value="1" title="Quantity" placeholder="Quantity" />
                                 <button onclick="document.getElementById('product-qty').stepUp()"
                                     class="w-10 h-10 flex items-center justify-center text-text-secondary hover:bg-background-light :bg-background-dark rounded-xl transition-colors">
@@ -176,7 +176,7 @@
                                 </button>
                             </div>
                             <button onclick="window.location.href='checkout.html'"
-                                class="flex-[2] h-12 md:h-14 bg-primary hover:bg-blue-700 text-white font-bold rounded-2xl transition-all shadow-xl shadow-primary/30 flex items-center justify-center gap-2 transform active:scale-95">
+                                class="flex-[2] h-14 md:h-16 bg-primary hover:bg-blue-700 text-white font-bold rounded-2xl transition-all shadow-xl shadow-primary/30 flex items-center justify-center gap-2 transform active:scale-95 text-lg md:text-xl">
                                 <span class="material-symbols-outlined text-[22px]">bolt</span>
                                 Buy Now
                             </button>
