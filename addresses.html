@@ -302,121 +302,67 @@
   </script>
 
   <script type="module">
-    const authUser = await (window.BUYIT_AUTH_READY || Promise.resolve(null));
-    const activeUid = String(authUser?.uid || window.BUYIT_ACTIVE_UID || '').trim();
-    const addressesKey = activeUid ? `buyit_addresses_${activeUid}` : 'buyit_addresses';
-    const selectedAddressKey = activeUid ? `buyit_selected_address_${activeUid}` : 'buyit_selected_address';
+    import { addAddress } from "./scripts/user-address.js";
+    import { getFirestore, collection, getDocs } from "firebase/firestore";
+    import { getAuth } from "firebase/auth";
 
-    function parseAddresses(raw) {
-      try {
-        const parsed = JSON.parse(raw || '[]');
-        return Array.isArray(parsed) ? parsed : [];
-      } catch {
-        return [];
-      }
-    }
-
-    function migrateLegacyAddressesIfNeeded() {
-      if (!activeUid) {
-        return;
-      }
-
-      const scopedAddresses = parseAddresses(localStorage.getItem(addressesKey));
-      if (scopedAddresses.length > 0) {
-        return;
-      }
-
-      const legacyAddresses = parseAddresses(localStorage.getItem('buyit_addresses'));
-      if (legacyAddresses.length === 0) {
-        return;
-      }
-
-      localStorage.setItem(addressesKey, JSON.stringify(legacyAddresses));
-
-      const legacySelected = String(localStorage.getItem('buyit_selected_address') || '0');
-      localStorage.setItem(selectedAddressKey, legacySelected);
-    }
-
-    function readAddresses() {
-      return parseAddresses(localStorage.getItem(addressesKey));
-    }
-
-    function saveAddresses(addresses) {
-      localStorage.setItem(addressesKey, JSON.stringify(addresses));
-    }
-
-    function getSelectedAddressIndex() {
-      return parseInt(localStorage.getItem(selectedAddressKey) || '0', 10);
-    }
-
-    function setSelectedAddressIndex(index) {
-      localStorage.setItem(selectedAddressKey, String(index));
-    }
-
-    function escapeHtml(value) {
-      return String(value || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    }
-
-    function renderSavedAddresses() {
+    // Fetch and render addresses from Firestore
+    async function renderSavedAddresses() {
+      const db = getFirestore();
+      const auth = getAuth();
+      const user = auth.currentUser;
       const container = document.getElementById('saved-addresses');
-      const addresses = readAddresses();
-      const selectedAddressIndex = getSelectedAddressIndex();
-
-      if (!addresses.length) {
-        container.innerHTML = '<div class="saved-address-line">No saved addresses yet.</div>';
+      if (!user) {
+        container.innerHTML = '<div class="saved-address-line">Please log in to view addresses.</div>';
         return;
       }
-
-      container.innerHTML = addresses.map((address, index) => {
-        const fullName = `${address['first-name'] || ''} ${address['last-name'] || ''}`.trim() || 'Unnamed';
-        const badges = index === selectedAddressIndex ? '<span class="saved-badge">Selected</span>' : '';
-
-        return `
-          <div class="saved-address-card">
-            <div class="saved-address-name">${escapeHtml(fullName)}${badges}</div>
-            <div class="saved-address-line">${escapeHtml(address['address-line1'])}</div>
-            <div class="saved-address-line">${escapeHtml(address['city'])}, ${escapeHtml(address['state'])} ${escapeHtml(address['postal-code'])}</div>
-            <div class="saved-address-meta">${address['phone'] ? 'Phone: ' + escapeHtml(address['phone']) : ''}</div>
-          </div>
-        `;
-      }).join('');
+      const addressesRef = collection(db, "users", user.uid, "addresses");
+      try {
+        const snapshot = await getDocs(addressesRef);
+        if (snapshot.empty) {
+          container.innerHTML = '<div class="saved-address-line">No saved addresses yet.</div>';
+          return;
+        }
+        container.innerHTML = Array.from(snapshot.docs).map(doc => {
+          const address = doc.data();
+          return `
+            <div class="saved-address-card">
+              <div class="saved-address-name">${address.name || ''}</div>
+              <div class="saved-address-line">${address.addressLine1 || ''}</div>
+              <div class="saved-address-line">${address.city || ''}, ${address.state || ''} ${address.pincode || ''}</div>
+              <div class="saved-address-meta">${address.phone ? 'Phone: ' + address.phone : ''}</div>
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        container.innerHTML = '<div class="saved-address-line">Failed to load addresses.</div>';
+      }
     }
 
-    migrateLegacyAddressesIfNeeded();
-
-    document.querySelector('.address-form').addEventListener('submit', function(e) {
+    document.querySelector('.address-form').addEventListener('submit', async function(e) {
       e.preventDefault();
       const form = e.target;
-      const address = {
-        'first-name': form['first-name'].value,
-        'last-name': form['last-name'].value,
-        'address-line1': form['address-line1'].value,
-        'city': form['city'].value,
-        'state': form['state'].value,
-        'country': form['country'].value,
-        'postal-code': form['postal-code'].value,
-        'phone': form['phone'].value
+      const addressData = {
+        name: form['first-name'].value + ' ' + form['last-name'].value,
+        phone: form['phone'].value,
+        addressLine1: form['address-line1'].value,
+        city: form['city'].value,
+        state: form['state'].value,
+        pincode: form['postal-code'].value,
+        country: form['country'].value
       };
-
-      let addresses = readAddresses();
-      addresses.push(address);
-      saveAddresses(addresses);
-
-      if (addresses.length === 1) {
-        setSelectedAddressIndex(addresses.length - 1);
+      try {
+        await addAddress(addressData);
+        alert('Address added successfully!');
+        form.reset();
+        renderSavedAddresses();
+      } catch (err) {
+        alert('Failed to add address: ' + err.message);
       }
-
-      form.reset();
-      alert('Address saved!');
-      renderSavedAddresses();
     });
 
-    renderSavedAddresses();
+    // Wait for auth to be ready, then render addresses
+    window.BUYIT_AUTH_READY.then(renderSavedAddresses);
   </script>
   <script src="shop.js"></script>
 </body>
