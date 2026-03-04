@@ -713,6 +713,7 @@
                         id: product.id,
                         title: product.title,
                         price: product.price,
+                        regularPrice: product.regularPrice || Math.round(product.price * 2.1451612903),
                         image: product.image
                     });
                 };
