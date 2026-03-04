@@ -557,9 +557,11 @@
                     }
 
                     if (!selectedAddress || !selectedAddress.name) {
-                        alert('Please add and select a shipping address before placing your order.');
-                        window.location.href = 'addresses.html';
-                        return;
+                        if (!selectedAddress || !selectedAddress['first-name']) {
+                            alert('Please add and select a shipping address before placing your order.');
+                            window.location.href = 'addresses.html';
+                            return;
+                        }
                     }
 
                     placeOrderBtn.disabled = true;
