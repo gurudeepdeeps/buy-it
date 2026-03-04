@@ -211,7 +211,7 @@
     <script type="module">
         import { auth, db } from "./firebase-config.js";
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-        import { doc, getDoc, collection } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+        import { doc, getDoc, collection, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
         document.addEventListener('DOMContentLoaded', async () => {
             const getCurrentUser = () => new Promise((resolve) => {
