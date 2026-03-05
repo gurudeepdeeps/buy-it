@@ -202,6 +202,41 @@
                             <button class="buyit-mobile-share-btn">
                                 <span class="material-symbols-outlined text-[20px]">share</span>
                             </button>
+                            <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var mobileShareBtn = document.querySelector('.buyit-mobile-share-btn');
+                                if (mobileShareBtn) {
+                                    mobileShareBtn.onclick = async function() {
+                                        const shareUrl = new URL(window.location.href);
+                                        shareUrl.searchParams.set('id', window.product?.id || '');
+                                        const shareData = {
+                                            title: `Buy it - ${window.product?.title || ''}`,
+                                            text: `Check out ${window.product?.title || ''} on Buy it`,
+                                            url: shareUrl.toString()
+                                        };
+                                        if (navigator.share) {
+                                            try {
+                                                await navigator.share(shareData);
+                                                return;
+                                            } catch (error) {
+                                                if (error && error.name === 'AbortError') {
+                                                    return;
+                                                }
+                                            }
+                                        }
+                                        if (navigator.clipboard && navigator.clipboard.writeText) {
+                                            try {
+                                                await navigator.clipboard.writeText(shareData.url);
+                                                alert('Product link copied to clipboard');
+                                                return;
+                                            } catch (error) {}
+                                        }
+                                        window.prompt('Copy this product link:', shareData.url);
+                                    };
+                                }
+                            });
+                            </script>
+                            </button>
                         </div>
                         <button id="buy-now-mobile-btn" class="flex-[2] h-14 bg-primary hover:bg-blue-700 text-white font-bold rounded-2xl transition-all shadow-xl shadow-primary/30 flex items-center justify-center gap-2 transform active:scale-95 lg:hidden">
                             <span class="material-symbols-outlined text-[22px]">bolt</span>
