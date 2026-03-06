@@ -245,6 +245,42 @@
                 shippingEl.textContent = fmt(1245);
                 totalEl.textContent = fmt(subtotal + 1245);
             }
+            // Format currency in INR
+            function fmt(n) {
+                return typeof window.formatINR === 'function'
+                    ? window.formatINR(n)
+                    : new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(Number(n || 0));
+            }
+
+            // Render order items
+            function renderOrderItems() {
+                const list = document.getElementById('order-items-list');
+                const countEl = document.getElementById('order-item-count');
+                const subtotalEl = document.getElementById('order-subtotal');
+                const totalEl = document.getElementById('order-total');
+                const shippingEl = document.getElementById('order-shipping');
+                if (!list || !countEl || !subtotalEl || !totalEl || !shippingEl) return;
+                list.innerHTML = '';
+                let subtotal = 0;
+                if (typeof items !== 'undefined' && Array.isArray(items)) {
+                    items.forEach(item => {
+                        const itemTotal = Number(item.price || 0) * Math.max(1, Number(item.quantity || 1));
+                        subtotal += itemTotal;
+                        list.innerHTML += `<div class="flex items-center gap-4">
+                            <img src="${item.image || 'buyit-logo.png'}" alt="${item.title || 'Product'}" class="h-12 w-12 rounded-lg object-cover">
+                            <div class="flex-1">
+                                <div class="font-semibold">${item.title || 'Product'}</div>
+                                <div class="text-xs text-slate-500">Qty: ${item.quantity || 1}</div>
+                            </div>
+                            <div class="font-semibold">${fmt(itemTotal)}</div>
+                        </div>`;
+                    });
+                }
+                countEl.textContent = `Items (${items ? items.length : 0})`;
+                subtotalEl.textContent = fmt(subtotal);
+                shippingEl.textContent = fmt(1245);
+                totalEl.textContent = fmt(subtotal + 1245);
+            }
         import { auth, db } from "./firebase-config.js";
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
         import { doc, getDoc, collection, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
