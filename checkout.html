@@ -475,6 +475,8 @@ let items = [];
                             };
                             console.log('Order Firestore user:', user);
                             console.log('Order Firestore payload:', firestorePayload);
+                            console.log('DEBUG: Firestore user:', user);
+                            console.log('DEBUG: Firestore payload:', firestorePayload);
                             const batch = writeBatch(db);
                             batch.set(doc(db, 'orders', orderId), firestorePayload);
                             await batch.commit();
