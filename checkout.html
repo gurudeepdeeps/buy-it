@@ -340,47 +340,38 @@ let items = [];
     const addressContainer = document.getElementById('address-select-container');
     const editAddressBtn = document.getElementById('edit-address-btn');
     const currentUser = await getCurrentUser();
+    // Fetch addresses from Firebase
     let addresses = [];
-    let selectedAddressIndex = 0;
-    function readAddresses() {
-        const addressesKey = currentUser?.uid ? `buyit_addresses_${currentUser.uid}` : 'buyit_addresses';
-        try {
-            const raw = localStorage.getItem(addressesKey);
-            const parsed = JSON.parse(raw || '[]');
-            return Array.isArray(parsed) ? parsed : [];
-        } catch (_error) {
-            return [];
-        }
-    }
-    function getSelectedAddressIndex() {
-        const selectedAddressKey = currentUser?.uid ? `buyit_selected_address_${currentUser.uid}` : 'buyit_selected_address';
-        return parseInt(localStorage.getItem(selectedAddressKey) || '0', 10);
-    }
-    addresses = readAddresses();
     let selectedAddressId = localStorage.getItem('selectedAddressId');
     let selectedAddress = null;
+    if (currentUser && currentUser.uid) {
+        try {
+            const addressesRef = collection(db, "users", currentUser.uid, "addresses");
+            const snapshot = await getDocs(addressesRef);
+            addresses = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+        } catch (error) {
+            addresses = [];
+        }
+    }
     if (addresses.length > 0) {
-        // Try to match by id, else default to first
         if (selectedAddressId && addresses.some(addr => addr.id === selectedAddressId)) {
             selectedAddress = addresses.find(addr => addr.id === selectedAddressId);
         } else {
             selectedAddress = addresses[0];
-            // If address has id, set as selected for future
             if (selectedAddress.id) {
                 localStorage.setItem('selectedAddressId', selectedAddress.id);
             }
         }
     }
-    // Always render address
     if (selectedAddress && addressContainer) {
         addressContainer.innerHTML = `
             <div class="flex flex-col gap-2">
                 <label class="flex items-center gap-2 cursor-pointer">
                     <input type="radio" name="selected-address" checked class="accent-primary" />
                     <div class="saved-address-card">
-                        <div class="saved-address-name">${selectedAddress['first-name'] || selectedAddress['name'] || ''} ${selectedAddress['last-name'] || ''}</div>
-                        <div class="saved-address-line">${selectedAddress['address-line1'] || selectedAddress['addressLine1'] || ''}</div>
-                        <div class="saved-address-line">${selectedAddress['city'] || ''}, ${selectedAddress['state'] || ''} ${selectedAddress['postal-code'] || selectedAddress['pincode'] || ''}</div>
+                        <div class="saved-address-name">${selectedAddress['name'] || selectedAddress['first-name'] || ''}</div>
+                        <div class="saved-address-line">${selectedAddress['addressLine1'] || selectedAddress['address-line1'] || ''}</div>
+                        <div class="saved-address-line">${selectedAddress['city'] || ''}, ${selectedAddress['state'] || ''} ${selectedAddress['pincode'] || selectedAddress['postal-code'] || ''}</div>
                         <div class="saved-address-meta">${selectedAddress['phone'] ? 'Phone: ' + selectedAddress['phone'] : ''}</div>
                     </div>
                 </label>
