@@ -206,6 +206,19 @@
         const id = order.id || order.orderId || '-';
         const customer = getCustomerName(order);
         const productNames = Array.isArray(order.items) ? order.items.map(item => item.title || item.name || '-').join(', ') : '-';
+        // Fix date display for Firestore Timestamp and other types
+        let dateVal = order.date || order.createdAt || order.placedAt || '';
+        let date = '-';
+        if (typeof dateVal === 'string') {
+          date = window.AdminData.formatDate(dateVal);
+        } else if (dateVal instanceof Date) {
+          date = window.AdminData.formatDate(dateVal.toISOString());
+        } else if (typeof dateVal === 'object' && typeof dateVal.toDate === 'function') {
+          // Firestore Timestamp object
+          date = window.AdminData.formatDate(dateVal.toDate().toISOString());
+        } else {
+          date = window.AdminData.formatDate(String(dateVal));
+        }
         const amount = window.AdminData.formatCurrency(toAmount(order));
         const status = String(order.status || 'Unknown');
         const badgeClass = window.AdminData.statusBadgeClass(status);
@@ -213,6 +226,7 @@
           + '<td class="px-4 py-3">' + id + '</td>'
           + '<td class="px-4 py-3">' + customer + '</td>'
           + '<td class="px-4 py-3">' + productNames + '</td>'
+          + '<td class="px-4 py-3">' + date + '</td>'
           + '<td class="px-4 py-3">' + amount + '</td>'
           + '<td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs ' + badgeClass + '">' + status + '</span></td>'
           + '</tr>';
