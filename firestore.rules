@@ -106,8 +106,7 @@ service cloud.firestore {
           && request.resource.data.uid == request.auth.uid
           && request.resource.data.status is string
           && request.resource.data.totalAmount is number
-          && request.resource.data.placedAt != null
-          || true;
+          && request.resource.data.placedAt != null;
         allow update: if isAdmin();
         allow delete: if isAdmin();
       }
