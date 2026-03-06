@@ -338,6 +338,7 @@ let items = [];
 
     // Default address selection
     const addressContainer = document.getElementById('address-select-container');
+    const editAddressBtn = document.getElementById('edit-address-btn');
     const currentUser = await getCurrentUser();
     let addresses = [];
     let selectedAddressIndex = 0;
@@ -370,21 +371,16 @@ let items = [];
                         <div class="saved-address-meta">${addr['phone'] ? 'Phone: ' + addr['phone'] : ''}</div>
                     </div>
                 </label>
-                <button id="change-address-btn" class="text-primary hover:underline text-sm font-medium flex items-center gap-1 py-[0.2rem] px-[0.7rem] rounded-[0.4rem] border border-slate-200 bg-background-light w-fit">
-                    <span class="material-symbols-outlined text-[18px]">edit</span> Change Address
-                </button>
             </div>
         `;
-        setTimeout(() => {
-            const changeBtn = document.getElementById('change-address-btn');
-            if (changeBtn) {
-                changeBtn.addEventListener('click', () => {
-                    window.location.href = 'addresses.html';
-                });
-            }
-        }, 100);
     } else if (addressContainer) {
         addressContainer.innerHTML = '<div class="text-slate-500">No address found. Please add or select an address.</div>';
+    }
+    // Edit address button always works
+    if (editAddressBtn) {
+        editAddressBtn.addEventListener('click', () => {
+            window.location.href = 'addresses.html';
+        });
     }
 
     if (placeOrderBtn) {
