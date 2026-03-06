@@ -59,6 +59,7 @@
                 <th class="text-left px-4 py-3">Order ID</th>
                 <th class="text-left px-4 py-3">Customer</th>
                 <th class="text-left px-4 py-3">Date</th>
+                <th class="text-left px-4 py-3">Product Name(s)</th>
                 <th class="text-left px-4 py-3">Amount</th>
                 <th class="text-left px-4 py-3">Status</th>
                 <th class="text-left px-4 py-3">Action</th>
@@ -263,7 +264,18 @@
       tbody.innerHTML = orders.map(order => {
         const id = order.id || order.orderId || '-';
         const customer = order.customer || order.customerName || '-';
-        const date = window.AdminData.formatDate(order.date || order.createdAt || '');
+        // Fix date display
+        let dateVal = order.date || order.createdAt || order.placedAt || '';
+        let date = '-';
+        if (typeof dateVal === 'string') {
+          date = window.AdminData.formatDate(dateVal);
+        } else if (dateVal instanceof Date) {
+          date = window.AdminData.formatDate(dateVal.toISOString());
+        } else {
+          date = window.AdminData.formatDate(String(dateVal));
+        }
+        // Product names column
+        const productNames = Array.isArray(order.items) ? order.items.map(item => item.title || item.name || '-').join(', ') : '-';
         const amount = window.AdminData.formatCurrency(order.amount || 0);
         const status = order.status || 'Unknown';
         const badgeClass = window.AdminData.statusBadgeClass(status);
@@ -273,6 +285,7 @@
           + '<td class="px-4 py-3 font-medium">' + id + '</td>'
           + '<td class="px-4 py-3">' + customer + '</td>'
           + '<td class="px-4 py-3">' + date + '</td>'
+          + '<td class="px-4 py-3">' + productNames + '</td>'
           + '<td class="px-4 py-3">' + amount + '</td>'
           + '<td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs ' + badgeClass + '">' + status + '</span></td>'
           + '<td class="px-4 py-3">'
