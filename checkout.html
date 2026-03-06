@@ -222,142 +222,125 @@
             });
 
             const currentUser = await getCurrentUser();
-            // Debug log for Buy Now sessionStorage
-            console.log('Checkout page sessionStorage:', {
-                buyit_buynow: sessionStorage.getItem('buyit_buynow'),
-                buyit_checkout_source: sessionStorage.getItem('buyit_checkout_source')
-            });
-            const addressesKey = currentUser?.uid ? `buyit_addresses_${currentUser.uid}` : 'buyit_addresses';
-            const selectedAddressKey = currentUser?.uid ? `buyit_selected_address_${currentUser.uid}` : 'buyit_selected_address';
-
-            const parseAddresses = (raw) => {
-                try {
-                    const parsed = JSON.parse(raw || '[]');
-                    return Array.isArray(parsed) ? parsed : [];
-                } catch (_error) {
-                    return [];
-                }
-            };
-
-            const migrateLegacyAddressesIfNeeded = () => {
-                if (!currentUser?.uid) {
-                    return;
-                }
-
-                const scopedAddresses = parseAddresses(localStorage.getItem(addressesKey));
-                if (scopedAddresses.length > 0) {
-                    return;
-                }
-
-                const legacyAddresses = parseAddresses(localStorage.getItem('buyit_addresses'));
-                if (legacyAddresses.length === 0) {
-                    return;
-                }
-
-                localStorage.setItem(addressesKey, JSON.stringify(legacyAddresses));
-                const legacySelected = String(localStorage.getItem('buyit_selected_address') || '0');
-                localStorage.setItem(selectedAddressKey, legacySelected);
-            };
-
-            const readAddresses = () => parseAddresses(localStorage.getItem(addressesKey));
-            const getSelectedAddressIndex = () => parseInt(localStorage.getItem(selectedAddressKey) || '0', 10);
-
-            const SHIPPING = 1245;
-            const fmt = n => typeof window.formatINR === 'function'
-                ? window.formatINR(n)
-                : new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(Number(n || 0));
-
-            const escapeHtml = (value) => String(value || '')
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#39;');
-
-            const addressContainer = document.getElementById('address-select-container');
-            const editAddressBtn = document.getElementById('edit-address-btn');
-            const placeOrderBtn = document.getElementById('place-order-btn');
-
-            // Show selected address from Firestore
-            async function showSelectedAddress() {
-                const selectedAddressId = localStorage.getItem('selectedAddressId');
-                if (!currentUser || !selectedAddressId) {
-                    addressContainer.innerHTML = '<div class="text-slate-500">No address selected. Please add or select an address.</div>';
-                    return;
-                }
-                const addressRef = doc(collection(db, "users", currentUser.uid, "addresses"), selectedAddressId);
-                try {
-                    const addressSnap = await getDoc(addressRef);
-                    if (!addressSnap.exists()) {
-                        addressContainer.innerHTML = '<div class="text-slate-500">Selected address not found.</div>';
-                        return;
-                    }
-                    const address = addressSnap.data();
-                    addressContainer.innerHTML = `
-                        <div class="flex flex-col gap-2">
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="radio" name="selected-address" checked class="accent-primary" />
-                                <div class="saved-address-card">
-                                    <div class="saved-address-name">${escapeHtml(address.name || '')}</div>
-                                    <div class="saved-address-line">${escapeHtml(address.addressLine1 || '')}</div>
-                                    <div class="saved-address-line">${escapeHtml(address.city || '')}, ${escapeHtml(address.state || '')} ${escapeHtml(address.pincode || '')}</div>
-                                    <div class="saved-address-meta">${address.phone ? 'Phone: ' + escapeHtml(address.phone) : ''}</div>
-                                </div>
-                            </label>
-                            <button id="change-address-btn" class="text-primary hover:underline text-sm font-medium flex items-center gap-1 py-[0.2rem] px-[0.7rem] rounded-[0.4rem] border border-slate-200 bg-background-light w-fit">
-                                <span class="material-symbols-outlined text-[18px]">edit</span> Change Address
-                            </button>
-                        </div>
-                    `;
-                    // Add event listener for change address button
-                    setTimeout(() => {
-                        const changeBtn = document.getElementById('change-address-btn');
-                        if (changeBtn) {
-                            changeBtn.addEventListener('click', () => {
-                                window.location.href = 'addresses.html';
-                            });
+                renderOrderItems();
+                if (placeOrderBtn) {
+                    placeOrderBtn.disabled = false;
+                    placeOrderBtn.addEventListener('click', async () => {
+                        if (!items.length) {
+                            alert('No items to place order.');
+                            return;
                         }
-                    }, 100);
-                } catch (err) {
-                    addressContainer.innerHTML = '<div class="text-slate-500">Failed to load address.</div>';
+                        // Try to get Firestore address from DOM
+                        let selectedAddress = null;
+                        const addressCard = document.querySelector('.saved-address-card');
+                        if (addressCard) {
+                            const fullName = addressCard.querySelector('.saved-address-name')?.textContent?.trim() || '';
+                            const nameParts = fullName.split(' ');
+                            selectedAddress = {
+                                'first-name': nameParts[0] || '',
+                                'last-name': nameParts.slice(1).join(' ') || '',
+                                'address-line1': addressCard.querySelector('.saved-address-line')?.textContent?.trim() || '',
+                                'city': '',
+                                'state': '',
+                                'postal-code': '',
+                                'phone': addressCard.querySelector('.saved-address-meta')?.textContent?.replace('Phone: ', '').trim() || ''
+                            };
+                        } else {
+                            const currentAddresses = readAddresses();
+                            const selectedIndex = getSelectedAddressIndex();
+                            selectedAddress = currentAddresses[selectedIndex] || null;
+                        }
+                        if (!selectedAddress || !selectedAddress.name) {
+                            if (!selectedAddress || !selectedAddress['first-name']) {
+                                alert('Please add and select a shipping address before placing your order.');
+                                window.location.href = 'addresses.html';
+                                return;
+                            }
+                        }
+                        placeOrderBtn.disabled = true;
+                        placeOrderBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                        try {
+                            const user = await getCurrentUser();
+                            if (!user || !user.uid) {
+                                alert('You must be logged in to place an order. Redirecting to login...');
+                                window.location.href = 'login.html';
+                                placeOrderBtn.disabled = false;
+                                placeOrderBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                                return;
+                            }
+                            const normalizedItems = items.map((item) => ({
+                                id: String(item.id || ''),
+                                title: String(item.title || 'Product'),
+                                price: Number(item.price || 0),
+                                regularPrice: Number(item.regularPrice || 0),
+                                quantity: Math.max(1, Number(item.quantity || 1)),
+                                image: String(item.image || 'buyit-logo.png')
+                            }));
+                            const subtotal = normalizedItems.reduce((sum, item) => sum + (Number(item.price || 0) * Math.max(1, Number(item.quantity || 1))), 0);
+                            const totalAmount = subtotal + SHIPPING;
+                            const orderId = `ORD-${Date.now()}`;
+                            const placedAtIso = new Date().toISOString();
+                            const order = {
+                                id: orderId,
+                                items: normalizedItems,
+                                address: selectedAddress,
+                                status: 'Processing',
+                                amount: totalAmount,
+                                totalAmount,
+                                placedAt: placedAtIso,
+                                date: placedAtIso,
+                                customer: `${selectedAddress['first-name'] || ''} ${selectedAddress['last-name'] || ''}`.trim() || 'Guest Customer',
+                                uid: user.uid
+                            };
+                            // Only include required address fields
+                            const minimalAddress = {
+                                'first-name': selectedAddress['first-name'] || '',
+                                'last-name': selectedAddress['last-name'] || '',
+                                'address-line1': selectedAddress['address-line1'] || '',
+                                'city': selectedAddress['city'] || '',
+                                'state': selectedAddress['state'] || '',
+                                'postal-code': selectedAddress['postal-code'] || '',
+                                'phone': selectedAddress['phone'] || ''
+                            };
+                            const firestorePayload = {
+                                id: orderId,
+                                items: normalizedItems,
+                                address: minimalAddress,
+                                status: 'Processing',
+                                amount: totalAmount,
+                                totalAmount: totalAmount,
+                                placedAt: placedAtIso,
+                                uid: user.uid,
+                                createdAt: serverTimestamp()
+                            };
+                            console.log('Order Firestore user:', user);
+                            console.log('Order Firestore payload:', firestorePayload);
+                            const batch = writeBatch(db);
+                            batch.set(doc(db, 'orders', orderId), firestorePayload);
+                            await batch.commit();
+                            orders.push(order);
+                            localStorage.setItem('buyit_orders', JSON.stringify(orders));
+                            if (checkoutSource === 'buyNow') {
+                                sessionStorage.removeItem('buyit_buynow');
+                            } else {
+                                localStorage.setItem('buyit_cart', '[]');
+                            }
+                            sessionStorage.removeItem('buyit_checkout_source');
+                            if (typeof window.updateHeaderCounts === 'function') {
+                                window.updateHeaderCounts();
+                            }
+                            window.location.href = 'orders.html';
+                        } catch (error) {
+                            console.error('Failed to place order.', error);
+                            alert('Failed to place order. Please try again.');
+                            placeOrderBtn.disabled = false;
+                            placeOrderBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                        }
+                    });
                 }
-            }
-
-            await showSelectedAddress();
-            const storedSource = sessionStorage.getItem('buyit_checkout_source');
-            const buyNowRaw = sessionStorage.getItem('buyit_buynow');
-
-            let checkoutSource = 'cart';
-            if (storedSource === 'buyNow' && buyNowRaw) {
-                checkoutSource = 'buyNow';
-            } else if (storedSource === 'cart') {
-                checkoutSource = 'cart';
-            } else if (buyNowRaw) {
-                checkoutSource = 'buyNow';
-            }
-
-            let items = [];
-            let addresses = [];
-            let selectedAddressIndex = 0;
-            if (checkoutSource === 'buyNow' && buyNowRaw) {
-                try {
-                    const buyNowItem = JSON.parse(buyNowRaw);
-                    if (buyNowItem && typeof buyNowItem === 'object') {
-                        items = [buyNowItem];
-                    }
-                } catch (error) {
-                    items = [];
-                }
-            } else {
-                try {
-                    const cartRaw = localStorage.getItem('buyit_cart');
-                    items = cartRaw ? JSON.parse(cartRaw) : [];
-                } catch (error) {
-                    items = [];
-                }
-            }
-
-            const list = document.getElementById('order-items-list');
+            // End of DOMContentLoaded
+            renderOrderItems();
+        });
             const countEl = document.getElementById('order-item-count');
             const subtotalEl = document.getElementById('order-subtotal');
             const totalEl = document.getElementById('order-total');
@@ -397,11 +380,138 @@
 
                 if (!addresses.length) {
                     addressContainer.innerHTML = '<div class="text-sm text-text-sub-light">No address found. <a href="addresses.html" class="text-primary underline">Add an address</a>.</div>';
-                    placeOrderBtn.disabled = true;
-                }
-            }
-            // ...existing code...
-        });
+                    if (placeOrderBtn) {
+                        placeOrderBtn.disabled = true;
+                        placeOrderBtn.addEventListener('click', async () => {
+                            if (!items.length) {
+                                placeOrderBtn.addEventListener('click', async () => {
+                                    if (!items.length) {
+                                        alert('No items to place order.');
+                                        return;
+                                    }
+
+                                    // Try to get Firestore address from DOM
+                                    let selectedAddress = null;
+                                    const addressCard = document.querySelector('.saved-address-card');
+                                    if (addressCard) {
+                                        const fullName = addressCard.querySelector('.saved-address-name')?.textContent?.trim() || '';
+                                        const nameParts = fullName.split(' ');
+                                        selectedAddress = {
+                                            'first-name': nameParts[0] || '',
+                                            'last-name': nameParts.slice(1).join(' ') || '',
+                                            'address-line1': addressCard.querySelector('.saved-address-line')?.textContent?.trim() || '',
+                                            'city': '',
+                                            'state': '',
+                                            'postal-code': '',
+                                            'phone': addressCard.querySelector('.saved-address-meta')?.textContent?.replace('Phone: ', '').trim() || ''
+                                        };
+                                    } else {
+                                        const currentAddresses = readAddresses();
+                                        const selectedIndex = getSelectedAddressIndex();
+                                        selectedAddress = currentAddresses[selectedIndex] || null;
+                                    }
+
+                                    if (!selectedAddress || !selectedAddress.name) {
+                                        if (!selectedAddress || !selectedAddress['first-name']) {
+                                            alert('Please add and select a shipping address before placing your order.');
+                                            window.location.href = 'addresses.html';
+                                            return;
+                                        }
+                                    }
+
+                                    placeOrderBtn.disabled = true;
+                                    placeOrderBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+                                    try {
+                                        const user = await getCurrentUser();
+                                        if (!user || !user.uid) {
+                                            alert('You must be logged in to place an order. Redirecting to login...');
+                                            window.location.href = 'login.html';
+                                            placeOrderBtn.disabled = false;
+                                            placeOrderBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                                            return;
+                                        }
+
+                                        const normalizedItems = items.map((item) => ({
+                                            id: String(item.id || ''),
+                                            title: String(item.title || 'Product'),
+                                            price: Number(item.price || 0),
+                                            regularPrice: Number(item.regularPrice || 0),
+                                            quantity: Math.max(1, Number(item.quantity || 1)),
+                                            image: String(item.image || 'buyit-logo.png')
+                                        }));
+
+                                        const subtotal = normalizedItems.reduce((sum, item) => sum + (Number(item.price || 0) * Math.max(1, Number(item.quantity || 1))), 0);
+                                        const totalAmount = subtotal + SHIPPING;
+                                        const orderId = `ORD-${Date.now()}`;
+                                        const placedAtIso = new Date().toISOString();
+
+                                        const order = {
+                                            id: orderId,
+                                            items: normalizedItems,
+                                            address: selectedAddress,
+                                            status: 'Processing',
+                                            amount: totalAmount,
+                                            totalAmount,
+                                            placedAt: placedAtIso,
+                                            date: placedAtIso,
+                                            customer: `${selectedAddress['first-name'] || ''} ${selectedAddress['last-name'] || ''}`.trim() || 'Guest Customer',
+                                            uid: user.uid
+                                        };
+
+                                        // Only include required address fields
+                                        const minimalAddress = {
+                                            'first-name': selectedAddress['first-name'] || '',
+                                            'last-name': selectedAddress['last-name'] || '',
+                                            'address-line1': selectedAddress['address-line1'] || '',
+                                            'city': selectedAddress['city'] || '',
+                                            'state': selectedAddress['state'] || '',
+                                            'postal-code': selectedAddress['postal-code'] || '',
+                                            'phone': selectedAddress['phone'] || ''
+                                        };
+                                        const firestorePayload = {
+                                            id: orderId,
+                                            items: normalizedItems,
+                                            address: minimalAddress,
+                                            status: 'Processing',
+                                            amount: totalAmount,
+                                            totalAmount: totalAmount,
+                                            placedAt: placedAtIso,
+                                            uid: user.uid,
+                                            createdAt: serverTimestamp()
+                                        };
+                                        console.log('Order Firestore user:', user);
+                                        console.log('Order Firestore payload:', firestorePayload);
+
+                                        const batch = writeBatch(db);
+                                        batch.set(doc(db, 'orders', orderId), firestorePayload);
+                                        await batch.commit();
+
+                                        orders.push(order);
+                                        localStorage.setItem('buyit_orders', JSON.stringify(orders));
+
+                                        if (checkoutSource === 'buyNow') {
+                                            sessionStorage.removeItem('buyit_buynow');
+                                        } else {
+                                            localStorage.setItem('buyit_cart', '[]');
+                                        }
+                                        sessionStorage.removeItem('buyit_checkout_source');
+
+                                        if (typeof window.updateHeaderCounts === 'function') {
+                                            window.updateHeaderCounts();
+                                        }
+
+                                        window.location.href = 'orders.html';
+                                    } catch (error) {
+                                        console.error('Failed to place order.', error);
+                                        alert('Failed to place order. Please try again.');
+                                        placeOrderBtn.disabled = false;
+                                        placeOrderBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                                    }
+                                });
+        }
+    });
+}}}
     </script>
 </body>
 </html>
