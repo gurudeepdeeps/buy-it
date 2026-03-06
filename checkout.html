@@ -357,16 +357,18 @@ let items = [];
         return parseInt(localStorage.getItem(selectedAddressKey) || '0', 10);
     }
     addresses = readAddresses();
-    // Use selected address from localStorage if available, else default to first
     let selectedAddressId = localStorage.getItem('selectedAddressId');
     let selectedAddress = null;
     if (addresses.length > 0) {
-        if (selectedAddressId) {
-            selectedAddress = addresses.find(addr => addr.id === selectedAddressId) || addresses[0];
+        // Try to match by id, else default to first
+        if (selectedAddressId && addresses.some(addr => addr.id === selectedAddressId)) {
+            selectedAddress = addresses.find(addr => addr.id === selectedAddressId);
         } else {
             selectedAddress = addresses[0];
-            // Optionally set as selected for future
-            // localStorage.setItem('selectedAddressId', selectedAddress.id);
+            // If address has id, set as selected for future
+            if (selectedAddress.id) {
+                localStorage.setItem('selectedAddressId', selectedAddress.id);
+            }
         }
     }
     if (selectedAddress && addressContainer) {
