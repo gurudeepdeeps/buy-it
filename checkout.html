@@ -231,30 +231,67 @@ let items = [];
                     if (!list || !countEl || !subtotalEl || !totalEl || !shippingEl) return;
                     list.innerHTML = '';
                     let total = 0;
-                    items.forEach((item) => {
+                    items.forEach((item, idx) => {
                         const itemTotal = (item.price || 0) * (item.qty || 1);
                         total += itemTotal;
+                        const safeName = item.name ? String(item.name).replace(/`/g, "'") : '';
+                        const safeId = item.id ? String(item.id).replace(/`/g, "'") : idx;
+                        const regularPrice = Math.round(Number(item.price || 0) * 2.1451612903);
                         const card = document.createElement('div');
-                        card.className = 'flex gap-4 border rounded-xl p-4 mb-4 bg-white shadow-md items-center';
+                        card.className = 'group relative p-5 bg-white rounded-xl border border-slate-200 hover:border-primary/30 hover:shadow-lg transition-all duration-300 mb-4';
                         card.innerHTML = `
-                            <div class="w-20 h-20 flex-shrink-0">
-                                <img src="${item.image || 'https://via.placeholder.com/80'}" alt="${item.name}" class="w-full h-full object-cover rounded-lg border" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <div class="font-semibold text-lg text-slate-900 truncate">${item.name}</div>
-                                <div class="flex items-center gap-2 mt-1">
-                                    <span class="text-sm text-slate-500">Qty:</span>
-                                    <span class="text-base font-medium text-slate-700">${item.qty || 1}</span>
+                            <div class="flex flex-col sm:flex-row gap-5">
+                                <div class="shrink-0 w-full sm:w-36 aspect-[4/3] rounded-xl overflow-hidden bg-white border border-slate-200 p-2 flex items-center justify-center">
+                                    <img alt="${safeName}" class="h-full w-full object-contain group-hover:scale-105 transition-transform duration-500" src="${item.image || 'https://via.placeholder.com/80'}" />
                                 </div>
-                            </div>
-                            <div class="flex flex-col items-end justify-center min-w-[90px]">
-                                <div class="text-primary font-bold text-lg">${fmt(item.price)}</div>
-                                <div class="text-xs text-slate-400 mt-1">Subtotal: <span class="font-semibold text-slate-600">${fmt(itemTotal)}</span></div>
+                                <div class="flex flex-1 flex-col">
+                                    <div class="flex justify-between items-start gap-4">
+                                        <div>
+                                            <h3 class="text-lg font-semibold text-slate-900 leading-tight">${safeName}</h3>
+                                        </div>
+                                        <button type="button" class="text-slate-400 hover:text-red-500 transition-colors p-1 cursor-pointer delete-checkout-item" data-idx="${idx}" aria-label="Remove item">
+                                            <span class="material-symbols-outlined !text-[20px]">delete</span>
+                                        </button>
+                                    </div>
+                                    <div class="mt-4 mb-4 flex flex-col gap-1">
+                                        <span class="text-base font-black text-red-600 leading-tight">${fmt(item.price)}</span>
+                                        <span class="text-sm font-semibold text-slate-500 line-through leading-tight">${fmt(regularPrice)}</span>
+                                    </div>
+                                    <div class="flex items-center justify-between mt-auto gap-4">
+                                        <div class="flex items-center border border-slate-200 rounded-lg bg-slate-50 overflow-hidden">
+                                            <span class="px-3 py-1.5 text-text-main">Qty:</span>
+                                            <input class="w-10 text-center bg-transparent border-none p-0 text-sm font-semibold text-text-main focus:ring-0" readonly type="text" value="${item.qty || 1}" title="Quantity" placeholder="Qty" />
+                                        </div>
+                                        <span class="text-lg font-black text-red-600">${fmt(itemTotal)}</span>
+                                    </div>
+                                </div>
                             </div>
                         `;
                         list.appendChild(card);
                     });
                     document.getElementById('order-total').textContent = fmt(total + SHIPPING);
+                    // Add delete handler
+                    setTimeout(() => {
+                        document.querySelectorAll('.delete-checkout-item').forEach(btn => {
+                            btn.addEventListener('click', function() {
+                                const idx = parseInt(this.getAttribute('data-idx'), 10);
+                                if (!isNaN(idx)) {
+                                    items.splice(idx, 1);
+                                    // Save updated items to storage
+                                    if (sessionStorage.getItem('buyit_checkout_source') === 'buyNow') {
+                                        if (items.length > 0) {
+                                            sessionStorage.setItem('buyit_buynow', JSON.stringify(items[0]));
+                                        } else {
+                                            sessionStorage.removeItem('buyit_buynow');
+                                        }
+                                    } else {
+                                        localStorage.setItem('buyit_cart', JSON.stringify(items));
+                                    }
+                                    renderOrderItems();
+                                }
+                            });
+                        });
+                    }, 100);
             }
         import { auth, db } from "./firebase-config.js";
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
