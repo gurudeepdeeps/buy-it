@@ -357,18 +357,28 @@ let items = [];
         return parseInt(localStorage.getItem(selectedAddressKey) || '0', 10);
     }
     addresses = readAddresses();
-    selectedAddressIndex = getSelectedAddressIndex();
-    if (addresses.length > 0 && addressContainer) {
-        const addr = addresses[selectedAddressIndex] || addresses[0];
+    // Use selected address from localStorage if available, else default to first
+    let selectedAddressId = localStorage.getItem('selectedAddressId');
+    let selectedAddress = null;
+    if (addresses.length > 0) {
+        if (selectedAddressId) {
+            selectedAddress = addresses.find(addr => addr.id === selectedAddressId) || addresses[0];
+        } else {
+            selectedAddress = addresses[0];
+            // Optionally set as selected for future
+            // localStorage.setItem('selectedAddressId', selectedAddress.id);
+        }
+    }
+    if (selectedAddress && addressContainer) {
         addressContainer.innerHTML = `
             <div class="flex flex-col gap-2">
                 <label class="flex items-center gap-2 cursor-pointer">
                     <input type="radio" name="selected-address" checked class="accent-primary" />
                     <div class="saved-address-card">
-                        <div class="saved-address-name">${addr['first-name'] || ''} ${addr['last-name'] || ''}</div>
-                        <div class="saved-address-line">${addr['address-line1'] || ''}</div>
-                        <div class="saved-address-line">${addr['city'] || ''}, ${addr['state'] || ''} ${addr['postal-code'] || ''}</div>
-                        <div class="saved-address-meta">${addr['phone'] ? 'Phone: ' + addr['phone'] : ''}</div>
+                        <div class="saved-address-name">${selectedAddress['first-name'] || ''} ${selectedAddress['last-name'] || ''}</div>
+                        <div class="saved-address-line">${selectedAddress['address-line1'] || ''}</div>
+                        <div class="saved-address-line">${selectedAddress['city'] || ''}, ${selectedAddress['state'] || ''} ${selectedAddress['postal-code'] || ''}</div>
+                        <div class="saved-address-meta">${selectedAddress['phone'] ? 'Phone: ' + selectedAddress['phone'] : ''}</div>
                     </div>
                 </label>
             </div>

@@ -328,6 +328,11 @@
           container.innerHTML = '<div class="saved-address-line">No saved addresses yet.</div>';
           return;
         }
+        // Auto-select first address if none selected
+        if (!selectedAddressId) {
+          selectedAddressId = snapshot.docs[0].id;
+          localStorage.setItem('selectedAddressId', selectedAddressId);
+        }
         container.innerHTML = Array.from(snapshot.docs).map(docSnap => {
           const address = docSnap.data();
           const id = docSnap.id;
