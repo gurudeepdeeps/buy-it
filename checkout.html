@@ -400,13 +400,30 @@ let items = [];
             if (addressCard) {
                 const fullName = addressCard.querySelector('.saved-address-name')?.textContent?.trim() || '';
                 const nameParts = fullName.split(' ');
+                const addressLine1 = addressCard.querySelector('.saved-address-line')?.textContent?.trim() || '';
+                const addressLines = addressCard.querySelectorAll('.saved-address-line');
+                let city = '', state = '', postalCode = '', country = '';
+                if (addressLines.length > 1) {
+                    // Example: "Hebbur, Karnataka 572120"
+                    const line = addressLines[1].textContent.trim();
+                    const parts = line.split(',');
+                    city = parts[0]?.trim() || '';
+                    const stateZip = parts[1]?.trim().split(' ');
+                    state = stateZip?.[0] || '';
+                    postalCode = stateZip?.[1] || '';
+                }
+                if (addressLines.length > 2) {
+                    // Example: country info if present
+                    country = addressLines[2].textContent.trim();
+                }
                 selectedAddress = {
                     'first-name': nameParts[0] || '',
                     'last-name': nameParts.slice(1).join(' ') || '',
-                    'address-line1': addressCard.querySelector('.saved-address-line')?.textContent?.trim() || '',
-                    'city': '',
-                    'state': '',
-                    'postal-code': '',
+                    'address-line1': addressLine1,
+                    'city': city,
+                    'state': state,
+                    'postal-code': postalCode,
+                    'country': country,
                     'phone': addressCard.querySelector('.saved-address-meta')?.textContent?.replace('Phone: ', '').trim() || ''
                 };
             } else if (addresses.length > 0) {
