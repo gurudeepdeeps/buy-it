@@ -371,15 +371,16 @@ let items = [];
             }
         }
     }
+    // Always render address
     if (selectedAddress && addressContainer) {
         addressContainer.innerHTML = `
             <div class="flex flex-col gap-2">
                 <label class="flex items-center gap-2 cursor-pointer">
                     <input type="radio" name="selected-address" checked class="accent-primary" />
                     <div class="saved-address-card">
-                        <div class="saved-address-name">${selectedAddress['first-name'] || ''} ${selectedAddress['last-name'] || ''}</div>
-                        <div class="saved-address-line">${selectedAddress['address-line1'] || ''}</div>
-                        <div class="saved-address-line">${selectedAddress['city'] || ''}, ${selectedAddress['state'] || ''} ${selectedAddress['postal-code'] || ''}</div>
+                        <div class="saved-address-name">${selectedAddress['first-name'] || selectedAddress['name'] || ''} ${selectedAddress['last-name'] || ''}</div>
+                        <div class="saved-address-line">${selectedAddress['address-line1'] || selectedAddress['addressLine1'] || ''}</div>
+                        <div class="saved-address-line">${selectedAddress['city'] || ''}, ${selectedAddress['state'] || ''} ${selectedAddress['postal-code'] || selectedAddress['pincode'] || ''}</div>
                         <div class="saved-address-meta">${selectedAddress['phone'] ? 'Phone: ' + selectedAddress['phone'] : ''}</div>
                     </div>
                 </label>
