@@ -255,49 +255,126 @@ let items = [];
         import { doc, getDoc, collection, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
         document.addEventListener('DOMContentLoaded', async () => {
-            const getCurrentUser = () => new Promise((resolve) => {
-                const unsubscribe = onAuthStateChanged(auth, (user) => {
-                    unsubscribe();
-                    resolve(user || null);
-                });
-            });
+    const getCurrentUser = () => new Promise((resolve) => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            unsubscribe();
+            resolve(user || null);
+        });
+    });
 
-            const currentUser = await getCurrentUser();
-                renderOrderItems();
-                if (placeOrderBtn) {
-                    placeOrderBtn.disabled = false;
-                    placeOrderBtn.addEventListener('click', async () => {
-                        if (!items.length) {
-                            alert('No items to place order.');
-                            return;
-                        }
-                        // Try to get Firestore address from DOM
-                        let selectedAddress = null;
-                        const addressCard = document.querySelector('.saved-address-card');
-                        if (addressCard) {
-                            const fullName = addressCard.querySelector('.saved-address-name')?.textContent?.trim() || '';
-                            const nameParts = fullName.split(' ');
-                            selectedAddress = {
-                                'first-name': nameParts[0] || '',
-                                'last-name': nameParts.slice(1).join(' ') || '',
-                                'address-line1': addressCard.querySelector('.saved-address-line')?.textContent?.trim() || '',
-                                'city': '',
-                                'state': '',
-                                'postal-code': '',
-                                'phone': addressCard.querySelector('.saved-address-meta')?.textContent?.replace('Phone: ', '').trim() || ''
-                            };
-                        } else {
-                            const currentAddresses = readAddresses();
-                            const selectedIndex = getSelectedAddressIndex();
-                            selectedAddress = currentAddresses[selectedIndex] || null;
-                        }
-                        if (!selectedAddress || !selectedAddress.name) {
-                            if (!selectedAddress || !selectedAddress['first-name']) {
-                                alert('Please add and select a shipping address before placing your order.');
-                                window.location.href = 'addresses.html';
-                                return;
-                            }
-                        }
+    // Load items from cart or buy-now
+    let checkoutSource = 'cart';
+    const storedSource = sessionStorage.getItem('buyit_checkout_source');
+    const buyNowRaw = sessionStorage.getItem('buyit_buynow');
+    if (storedSource === 'buyNow' && buyNowRaw) {
+        checkoutSource = 'buyNow';
+    } else if (storedSource === 'cart') {
+        checkoutSource = 'cart';
+    } else if (buyNowRaw) {
+        checkoutSource = 'buyNow';
+    }
+    if (checkoutSource === 'buyNow' && buyNowRaw) {
+        try {
+            const buyNowItem = JSON.parse(buyNowRaw);
+            if (buyNowItem && typeof buyNowItem === 'object') {
+                items = [buyNowItem];
+            }
+        } catch (error) {
+            items = [];
+        }
+    } else {
+        try {
+            const cartRaw = localStorage.getItem('buyit_cart');
+            items = cartRaw ? JSON.parse(cartRaw) : [];
+        } catch (error) {
+            items = [];
+        }
+    }
+
+    renderOrderItems();
+
+    // Default address selection
+    const addressContainer = document.getElementById('address-select-container');
+    const currentUser = await getCurrentUser();
+    let addresses = [];
+    let selectedAddressIndex = 0;
+    function readAddresses() {
+        const addressesKey = currentUser?.uid ? `buyit_addresses_${currentUser.uid}` : 'buyit_addresses';
+        try {
+            const raw = localStorage.getItem(addressesKey);
+            const parsed = JSON.parse(raw || '[]');
+            return Array.isArray(parsed) ? parsed : [];
+        } catch (_error) {
+            return [];
+        }
+    }
+    function getSelectedAddressIndex() {
+        const selectedAddressKey = currentUser?.uid ? `buyit_selected_address_${currentUser.uid}` : 'buyit_selected_address';
+        return parseInt(localStorage.getItem(selectedAddressKey) || '0', 10);
+    }
+    addresses = readAddresses();
+    selectedAddressIndex = getSelectedAddressIndex();
+    if (addresses.length > 0 && addressContainer) {
+        const addr = addresses[selectedAddressIndex] || addresses[0];
+        addressContainer.innerHTML = `
+            <div class="flex flex-col gap-2">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="selected-address" checked class="accent-primary" />
+                    <div class="saved-address-card">
+                        <div class="saved-address-name">${addr['first-name'] || ''} ${addr['last-name'] || ''}</div>
+                        <div class="saved-address-line">${addr['address-line1'] || ''}</div>
+                        <div class="saved-address-line">${addr['city'] || ''}, ${addr['state'] || ''} ${addr['postal-code'] || ''}</div>
+                        <div class="saved-address-meta">${addr['phone'] ? 'Phone: ' + addr['phone'] : ''}</div>
+                    </div>
+                </label>
+                <button id="change-address-btn" class="text-primary hover:underline text-sm font-medium flex items-center gap-1 py-[0.2rem] px-[0.7rem] rounded-[0.4rem] border border-slate-200 bg-background-light w-fit">
+                    <span class="material-symbols-outlined text-[18px]">edit</span> Change Address
+                </button>
+            </div>
+        `;
+        setTimeout(() => {
+            const changeBtn = document.getElementById('change-address-btn');
+            if (changeBtn) {
+                changeBtn.addEventListener('click', () => {
+                    window.location.href = 'addresses.html';
+                });
+            }
+        }, 100);
+    } else if (addressContainer) {
+        addressContainer.innerHTML = '<div class="text-slate-500">No address found. Please add or select an address.</div>';
+    }
+
+    if (placeOrderBtn) {
+        placeOrderBtn.disabled = false;
+        placeOrderBtn.addEventListener('click', async () => {
+            if (!items.length) {
+                alert('No items to place order.');
+                return;
+            }
+            // Try to get address from DOM
+            let selectedAddress = null;
+            const addressCard = document.querySelector('.saved-address-card');
+            if (addressCard) {
+                const fullName = addressCard.querySelector('.saved-address-name')?.textContent?.trim() || '';
+                const nameParts = fullName.split(' ');
+                selectedAddress = {
+                    'first-name': nameParts[0] || '',
+                    'last-name': nameParts.slice(1).join(' ') || '',
+                    'address-line1': addressCard.querySelector('.saved-address-line')?.textContent?.trim() || '',
+                    'city': '',
+                    'state': '',
+                    'postal-code': '',
+                    'phone': addressCard.querySelector('.saved-address-meta')?.textContent?.replace('Phone: ', '').trim() || ''
+                };
+            } else if (addresses.length > 0) {
+                selectedAddress = addresses[selectedAddressIndex] || addresses[0];
+            }
+            if (!selectedAddress || !selectedAddress['first-name']) {
+                alert('Please add and select a shipping address before placing your order.');
+                window.location.href = 'addresses.html';
+                return;
+            }
+            // ...existing code for placing order...
                         placeOrderBtn.disabled = true;
                         placeOrderBtn.classList.add('opacity-50', 'cursor-not-allowed');
                         try {
