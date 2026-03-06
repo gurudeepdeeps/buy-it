@@ -264,13 +264,16 @@
       tbody.innerHTML = orders.map(order => {
         const id = order.id || order.orderId || '-';
         const customer = order.customer || order.customerName || '-';
-        // Fix date display
+        // Fix date display for Firestore Timestamp and other types
         let dateVal = order.date || order.createdAt || order.placedAt || '';
         let date = '-';
         if (typeof dateVal === 'string') {
           date = window.AdminData.formatDate(dateVal);
         } else if (dateVal instanceof Date) {
           date = window.AdminData.formatDate(dateVal.toISOString());
+        } else if (typeof dateVal === 'object' && typeof dateVal.toDate === 'function') {
+          // Firestore Timestamp object
+          date = window.AdminData.formatDate(dateVal.toDate().toISOString());
         } else {
           date = window.AdminData.formatDate(String(dateVal));
         }
