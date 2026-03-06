@@ -209,12 +209,6 @@
     </footer>
     <script src="shop.js"></script>
     <script type="module">
-            // Format currency in INR
-            function fmt(n) {
-                return typeof window.formatINR === 'function'
-                    ? window.formatINR(n)
-                    : new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(Number(n || 0));
-            }
 
             // Render order items
             function renderOrderItems() {
