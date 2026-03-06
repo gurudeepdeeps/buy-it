@@ -480,6 +480,12 @@ let items = [];
                             const batch = writeBatch(db);
                             batch.set(doc(db, 'orders', orderId), firestorePayload);
                             await batch.commit();
+                            let orders = [];
+                            try {
+                                orders = JSON.parse(localStorage.getItem('buyit_orders') || '[]');
+                            } catch (e) {
+                                orders = [];
+                            }
                             orders.push(order);
                             localStorage.setItem('buyit_orders', JSON.stringify(orders));
                             if (checkoutSource === 'buyNow') {
