@@ -497,10 +497,11 @@ let items = [];
                             if (typeof window.updateHeaderCounts === 'function') {
                                 window.updateHeaderCounts();
                             }
+                            alert('Order placed successfully! Redirecting to your orders page.');
                             window.location.href = 'orders.html';
                         } catch (error) {
                             console.error('Failed to place order.', error);
-                            alert('Failed to place order. Please try again.');
+                            alert('Order failed: ' + (error?.message || 'Please try again.'));
                             placeOrderBtn.disabled = false;
                             placeOrderBtn.classList.remove('opacity-50', 'cursor-not-allowed');
                         }
