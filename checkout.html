@@ -479,6 +479,7 @@ let items = [];
                             console.log('DEBUG: Firestore payload:', firestorePayload);
                             const batch = writeBatch(db);
                             batch.set(doc(db, 'orders', orderId), firestorePayload);
+                            batch.set(doc(db, 'users', user.uid, 'orders', orderId), firestorePayload);
                             await batch.commit();
                             let orders = [];
                             try {
