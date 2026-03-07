@@ -149,7 +149,8 @@
         await updateDoc(doc(db, 'orders', normalizedId), { status: String(nextStatus || 'Processing') });
         return { ok: true, updated: 1 };
       } catch (_error) {
-        return { ok: false, updated: 0, reason: 'cloud-update-failed' };
+          console.error('Firestore update error:', _error);
+          return { ok: false, updated: 0, reason: 'cloud-update-failed', error: _error?.message || String(_error) };
       }
     }
 
@@ -176,7 +177,8 @@
         await deleteDoc(doc(db, 'orders', normalizedId));
         return { ok: true, deleted: 1 };
       } catch (_error) {
-        return { ok: false, deleted: 0, reason: 'cloud-delete-failed' };
+          console.error('Firestore delete error:', _error);
+          return { ok: false, deleted: 0, reason: 'cloud-delete-failed', error: _error?.message || String(_error) };
       }
     }
 
