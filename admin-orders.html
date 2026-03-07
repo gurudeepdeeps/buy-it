@@ -133,9 +133,9 @@
       }
 
       try {
-        const groupedOrders = await getDocs(
-          query(collectionGroup(db, 'orders'), where(documentId(), '==', normalizedId))
-        );
+          const groupedOrders = await getDocs(
+            query(collectionGroup(db, 'orders'), where('id', '==', normalizedId))
+          );
 
         if (!groupedOrders.empty) {
           const batch = writeBatch(db);
@@ -161,9 +161,9 @@
       }
 
       try {
-        const groupedOrders = await getDocs(
-          query(collectionGroup(db, 'orders'), where(documentId(), '==', normalizedId))
-        );
+          const groupedOrders = await getDocs(
+            query(collectionGroup(db, 'orders'), where('id', '==', normalizedId))
+          );
 
         if (!groupedOrders.empty) {
           const batch = writeBatch(db);
