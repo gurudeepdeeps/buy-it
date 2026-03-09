@@ -247,71 +247,80 @@ await fetchShippingCharge();
                 const subtotalEl = document.getElementById('order-subtotal');
                 const totalEl = document.getElementById('order-total');
                 const shippingEl = document.getElementById('order-shipping');
-                    if (!list || !countEl || !subtotalEl || !totalEl || !shippingEl) return;
-                    list.innerHTML = '';
-                    let total = 0;
-                    items.forEach((item, idx) => {
-                        const itemTotal = (item.price || 0) * (item.qty || 1);
-                        total += itemTotal;
-                        const safeName = item.title ? String(item.title).replace(/`/g, "'") : '';
-                        const safeId = item.id ? String(item.id).replace(/`/g, "'") : idx;
-                        const regularPrice = Math.round(Number(item.price || 0) * 2.1451612903);
-                        const card = document.createElement('div');
-                        card.className = 'group relative p-5 bg-white rounded-xl border border-slate-200 hover:border-primary/30 hover:shadow-lg transition-all duration-300 mb-4';
-                        card.innerHTML = `
-                            <div class="flex flex-col sm:flex-row gap-5">
-                                <div class="shrink-0 w-full sm:w-36 aspect-[4/3] rounded-xl overflow-hidden bg-white border border-slate-200 p-2 flex items-center justify-center">
-                                    <img alt="${safeName}" class="h-full w-full object-contain group-hover:scale-105 transition-transform duration-500" src="${item.image || 'https://via.placeholder.com/80'}" />
+                if (!list || !countEl || !subtotalEl || !totalEl || !shippingEl) return;
+                list.innerHTML = '';
+                let total = 0;
+                if (!items || items.length === 0) {
+                    list.innerHTML = '<div class="text-slate-500">No products found in your cart or buy-now. <a href="products.html" class="text-primary underline">Shop now</a>.</div>';
+                    countEl.textContent = 'No products';
+                    subtotalEl.textContent = fmt(0);
+                    document.getElementById('order-total').textContent = fmt(SHIPPING);
+                    console.warn('DEBUG: No products found. items:', items);
+                    return;
+                }
+                items.forEach((item, idx) => {
+                    const itemTotal = (item.price || 0) * (item.qty || 1);
+                    total += itemTotal;
+                    const safeName = item.title ? String(item.title).replace(/`/g, "'") : '';
+                    const safeId = item.id ? String(item.id).replace(/`/g, "'") : idx;
+                    const regularPrice = Math.round(Number(item.price || 0) * 2.1451612903);
+                    const card = document.createElement('div');
+                    card.className = 'group relative p-5 bg-white rounded-xl border border-slate-200 hover:border-primary/30 hover:shadow-lg transition-all duration-300 mb-4';
+                    card.innerHTML = `
+                        <div class="flex flex-col sm:flex-row gap-5">
+                            <div class="shrink-0 w-full sm:w-36 aspect-[4/3] rounded-xl overflow-hidden bg-white border border-slate-200 p-2 flex items-center justify-center">
+                                <img alt="${safeName}" class="h-full w-full object-contain group-hover:scale-105 transition-transform duration-500" src="${item.image || 'https://via.placeholder.com/80'}" />
+                            </div>
+                            <div class="flex flex-1 flex-col">
+                                <div class="flex justify-between items-start gap-4">
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-slate-900 leading-tight">${safeName}</h3>
+                                    </div>
+                                    <button type="button" class="text-slate-400 hover:text-red-500 transition-colors p-1 cursor-pointer delete-checkout-item" data-idx="${idx}" aria-label="Remove item">
+                                        <span class="material-symbols-outlined !text-[20px]">delete</span>
+                                    </button>
                                 </div>
-                                <div class="flex flex-1 flex-col">
-                                    <div class="flex justify-between items-start gap-4">
-                                        <div>
-                                            <h3 class="text-lg font-semibold text-slate-900 leading-tight">${safeName}</h3>
-                                        </div>
-                                        <button type="button" class="text-slate-400 hover:text-red-500 transition-colors p-1 cursor-pointer delete-checkout-item" data-idx="${idx}" aria-label="Remove item">
-                                            <span class="material-symbols-outlined !text-[20px]">delete</span>
-                                        </button>
+                                <div class="mt-4 mb-4 flex flex-col gap-1">
+                                    <span class="text-base font-black text-red-600 leading-tight">${fmt(item.price)}</span>
+                                    <span class="text-sm font-semibold text-slate-500 line-through leading-tight">${fmt(regularPrice)}</span>
+                                </div>
+                                <div class="flex items-center justify-between mt-auto gap-4">
+                                    <div class="flex items-center border border-slate-200 rounded-lg bg-slate-50 overflow-hidden">
+                                        <span class="px-3 py-1.5 text-text-main">Qty:</span>
+                                        <input class="w-10 text-center bg-transparent border-none p-0 text-sm font-semibold text-text-main focus:ring-0" readonly type="text" value="${item.qty || 1}" title="Quantity" placeholder="Qty" />
                                     </div>
-                                    <div class="mt-4 mb-4 flex flex-col gap-1">
-                                        <span class="text-base font-black text-red-600 leading-tight">${fmt(item.price)}</span>
-                                        <span class="text-sm font-semibold text-slate-500 line-through leading-tight">${fmt(regularPrice)}</span>
-                                    </div>
-                                    <div class="flex items-center justify-between mt-auto gap-4">
-                                        <div class="flex items-center border border-slate-200 rounded-lg bg-slate-50 overflow-hidden">
-                                            <span class="px-3 py-1.5 text-text-main">Qty:</span>
-                                            <input class="w-10 text-center bg-transparent border-none p-0 text-sm font-semibold text-text-main focus:ring-0" readonly type="text" value="${item.qty || 1}" title="Quantity" placeholder="Qty" />
-                                        </div>
-                                        <span class="text-lg font-black text-red-600">${fmt(itemTotal)}</span>
-                                    </div>
+                                    <span class="text-lg font-black text-red-600">${fmt(itemTotal)}</span>
                                 </div>
                             </div>
-                        `;
-                        list.appendChild(card);
-                    });
-                    subtotalEl.textContent = fmt(total);
-                    document.getElementById('order-total').textContent = fmt(total + SHIPPING);
-                    // Add delete handler
-                    setTimeout(() => {
-                        document.querySelectorAll('.delete-checkout-item').forEach(btn => {
-                            btn.addEventListener('click', function() {
-                                const idx = parseInt(this.getAttribute('data-idx'), 10);
-                                if (!isNaN(idx)) {
-                                    items.splice(idx, 1);
-                                    // Save updated items to storage
-                                    if (sessionStorage.getItem('buyit_checkout_source') === 'buyNow') {
-                                        if (items.length > 0) {
-                                            sessionStorage.setItem('buyit_buynow', JSON.stringify(items[0]));
-                                        } else {
-                                            sessionStorage.removeItem('buyit_buynow');
-                                        }
+                        </div>
+                    `;
+                    list.appendChild(card);
+                });
+                countEl.textContent = `${items.length} product${items.length > 1 ? 's' : ''}`;
+                subtotalEl.textContent = fmt(total);
+                document.getElementById('order-total').textContent = fmt(total + SHIPPING);
+                // Add delete handler
+                setTimeout(() => {
+                    document.querySelectorAll('.delete-checkout-item').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const idx = parseInt(this.getAttribute('data-idx'), 10);
+                            if (!isNaN(idx)) {
+                                items.splice(idx, 1);
+                                // Save updated items to storage
+                                if (sessionStorage.getItem('buyit_checkout_source') === 'buyNow') {
+                                    if (items.length > 0) {
+                                        sessionStorage.setItem('buyit_buynow', JSON.stringify(items[0]));
                                     } else {
-                                        localStorage.setItem('buyit_cart', JSON.stringify(items));
+                                        sessionStorage.removeItem('buyit_buynow');
                                     }
-                                    renderOrderItems();
+                                } else {
+                                    localStorage.setItem('buyit_cart', JSON.stringify(items));
                                 }
-                            });
+                                renderOrderItems();
+                            }
                         });
-                    }, 100);
+                    });
+                }, 100);
             }
         import { auth } from "./firebase-config.js";
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
@@ -397,8 +406,10 @@ await fetchShippingCharge();
                 </label>
             </div>
         `;
+        console.log('DEBUG: Loaded address:', selectedAddress);
     } else if (addressContainer) {
-        addressContainer.innerHTML = '<div class="text-slate-500">No address found. Please add or select an address.</div>';
+        addressContainer.innerHTML = '<div class="text-slate-500">No address found. Please <a href="addresses.html" class="text-primary underline">add or select an address</a>.</div>';
+        console.warn('DEBUG: No address found. addresses:', addresses);
     }
     // Edit address button always works
     if (editAddressBtn) {
