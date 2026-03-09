@@ -59,46 +59,6 @@
           <input id="shipping-charge" type="number" min="0" step="1" title="Shipping Charge" class="w-full rounded-lg border-slate-200 mb-2" />
           <button id="save-shipping-charge" class="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary-dark">Save Shipping Charge</button>
         </div>
-        <div class="bg-white border border-slate-200 rounded-xl p-4 sm:p-6">
-          <h2 class="text-lg font-semibold mb-4">Admin Account</h2>
-          <form id="admin-account-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium mb-1">Admin Name</label>
-              <input id="admin-name" type="text" title="Admin Name" class="w-full rounded-lg border-slate-200" />
-            </div>
-            <div>
-              <label class="block text-sm font-medium mb-1">Admin Email</label>
-              <input id="admin-email" type="email" title="Admin Email" class="w-full rounded-lg border-slate-200" />
-            </div>
-            <div>
-              <label class="block text-sm font-medium mb-1">Current Password</label>
-              <div class="relative">
-                <input id="current-password" type="password" title="Current Password" placeholder="Enter current password" class="w-full rounded-lg border-slate-200 pr-12" />
-                <button type="button" data-toggle-password="current-password" aria-label="Show current password" class="absolute inset-y-0 right-0 px-3 text-slate-500 hover:text-slate-700">👁️</button>
-              </div>
-            </div>
-            <div>
-              <label class="block text-sm font-medium mb-1">New Password</label>
-              <div class="relative">
-                <input id="new-password" type="password" title="New Password" placeholder="Enter new password" class="w-full rounded-lg border-slate-200 pr-12" />
-                <button type="button" data-toggle-password="new-password" aria-label="Show new password" class="absolute inset-y-0 right-0 px-3 text-slate-500 hover:text-slate-700">👁️</button>
-              </div>
-              <p id="new-password-strength" class="mt-1 text-xs text-slate-500">Strength: —</p>
-            </div>
-            <div>
-              <label class="block text-sm font-medium mb-1">Confirm Password</label>
-              <div class="relative">
-                <input id="confirm-password" type="password" title="Confirm Password" placeholder="Confirm new password" class="w-full rounded-lg border-slate-200 pr-12" />
-                <button type="button" data-toggle-password="confirm-password" aria-label="Show confirm password" class="absolute inset-y-0 right-0 px-3 text-slate-500 hover:text-slate-700">👁️</button>
-              </div>
-              <p id="confirm-password-status" class="mt-1 text-xs text-slate-500">Match: —</p>
-            </div>
-            <div class="md:col-span-2">
-              <button type="submit" class="px-4 py-2 rounded-lg bg-slate-900 text-white hover:bg-slate-700">Update Admin Account</button>
-            </div>
-          </form>
-        </div>
-        </form>
       </section>
     </main>
   </div>
@@ -109,8 +69,6 @@
     import { db } from './firebase-config.js';
     function loadSettings() {
       const settings = window.AdminData.getSettings();
-      document.getElementById('admin-name').value = settings.adminName || 'Admin User';
-      document.getElementById('admin-email').value = settings.adminEmail || '';
       document.getElementById('shipping-charge').value = settings.shippingCharge || 100;
     }
 
@@ -130,81 +88,6 @@
           showToast('Failed to save shipping charge to cloud: ' + err.message, 'error');
           return;
         }
-      });
-      // ...existing code...
-      const newPasswordInput = document.getElementById('new-password');
-      const confirmPasswordInput = document.getElementById('confirm-password');
-      const strengthText = document.getElementById('new-password-strength');
-      const matchText = document.getElementById('confirm-password-status');
-      // ...existing code...
-      document.querySelectorAll('[data-toggle-password]').forEach((toggleButton) => {
-        toggleButton.addEventListener('click', function () {
-          const targetId = this.getAttribute('data-toggle-password');
-          const input = document.getElementById(targetId);
-          if (!input) {
-            return;
-          }
-          const isHidden = input.type === 'password';
-          input.type = isHidden ? 'text' : 'password';
-          this.textContent = isHidden ? '🙈' : '👁️';
-          const labels = {
-            'current-password': 'current password',
-            'new-password': 'new password',
-            'confirm-password': 'confirm password'
-          };
-          const label = labels[targetId] || 'password';
-          this.setAttribute('aria-label', (isHidden ? 'Hide ' : 'Show ') + label);
-        });
-      });
-      // ...existing code...
-      newPasswordInput.addEventListener('input', updatePasswordFeedback);
-      confirmPasswordInput.addEventListener('input', updatePasswordFeedback);
-      updatePasswordFeedback();
-      document.getElementById('admin-account-form').addEventListener('submit', function (event) {
-        event.preventDefault();
-        // ...existing code...
-        const adminName = document.getElementById('admin-name').value.trim();
-        const adminEmail = document.getElementById('admin-email').value.trim().toLowerCase();
-        const currentPassword = document.getElementById('current-password').value;
-        const newPassword = document.getElementById('new-password').value;
-        const confirmPassword = document.getElementById('confirm-password').value;
-        // ...existing code...
-        if (!adminEmail) {
-          alert('Admin email is required.');
-          return;
-        }
-        const current = window.AdminData.getSettings();
-        const savedPassword = String(current.adminPassword || '');
-        if ((newPassword || confirmPassword) && savedPassword && currentPassword !== savedPassword) {
-          alert('Current password is incorrect.');
-          return;
-        }
-        if (newPassword || confirmPassword) {
-          if (newPassword !== confirmPassword) {
-            alert('Passwords do not match.');
-            return;
-          }
-          const strength = getPasswordStrengthLevel(newPassword);
-          if (strength.label === 'Easy') {
-            alert('Password strength is Easy. Use a Strong or VeryStrong password.');
-            return;
-          }
-        }
-        const shippingCharge = Number(document.getElementById('shipping-charge').value) || 100;
-        const payload = {
-          ...current,
-          adminName,
-          adminEmail,
-          shippingCharge
-        };
-        if (newPassword) {
-          payload.adminPassword = newPassword;
-        }
-        window.AdminData.saveSettings(payload);
-        document.getElementById('current-password').value = '';
-        document.getElementById('new-password').value = '';
-        document.getElementById('confirm-password').value = '';
-        alert('Admin account updated.');
       });
     }
 
