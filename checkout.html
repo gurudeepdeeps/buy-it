@@ -290,6 +290,7 @@ await fetchShippingCharge();
                         `;
                         list.appendChild(card);
                     });
+                    subtotalEl.textContent = fmt(total);
                     document.getElementById('order-total').textContent = fmt(total + SHIPPING);
                     // Add delete handler
                     setTimeout(() => {
