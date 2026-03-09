@@ -211,8 +211,29 @@
     <script type="module">
 const list = document.getElementById('order-items-list');
 const placeOrderBtn = document.getElementById('place-order-btn');
-const SHIPPING = 100;
+let SHIPPING = 100;
 let items = [];
+
+// Fetch shipping charge from Firestore
+async function fetchShippingCharge() {
+    try {
+        const { db } = window.firebaseConfig || {};
+        if (db) {
+            const { getDoc, doc } = await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js');
+            const snap = await getDoc(doc(db, 'settings', 'global'));
+            if (snap.exists()) {
+                const data = snap.data();
+                if (typeof data.shippingCharge === 'number') {
+                    SHIPPING = data.shippingCharge;
+                }
+            }
+        }
+    } catch (err) {
+        // fallback to default
+    }
+}
+
+await fetchShippingCharge();
 
             // Format currency in INR
             function fmt(n) {
@@ -234,7 +255,7 @@ let items = [];
                     items.forEach((item, idx) => {
                         const itemTotal = (item.price || 0) * (item.qty || 1);
                         total += itemTotal;
-                        const safeName = item.name ? String(item.name).replace(/`/g, "'") : '';
+                        const safeName = item.title ? String(item.title).replace(/`/g, "'") : '';
                         const safeId = item.id ? String(item.id).replace(/`/g, "'") : idx;
                         const regularPrice = Math.round(Number(item.price || 0) * 2.1451612903);
                         const card = document.createElement('div');
