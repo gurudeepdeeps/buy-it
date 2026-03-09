@@ -119,15 +119,17 @@
               const current = window.AdminData.getSettings();
               const payload = { ...current, shippingCharge };
               window.AdminData.saveSettings(payload);
+              console.log('Saving shipping charge:', shippingCharge);
+              console.log('window.firebaseConfig:', window.firebaseConfig);
+              console.log('db:', db);
               // Save to Firestore
               try {
-                const { db } = window.firebaseConfig || {};
-                if (db) {
-                  const { setDoc, doc } = await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js');
-                  await setDoc(doc(db, 'settings', 'global'), { shippingCharge }, { merge: true });
-                }
+                const { setDoc, doc } = await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js');
+                await setDoc(doc(db, 'settings', 'global'), { shippingCharge }, { merge: true });
+                console.log('Firestore write successful');
               } catch (err) {
                 showToast('Failed to save shipping charge to cloud: ' + err.message, 'error');
+                console.error('Firestore write error:', err);
                 return;
               }
               showToast('Shipping charge updated.', 'success');
