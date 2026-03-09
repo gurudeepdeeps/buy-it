@@ -251,6 +251,44 @@ await fetchShippingCharge();
                 list.innerHTML = '';
                 let total = 0;
                 if (!items || items.length === 0) {
+                    // Try to fetch products from Firestore as fallback
+                    if (typeof window.BUYIT_PRODUCTS_READY === 'object' && window.BUYIT_PRODUCTS_READY.then) {
+                        window.BUYIT_PRODUCTS_READY.then(() => {
+                            const catalog = window.BUYIT_PRODUCT_CATALOG || {};
+                            const productList = Object.values(catalog);
+                            if (productList.length > 0) {
+                                list.innerHTML = '<div class="text-slate-500">No products in cart. Here are some featured products:</div>';
+                                productList.slice(0, 3).forEach((item, idx) => {
+                                    const safeName = item.title ? String(item.title).replace(/`/g, "'") : '';
+                                    const card = document.createElement('div');
+                                    card.className = 'group relative p-5 bg-white rounded-xl border border-slate-200 hover:border-primary/30 hover:shadow-lg transition-all duration-300 mb-4';
+                                    card.innerHTML = `
+                                        <div class="flex flex-col sm:flex-row gap-5">
+                                            <div class="shrink-0 w-full sm:w-36 aspect-[4/3] rounded-xl overflow-hidden bg-white border border-slate-200 p-2 flex items-center justify-center">
+                                                <img alt="${safeName}" class="h-full w-full object-contain group-hover:scale-105 transition-transform duration-500" src="${item.image || 'https://via.placeholder.com/80'}" />
+                                            </div>
+                                            <div class="flex flex-1 flex-col">
+                                                <div class="flex justify-between items-start gap-4">
+                                                    <div>
+                                                        <h3 class="text-lg font-semibold text-slate-900 leading-tight">${safeName}</h3>
+                                                    </div>
+                                                    <a href="product-details.html?id=${encodeURIComponent(item.id)}" class="text-primary underline">View</a>
+                                                </div>
+                                                <div class="mt-4 mb-4 flex flex-col gap-1">
+                                                    <span class="text-base font-black text-red-600 leading-tight">${fmt(item.price)}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
+                                    list.appendChild(card);
+                                });
+                                countEl.textContent = 'No products in cart';
+                                subtotalEl.textContent = fmt(0);
+                                document.getElementById('order-total').textContent = fmt(SHIPPING);
+                                return;
+                            }
+                        });
+                    }
                     list.innerHTML = '<div class="text-slate-500">No products found in your cart or buy-now. <a href="products.html" class="text-primary underline">Shop now</a>.</div>';
                     countEl.textContent = 'No products';
                     subtotalEl.textContent = fmt(0);
@@ -327,6 +365,11 @@ await fetchShippingCharge();
         import { doc, getDoc, collection, getDocs, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
         document.addEventListener('DOMContentLoaded', async () => {
+        if (!currentUser) {
+            addressContainer.innerHTML = '<div class="text-slate-500">You must be <a href="login.html" class="text-primary underline">logged in</a> to select a shipping address.</div>';
+            console.warn('DEBUG: Not logged in, cannot load address.');
+            return;
+        }
     const getCurrentUser = () => new Promise((resolve) => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             unsubscribe();
