@@ -8,6 +8,7 @@
   <script src="admin-auth.js"></script>
   <script src="admin-data.js"></script>
   <script src="shop.js"></script>
+  <script type="module" src="firebase-config.js"></script>
   <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script>
@@ -104,7 +105,8 @@
 
   <div id="admin-toast" class="fixed top-4 right-4 z-50 hidden max-w-xs rounded-lg px-4 py-3 text-sm font-medium shadow-lg"></div>
 
-  <script>
+  <script type="module">
+    import { db } from './firebase-config.js';
     function loadSettings() {
       const settings = window.AdminData.getSettings();
       document.getElementById('admin-name').value = settings.adminName || 'Admin User';
@@ -113,71 +115,28 @@
     }
 
     function bindSettingsForms() {
-            document.getElementById('save-shipping-charge').addEventListener('click', async function (event) {
-              event.preventDefault();
-              const shippingCharge = Number(document.getElementById('shipping-charge').value) || 100;
-              const current = window.AdminData.getSettings();
-              const payload = { ...current, shippingCharge };
-              window.AdminData.saveSettings(payload);
-              console.log('Saving shipping charge:', shippingCharge);
-              console.log('window.firebaseConfig:', window.firebaseConfig);
-              console.log('db:', db);
-              // Save to Firestore
-              try {
-                const { setDoc, doc } = await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js');
-                await setDoc(doc(db, 'settings', 'global'), { shippingCharge }, { merge: true });
-                console.log('Firestore write successful');
-              } catch (err) {
-                showToast('Failed to save shipping charge to cloud: ' + err.message, 'error');
-                console.error('Firestore write error:', err);
-                return;
-              }
-              showToast('Shipping charge updated.', 'success');
-            });
+      document.getElementById('save-shipping-charge').addEventListener('click', async function (event) {
+        event.preventDefault();
+        const shippingCharge = Number(document.getElementById('shipping-charge').value) || 100;
+        const current = window.AdminData.getSettings();
+        const payload = { ...current, shippingCharge };
+        window.AdminData.saveSettings(payload);
+        // Save to Firestore
+        try {
+          const { setDoc, doc } = await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js');
+          await setDoc(doc(db, 'settings', 'global'), { shippingCharge }, { merge: true });
+          showToast('Shipping charge updated.', 'success');
+        } catch (err) {
+          showToast('Failed to save shipping charge to cloud: ' + err.message, 'error');
+          return;
+        }
+      });
+      // ...existing code...
       const newPasswordInput = document.getElementById('new-password');
       const confirmPasswordInput = document.getElementById('confirm-password');
       const strengthText = document.getElementById('new-password-strength');
       const matchText = document.getElementById('confirm-password-status');
-
-      const getPasswordStrengthLevel = (password) =>
-        window.BUYIT_GET_PASSWORD_STRENGTH(password, {
-          emptyClass: 'text-slate-500',
-          easyClass: 'text-amber-600',
-          strongClass: 'text-blue-600',
-          veryStrongClass: 'text-emerald-600'
-        });
-
-      function setFeedbackClass(element, className) {
-        element.classList.remove('text-slate-500', 'text-amber-600', 'text-blue-600', 'text-emerald-600', 'text-red-600');
-        element.classList.add(className);
-      }
-
-      function updatePasswordFeedback() {
-        const newPassword = newPasswordInput.value;
-        const confirmPassword = confirmPasswordInput.value;
-
-        const strength = getPasswordStrengthLevel(newPassword);
-        strengthText.textContent = `Strength: ${strength.label}`;
-        setFeedbackClass(strengthText, strength.className);
-
-        if (!confirmPassword) {
-          matchText.textContent = 'Match: —';
-          setFeedbackClass(matchText, 'text-slate-500');
-          confirmPasswordInput.setCustomValidity('');
-          return;
-        }
-
-        if (newPassword === confirmPassword) {
-          matchText.textContent = 'Match: Passwords match';
-          setFeedbackClass(matchText, 'text-emerald-600');
-          confirmPasswordInput.setCustomValidity('');
-        } else {
-          matchText.textContent = 'Match: Passwords do not match';
-          setFeedbackClass(matchText, 'text-red-600');
-          confirmPasswordInput.setCustomValidity('Passwords do not match');
-        }
-      }
-
+      // ...existing code...
       document.querySelectorAll('[data-toggle-password]').forEach((toggleButton) => {
         toggleButton.addEventListener('click', function () {
           const targetId = this.getAttribute('data-toggle-password');
@@ -185,11 +144,9 @@
           if (!input) {
             return;
           }
-
           const isHidden = input.type === 'password';
           input.type = isHidden ? 'text' : 'password';
           this.textContent = isHidden ? '🙈' : '👁️';
-
           const labels = {
             'current-password': 'current password',
             'new-password': 'new password',
@@ -199,46 +156,40 @@
           this.setAttribute('aria-label', (isHidden ? 'Hide ' : 'Show ') + label);
         });
       });
-
+      // ...existing code...
       newPasswordInput.addEventListener('input', updatePasswordFeedback);
       confirmPasswordInput.addEventListener('input', updatePasswordFeedback);
       updatePasswordFeedback();
-
       document.getElementById('admin-account-form').addEventListener('submit', function (event) {
         event.preventDefault();
-
+        // ...existing code...
         const adminName = document.getElementById('admin-name').value.trim();
         const adminEmail = document.getElementById('admin-email').value.trim().toLowerCase();
         const currentPassword = document.getElementById('current-password').value;
         const newPassword = document.getElementById('new-password').value;
         const confirmPassword = document.getElementById('confirm-password').value;
-
+        // ...existing code...
         if (!adminEmail) {
           alert('Admin email is required.');
           return;
         }
-
         const current = window.AdminData.getSettings();
         const savedPassword = String(current.adminPassword || '');
-
         if ((newPassword || confirmPassword) && savedPassword && currentPassword !== savedPassword) {
           alert('Current password is incorrect.');
           return;
         }
-
         if (newPassword || confirmPassword) {
           if (newPassword !== confirmPassword) {
             alert('Passwords do not match.');
             return;
           }
-
           const strength = getPasswordStrengthLevel(newPassword);
           if (strength.label === 'Easy') {
             alert('Password strength is Easy. Use a Strong or VeryStrong password.');
             return;
           }
         }
-
         const shippingCharge = Number(document.getElementById('shipping-charge').value) || 100;
         const payload = {
           ...current,
@@ -246,11 +197,9 @@
           adminEmail,
           shippingCharge
         };
-
         if (newPassword) {
           payload.adminPassword = newPassword;
         }
-
         window.AdminData.saveSettings(payload);
         document.getElementById('current-password').value = '';
         document.getElementById('new-password').value = '';
