@@ -308,6 +308,9 @@ await fetchShippingCharge();
                     subtotalEl.textContent = fmt(0);
                     document.getElementById('order-total').textContent = fmt(SHIPPING);
                     console.warn('DEBUG: No products found. items:', items);
+                    if (!items || items.length === 0) {
+                        console.log('CHECKOUT DEBUG: Products not loaded. Cart and buy-now are empty.');
+                    }
                     return;
                 }
                 items.forEach((item, idx) => {
@@ -379,6 +382,12 @@ await fetchShippingCharge();
         import { doc, getDoc, collection, getDocs, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
         document.addEventListener('DOMContentLoaded', async () => {
+            if (!currentUser) {
+                addressContainer.innerHTML = '<div class="text-slate-500">You must be <a href="login.html" class="text-primary underline">logged in</a> to select a shipping address.</div>';
+                console.warn('DEBUG: Not logged in, cannot load address.');
+                console.log('CHECKOUT DEBUG: Address not loaded. User is not logged in.');
+                return;
+            }
         if (!currentUser) {
             addressContainer.innerHTML = '<div class="text-slate-500">You must be <a href="login.html" class="text-primary underline">logged in</a> to select a shipping address.</div>';
             console.warn('DEBUG: Not logged in, cannot load address.');
