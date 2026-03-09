@@ -127,7 +127,7 @@
                   await setDoc(doc(db, 'settings', 'global'), { shippingCharge }, { merge: true });
                 }
               } catch (err) {
-                alert('Failed to save shipping charge to cloud.');
+                showToast('Failed to save shipping charge to cloud: ' + err.message, 'error');
                 return;
               }
               showToast('Shipping charge updated.', 'success');
