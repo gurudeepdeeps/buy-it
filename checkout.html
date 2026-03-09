@@ -257,8 +257,8 @@ await fetchShippingCharge();
                             const catalog = window.BUYIT_PRODUCT_CATALOG || {};
                             const productList = Object.values(catalog);
                             if (productList.length > 0) {
-                                list.innerHTML = '<div class="text-slate-500">No products in cart. Here are some featured products:</div>';
-                                productList.slice(0, 3).forEach((item, idx) => {
+                                list.innerHTML = '<div class="text-slate-500 mb-4">No products in cart. Select a product below to add to checkout:</div>';
+                                productList.slice(0, 5).forEach((item, idx) => {
                                     const safeName = item.title ? String(item.title).replace(/`/g, "'") : '';
                                     const card = document.createElement('div');
                                     card.className = 'group relative p-5 bg-white rounded-xl border border-slate-200 hover:border-primary/30 hover:shadow-lg transition-all duration-300 mb-4';
@@ -272,7 +272,7 @@ await fetchShippingCharge();
                                                     <div>
                                                         <h3 class="text-lg font-semibold text-slate-900 leading-tight">${safeName}</h3>
                                                     </div>
-                                                    <a href="product-details.html?id=${encodeURIComponent(item.id)}" class="text-primary underline">View</a>
+                                                    <button class="px-3 py-1 rounded bg-primary text-white font-semibold add-product-to-checkout" data-product-id="${item.id}">Add to Checkout</button>
                                                 </div>
                                                 <div class="mt-4 mb-4 flex flex-col gap-1">
                                                     <span class="text-base font-black text-red-600 leading-tight">${fmt(item.price)}</span>
@@ -285,6 +285,20 @@ await fetchShippingCharge();
                                 countEl.textContent = 'No products in cart';
                                 subtotalEl.textContent = fmt(0);
                                 document.getElementById('order-total').textContent = fmt(SHIPPING);
+                                // Add handler to add product to checkout
+                                setTimeout(() => {
+                                    document.querySelectorAll('.add-product-to-checkout').forEach(btn => {
+                                        btn.addEventListener('click', function() {
+                                            const productId = this.getAttribute('data-product-id');
+                                            const product = window.getProductById ? window.getProductById(productId) : null;
+                                            if (product) {
+                                                items = [Object.assign({}, product, { qty: 1 })];
+                                                localStorage.setItem('buyit_cart', JSON.stringify(items));
+                                                renderOrderItems();
+                                            }
+                                        });
+                                    });
+                                }, 100);
                                 return;
                             }
                         });
